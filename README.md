@@ -70,6 +70,20 @@ godot --path . res://scenes/block.tscn -- time=noon tex=pixellab street_angle=90
 
 所見は [docs/lookdev/PHASE6.md](docs/lookdev/PHASE6.md)。建物生成 `scripts/town/building_gen.gd`、テクスチャ `scripts/town/pixel_textures.gd`、AO `scripts/town/ao_baker.gd`。
 
+## フィールド（本番のデータ駆動の街）
+
+`data/fields/<id>.json`（形式は [docs/FIELD_FORMAT.md](docs/FIELD_FORMAT.md)）から `scripts/field/` が街を組む。F05 旧鹿之尾街道 商店街が最初の 1 枚。
+
+```bash
+godot --path . res://scenes/fields/f05_kaido.tscn -- time=evening          # 歩く（WASD 画面基準、E 調べる、F1 デバッグ、F2 通行判定）
+godot --path . res://scenes/fields/f05_kaido.tscn -- field_yaw=0 regen=1   # 回転を試す / AO を焼き直す
+godot --headless --path . --script res://tests/field_validate.gd           # データの検証
+godot --headless --path . --script res://tools/bake_fields.gd -- all       # 全フィールドの AO キャッシュを焼き直す
+```
+
+生成物（AO・手続きテクスチャ）は `cache/fields/<id>/`（Git 管理外）に置き、キー（JSON とテクスチャ版のハッシュ）が変われば起動時に焼き直す。
+記録は [docs/lookdev/PHASE8.md](docs/lookdev/PHASE8.md)。
+
 ## 縦切りプロトタイプ（8/1〜8/3）
 
 ```sh

@@ -33,3 +33,6 @@ __pycache__/
 
 # lookdev の GIF/連番（大きい。tools/lookdev_c.py で再生成）
 /docs/lookdev/video/
+
+# フィールドの生成物（AO 等）。tools/ か起動時に再生成できる。配布ビルドには焼き込む（FIELD_FORMAT.md 第 8 節）
+/cache/

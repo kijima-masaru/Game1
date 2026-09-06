@@ -1,0 +1,365 @@
+class_name FieldBuilder
+extends RefCounted
+## data/fields/<id>.json から 3D の街を組む（docs/FIELD_FORMAT.md 第 9 節）。
+## 地面 → 道 → 区画（建物生成器）→ 塀 → 配置物と光源 → field_yaw で全体を回す。AO は res://cache/fields/<id>/ にキャッシュ。
+
+const TEX_VERSION := 3            # テクスチャ生成の版。上げるとキャッシュを焼き直す
+const T := FieldData.TILE
+
+var fd: FieldData
+var root: Node3D                   # 回転する親（フィールドのローカル座標 = タイル × T）
+var gen: BuildingGen
+var baker: AoBaker
+var mats := {}
+var pixel_size := 1.0 / 28.0
+var billboards: Array[Node3D] = []
+var lights: Array[OmniLight3D] = []
+var lot_faces := {}                # lot id -> Array[MeshInstance3D]
+var lot_aabbs := {}                # lot id -> AABB（ローカル）
+var bake_seconds := 0.0
+var cache_hit := false
+
+
+func build(field: FieldData, parent: Node3D, flags: Dictionary, cam_yaw_deg: float, regen: bool = false, tex_mode: String = "proc") -> Node3D:
+	fd = field
+	root = Node3D.new()
+	root.name = "Field_" + fd.d["id"]
+	parent.add_child(root)
+	gen = BuildingGen.new(root)
+	gen.ao_texel = 2.0
+	baker = AoBaker.new([], 18.0, 24)
+	_build_materials(tex_mode)
+	_build_ground()
+	_build_roads()
+	for l in fd.d.get("lots", []):
+		if FieldData.when_ok(l.get("when"), flags):
+			_build_lot(l)
+	var t0 := Time.get_ticks_msec()
+	var cache_dir := "res://cache/fields/%s" % fd.d["id"]
+	var key := _cache_key()
+	var manifest := "%s/manifest.json" % cache_dir
+	var can_load := false
+	if not regen and FileAccess.file_exists(manifest):
+		var m = JSON.parse_string(FileAccess.get_file_as_string(manifest))
+		can_load = typeof(m) == TYPE_DICTIONARY and m.get("key", "") == key
+	gen.finalize(baker, {"dir": cache_dir, "load": can_load})
+	cache_hit = can_load
+	if not can_load:
+		var f := FileAccess.open(manifest, FileAccess.WRITE)
+		if f != null:
+			f.store_string(JSON.stringify({"key": key, "faces": gen.faces.size(), "generated": Time.get_datetime_string_from_system()}))
+	bake_seconds = (Time.get_ticks_msec() - t0) / 1000.0
+	_collect_lot_faces()
+	for p in fd.d.get("props", []):
+		if FieldData.when_ok(p.get("when"), flags):
+			_build_prop(p)
+	# 全体の回転（K-1）: 地図の北（ローカル -Z）がカメラ前方から field_yaw だけ回った向きになる
+	root.rotation.y = deg_to_rad(cam_yaw_deg + float(fd.d.get("field_yaw", 0)))
+	return root
+
+
+func _cache_key() -> String:
+	var txt := FileAccess.get_file_as_string("res://data/fields/%s.json" % fd.d["id"].to_lower())
+	return "%s:%d:%s" % [str(txt.hash()), TEX_VERSION, str(FileAccess.get_file_as_string("res://data/assets/objects.json").hash())]
+
+
+# ============================================================================
+# 材質
+# ============================================================================
+func _build_materials(tex_mode: String) -> void:
+	var PT := PixelTextures
+	mats["lot_ground"] = PT.material(PT.lot_ground())
+	mats["gravel"] = PT.material(PT.gravel())
+	mats["asphalt"] = PT.material(PT.asphalt_gravel())
+	mats["stone_path"] = PT.material(PT.stone_path())
+	mats["old_street"] = PT.material(PT.old_street())
+	mats["sidewalk"] = PT.material(PT.gutter())
+	mats["alley"] = PT.material(PT.lot_ground(32, 71))
+	mats["temple_path"] = mats["stone_path"]
+	mats["road"] = mats["asphalt"]
+	mats["weatherboard"] = [PT.material(PT.weatherboard(32, Color(0.55, 0.58, 0.72))), PT.material(PT.weatherboard(32, Color(0.62, 0.55, 0.50), 0.50, 14)),
+		PT.material(PT.weatherboard(32, Color(0.50, 0.60, 0.62), 0.50, 15)), PT.material(PT.weatherboard(32, Color(0.66, 0.60, 0.58), 0.48, 16))]
+	mats["mortar"] = [PT.material(PT.mortar()), PT.material(PT.mortar(32, Color(0.78, 0.74, 0.66), 0.50, 12)), PT.material(PT.mortar(32, Color(0.72, 0.76, 0.78), 0.52, 13))]
+	mats["concrete"] = [PT.material(PT.concrete())]
+	mats["namako"] = [PT.material(PT.namako())]
+	mats["plaster"] = [PT.material(PT.plaster())]
+	mats["kawara"] = [PT.material(PT.kawara()), PT.material(PT.kawara(32, Color(0.40, 0.36, 0.42), 0.22, 30)), PT.material(PT.kawara(32, Color(0.34, 0.40, 0.44), 0.24, 31))]
+	mats["corrugated"] = PT.material(PT.corrugated())
+	mats["shutter"] = [PT.material(PT.shutter()), PT.material(PT.shutter(24, 0.36, 24)), PT.material(PT.shutter(24, 0.44, 25))]
+	mats["block_fence"] = PT.material(PT.block_fence())
+	mats["glass"] = PT.material(PT.noise(8, Color(0.10, 0.12, 0.18), 0.02))
+	mats["frame"] = PT.material(PT.noise(8, Color(0.62, 0.62, 0.60), 0.02))
+	mats["wood"] = PT.material(PT.weatherboard(32, Color(0.48, 0.36, 0.26), 0.30, 17))
+	mats["dark"] = PT.material(PT.noise(8, Color(0.08, 0.08, 0.10), 0.01))
+	mats["sign_dark"] = PT.material(PT.noise(8, Color(0.30, 0.30, 0.32), 0.02))
+	mats["warm_window"] = PT.emissive_material(Color(1.0, 0.82, 0.45), 2.5)
+	var wt := StandardMaterial3D.new()
+	wt.albedo_color = Color(0, 0, 0, 1)
+	wt.emission_enabled = true
+	wt.emission = Color(1, 1, 1)
+	wt.emission_texture = ImageTexture.create_from_image(PT.warm_window())
+	wt.emission_energy_multiplier = 0.35   # 2.5 / 1.0 は Filmic white 1.0 で白飛びした。Glow を切っている以上、発光は 0.3〜0.5 が上限（フェーズ8 J-3）
+	wt.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+	wt.uv1_scale = Vector3(28.0 / 16.0, 28.0 / 16.0, 1)
+	wt.cull_mode = BaseMaterial3D.CULL_DISABLED
+	mats["warm_window"] = wt
+
+
+func _wall_mat(kind: String, variant: int) -> StandardMaterial3D:
+	var arr = mats.get(kind, mats["mortar"])
+	if arr is Array:
+		return arr[variant % arr.size()]
+	return arr
+
+
+# ============================================================================
+# 地面・道
+# ============================================================================
+func _rect_face(r: Array, mat: Material, name_: String, lift: float, ao := true) -> void:
+	var o := Vector3(float(r[0]) * T, lift, float(r[1]) * T)
+	gen.add_face(o, Vector3(float(r[2]) * T, 0, 0), Vector3(0, 0, float(r[3]) * T), Vector3.UP, mat, name_, ao, true)
+
+
+func _build_ground() -> void:
+	var g: Dictionary = fd.d.get("ground", {})
+	var margin := 16   # 画面端に虚無が出ないよう広め（面は 5 枚、描画コストは無視できる）
+	var gm: Material = mats[g.get("default", "lot_ground")]
+	_rect_face([0, 0, fd.size.x, fd.size.y], gm, "ground", 0.0)
+	# 外周（フィールド外）。areamask=1 で別色にして「画面のうちフィールド外の割合」を測る
+	_rect_face([-margin, -margin, fd.size.x + 2 * margin, margin], gm, "margin_n", 0.0, false)
+	_rect_face([-margin, fd.size.y, fd.size.x + 2 * margin, margin], gm, "margin_s", 0.0, false)
+	_rect_face([-margin, 0, margin, fd.size.y], gm, "margin_w", 0.0, false)
+	_rect_face([fd.size.x, 0, margin, fd.size.y], gm, "margin_e", 0.0, false)
+	for p in g.get("patches", []):
+		_rect_face(p["rect"], mats[p["tex"]], "patch_" + p["id"], 0.005)
+
+
+func _build_roads() -> void:
+	for r in fd.d.get("roads", []):
+		var w := int(r["width"])
+		var line: Array = r["line"]
+		for i in range(line.size() - 1 if line.size() > 1 else 1):
+			var a: Array = line[i]
+			var b: Array = line[mini(i + 1, line.size() - 1)]
+			var x0 := mini(int(a[0]), int(b[0]))
+			var x1 := maxi(int(a[0]), int(b[0]))
+			var y0 := mini(int(a[1]), int(b[1]))
+			var y1 := maxi(int(a[1]), int(b[1]))
+			var half := (w - 1) / 2
+			var rect: Array
+			if x0 == x1:   # 縦
+				rect = [x0 - half, y0, w, y1 - y0 + 1]
+			else:          # 横
+				rect = [x0, y0 - half, x1 - x0 + 1, w]
+			_rect_face(rect, mats[r["kind"]], "road_%s_%d" % [r["id"], i], 0.012, true)
+
+
+# ============================================================================
+# 区画（建物）
+# ============================================================================
+func _lot_box(l: Dictionary) -> Dictionary:
+	var r: Array = l["rect"]
+	var w := float(r[2]) * T
+	var d := float(r[3]) * T
+	var cx := (float(r[0]) + float(r[2]) * 0.5) * T
+	var cz := (float(r[1]) + float(r[3]) * 0.5) * T
+	return {"center": Vector3(cx, 0, cz), "w": w, "d": d}
+
+
+## 正面の壁の座標系（origin = 正面の左下、u = 幅方向、v = 上、normal = 外向き）
+func _front_frame(l: Dictionary, box: Dictionary, h: float) -> Dictionary:
+	var c: Vector3 = box["center"]
+	var hw: float = box["w"] * 0.5
+	var hd: float = box["d"] * 0.5
+	match l.get("front", "S"):
+		"S":
+			return {"o": Vector3(c.x - hw, 0, c.z + hd), "u": Vector3(box["w"], 0, 0), "v": Vector3(0, h, 0), "n": Vector3.BACK, "len": box["w"]}
+		"N":
+			return {"o": Vector3(c.x + hw, 0, c.z - hd), "u": Vector3(-box["w"], 0, 0), "v": Vector3(0, h, 0), "n": Vector3.FORWARD, "len": box["w"]}
+		"E":
+			return {"o": Vector3(c.x + hw, 0, c.z + hd), "u": Vector3(0, 0, -box["d"]), "v": Vector3(0, h, 0), "n": Vector3.RIGHT, "len": box["d"]}
+		_:
+			return {"o": Vector3(c.x - hw, 0, c.z - hd), "u": Vector3(0, 0, box["d"]), "v": Vector3(0, h, 0), "n": Vector3.LEFT, "len": box["d"]}
+
+
+func _roof(l: Dictionary, box: Dictionary, h: float, roof_mat: Material, wall_mat: Material, overhang: float, rise: float) -> void:
+	var c: Vector3 = box["center"]
+	var along_z: bool = l.get("front", "S") in ["E", "W"]
+	if l.get("roof", "gable") == "flat":
+		gen.add_face(Vector3(c.x - box["w"] * 0.5, h, c.z - box["d"] * 0.5), Vector3(box["w"], 0, 0), Vector3(0, 0, box["d"]), Vector3.UP, roof_mat, l["id"] + "_top", true, true)
+		return
+	if l.get("roof", "gable") == "none":
+		return
+	if along_z:
+		gen.add_gable_roof_z(Vector3(c.x, h, c.z), box["w"], box["d"], rise, roof_mat, wall_mat, l["id"], overhang)
+	else:
+		gen.add_gable_roof(Vector3(c.x, h, c.z), box["w"], box["d"], rise, roof_mat, wall_mat, l["id"], overhang)
+
+
+func _build_lot(l: Dictionary) -> void:
+	var kind: String = l["kind"]
+	var box := _lot_box(l)
+	var variant := int(l.get("variant", 1))
+	var floors := int(l.get("floors", 1))
+	var h: float = float(l["height_m"]) if l.has("height_m") else floors * 3.0
+	# 隣接する区画が一枚の長屋に見えないよう、variant で軒高と屋根材を散らす（height_m 指定時はそのまま）
+	if not l.has("height_m") and kind in ["shop_shutter", "shop_wood", "dagashi", "house"]:
+		h += [0.0, -0.35, 0.3, -0.15, 0.45, 0.15, -0.45, 0.6][variant % 8]
+	var wall := _wall_mat(l.get("wall", "mortar"), variant)
+	var roof: StandardMaterial3D = mats["kawara"][variant % 3]
+	if kind in ["shop_shutter", "shop_wood", "house"] and variant % 4 == 3 and mats.has("corrugated"):
+		roof = mats["corrugated"] if not (mats["corrugated"] is Array) else mats["corrugated"][0]
+	match kind:
+		"fence_block":
+			gen.add_box(box["center"], Vector3(maxf(box["w"], 0.2), 1.2, maxf(box["d"], 0.2)), mats["block_fence"], mats["block_fence"], l["id"], true)
+			return
+		"fence_wall":
+			var sz := Vector3(maxf(box["w"], 0.25), 1.8, maxf(box["d"], 0.25))
+			gen.add_box(box["center"], sz, mats["plaster"][0], mats["plaster"][0], l["id"], true, false)
+			gen.add_box(Vector3(box["center"].x, 1.8, box["center"].z), Vector3(sz.x + 0.2, 0.25, sz.z + 0.2), roof, roof, l["id"] + "_cap", false)
+			return
+		"temple_gate":
+			var fr := _front_frame(l, box, 3.6)
+			var along: Vector3 = (fr["u"] as Vector3).normalized()
+			var c: Vector3 = box["center"]
+			for s in [-1.0, 1.0]:
+				var pc: Vector3 = c + along * (float(s) * (float(fr["len"]) * 0.5 - 0.35))
+				gen.add_box(Vector3(pc.x, 0, pc.z), Vector3(0.4, 3.6, 0.4), mats["wood"], mats["wood"], "%s_p%d" % [l["id"], 0 if s < 0 else 1], false)
+			# 屋根は柱の上。棟は正面と平行（= 通り抜け方向と直交）
+			if l.get("front", "S") in ["E", "W"]:
+				gen.add_gable_roof_z(Vector3(c.x, 3.6, c.z), maxf(box["w"], 1.0), box["d"], 1.0, roof, mats["wood"], l["id"], 0.5)
+			else:
+				gen.add_gable_roof(Vector3(c.x, 3.6, c.z), box["w"], maxf(box["d"], 1.0), 1.0, roof, mats["wood"], l["id"], 0.5)
+			return
+	# --- 壁のある建物 ---
+	var with_top: bool = l.get("roof", "gable") == "flat"
+	gen.add_box(box["center"], Vector3(box["w"], h, box["d"]), wall, wall, l["id"], true, with_top)
+	var overhang := 0.6
+	var rise := 1.5
+	if kind == "temple_hall":
+		overhang = 1.4
+		rise = 2.4
+	elif kind == "house":
+		overhang = 0.8
+	_roof(l, box, h, roof, wall, overhang, rise)
+	var fr := _front_frame(l, box, h)
+	var o: Vector3 = fr["o"]
+	var u: Vector3 = fr["u"]
+	var v: Vector3 = fr["v"]
+	var n: Vector3 = fr["n"]
+	var L: float = fr["len"]
+	match kind:
+		"shop_shutter":
+			var sw := minf(L - 0.6, 3.4)
+			gen.add_plate(o, u, v, n, (L - sw) * 0.5, 0.05, sw, 2.5, mats["shutter"][variant % 3], l["id"] + "_shutter")
+			gen.add_plate(o, u, v, n, 0.2, 2.6, L - 0.4, 0.5, mats["sign_dark"], l["id"] + "_sign")
+			if floors >= 2:
+				gen.add_window(o, u, v, n, 0.4, 3.6, minf(1.6, L * 0.4), 1.1, mats["glass"], mats["frame"], l["id"] + "_w1")
+				gen.add_window(o, u, v, n, L - 0.4 - minf(1.6, L * 0.4), 3.6, minf(1.6, L * 0.4), 1.1, mats["glass"], mats["frame"], l["id"] + "_w2")
+		"shop_wood":
+			var dw := minf(L - 0.8, 2.4)
+			gen.add_plate(o, u, v, n, (L - dw) * 0.5, 0.05, dw, 2.2, mats["dark"], l["id"] + "_dooropen")
+			gen.add_plate(o, u, v, n, (L - dw) * 0.5, 0.05, 0.08, 2.2, mats["wood"], l["id"] + "_dj0")
+			gen.add_plate(o, u, v, n, (L - dw) * 0.5 + dw * 0.5, 0.05, 0.08, 2.2, mats["wood"], l["id"] + "_dj1")
+			gen.add_plate(o, u, v, n, (L - dw) * 0.5 + dw - 0.08, 0.05, 0.08, 2.2, mats["wood"], l["id"] + "_dj2")
+			gen.add_plate(o, u, v, n, 0.2, 2.35, L - 0.4, 0.35, mats["wood"], l["id"] + "_noren")
+			if floors >= 2:
+				gen.add_window(o, u, v, n, 0.5, 3.6, L - 1.0, 1.1, mats["glass"], mats["frame"], l["id"] + "_w1")
+		"dagashi":
+			var ww := minf(L - 0.8, 2.2)
+			gen.add_plate(o, u, v, n, 0.3, 0.7, ww, 1.4, mats["warm_window"], l["id"] + "_warm")
+			gen.add_plate(o, u, v, n, 0.3 + ww + 0.1, 0.05, minf(1.0, L - ww - 0.7), 2.1, mats["dark"], l["id"] + "_door")
+			gen.add_plate(o, u, v, n, 0.2, 2.4, L - 0.4, 0.5, mats["sign_dark"], l["id"] + "_sign")
+			gen.add_plate(o, u, v, n, 0.1, 2.35, L - 0.2, 0.08, mats["wood"], l["id"] + "_eave")
+			if floors >= 2:
+				gen.add_window(o, u, v, n, 0.5, 3.6, L - 1.0, 1.1, mats["glass"], mats["frame"], l["id"] + "_w1")
+		"house":
+			gen.add_window(o, u, v, n, 0.4, 0.9, minf(1.6, L * 0.4), 1.0, mats["glass"], mats["frame"], l["id"] + "_w1")
+			gen.add_plate(o, u, v, n, L - 0.4 - 1.0, 0.05, 1.0, 2.0, mats["dark"], l["id"] + "_door")
+		"temple_hall":
+			gen.add_plate(o, u, v, n, L * 0.35, 0.05, L * 0.3, 2.6, mats["dark"], l["id"] + "_entrance")
+			gen.add_plate(o, u, v, n, 0.2, 2.8, L - 0.4, 0.3, mats["wood"], l["id"] + "_beam")
+			for i in range(3):
+				var px := 0.4 + i * (L - 0.8) / 2.0
+				gen.add_plate(o, u, v, n, px, 0.05, 0.3, h - 0.2, mats["wood"], "%s_pillar%d" % [l["id"], i], 0.04)
+		"bldg_rc":
+			for fl in floors:
+				gen.add_window(o, u, v, n, 0.5, 0.9 + fl * 3.0, L - 1.0, 1.2, mats["glass"], mats["frame"], "%s_w%d" % [l["id"], fl])
+
+
+func _collect_lot_faces() -> void:
+	for mi in root.get_children():
+		if not (mi is MeshInstance3D):
+			continue
+		var n: String = mi.name
+		for l in fd.d.get("lots", []):
+			var id: String = l["id"]
+			if n == id or n.begins_with(id + "_"):
+				if not lot_faces.has(id):
+					lot_faces[id] = []
+					var r: Array = l["rect"]
+					lot_aabbs[id] = AABB(Vector3(float(r[0]) * T, 0, float(r[1]) * T), Vector3(float(r[2]) * T, 9.0, float(r[3]) * T))
+				lot_faces[id].append(mi)
+				break
+
+
+# ============================================================================
+# 配置物
+# ============================================================================
+func _build_prop(p: Dictionary) -> void:
+	var a: Dictionary = fd.assets.get(p["asset"], {})
+	var img := Image.load_from_file(ProjectSettings.globalize_path("res://" + a["file"]))
+	if img == null:
+		push_warning("prop %s: 画像が無い %s" % [p["id"], a["file"]])
+		return
+	var pivot := Node3D.new()
+	pivot.name = "Prop_" + p["id"]
+	pivot.position = Vector3(float(p["at"][0]) * T, 0.02, float(p["at"][1]) * T)
+	root.add_child(pivot)
+	var sp := Sprite3D.new()
+	sp.texture = ImageTexture.create_from_image(img)
+	sp.pixel_size = pixel_size
+	sp.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+	sp.billboard = BaseMaterial3D.BILLBOARD_DISABLED
+	sp.alpha_cut = SpriteBase3D.ALPHA_CUT_DISCARD
+	sp.alpha_scissor_threshold = 0.5
+	sp.shaded = true
+	sp.double_sided = true
+	sp.flip_h = p.get("facing", "E") == "W"
+	sp.set_meta("h", img.get_height())
+	sp.position = Vector3(0, img.get_height() * pixel_size * 0.5, 0)
+	pivot.add_child(sp)
+	billboards.append(pivot)
+	if a.has("emissive"):
+		var e: Dictionary = a["emissive"]
+		var light := OmniLight3D.new()
+		light.light_color = Color(e["color"][0], e["color"][1], e["color"][2])
+		light.light_energy = float(e.get("energy", 1.0))
+		light.omni_range = float(e.get("range_m", 5.0))
+		light.omni_attenuation = 1.6
+		light.shadow_enabled = false
+		var off: Array = e.get("offset_m", [0, 1, 0])
+		light.position = Vector3(off[0], off[1], off[2])
+		pivot.add_child(light)
+		lights.append(light)
+
+
+## 毎フレーム: ビルボードをカメラに正対させ、等倍スナップ（ART_SPEC 第 5 節）
+func update_billboards(cam: Camera3D, texel_per_m: float) -> void:
+	var basis := cam.global_transform.basis
+	for pv in billboards:
+		pv.global_transform.basis = basis
+		for sp in pv.get_children():
+			if not (sp is Sprite3D):
+				continue
+			var base := pv.global_position
+			var h_px := absf(cam.unproject_position(base).y - cam.unproject_position(base + basis.y).y)
+			var ratio: float = h_px / texel_per_m
+			var sc := maxf(round(ratio), 1.0) / maxf(ratio, 0.001)
+			sp.scale = Vector3(sc, sc, sc)
+			sp.position = Vector3(0, int(sp.get_meta("h")) * pixel_size * 0.5 * sc, 0)
+
+
+func set_lights(on: bool) -> void:
+	for l in lights:
+		l.visible = on

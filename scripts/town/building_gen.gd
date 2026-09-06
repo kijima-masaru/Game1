@@ -76,25 +76,66 @@ func add_plate(wall_origin: Vector3, wall_u: Vector3, wall_v: Vector3, normal: V
 
 ## 窓: 暗いガラス + 白い枠（emission 板、ART_SPEC 第 4 節）
 func add_window(wall_origin: Vector3, wall_u: Vector3, wall_v: Vector3, normal: Vector3, ox: float, oy: float, w: float, h: float, glass: Material, frame: Material, name_: String, bar := 0.06) -> void:
+	# 暗いガラス面 + 上辺のハイライト 1 本 + 中桟（枠を白い線で囲まない: I-0）
 	add_plate(wall_origin, wall_u, wall_v, normal, ox, oy, w, h, glass, name_ + "_glass", 0.02)
-	add_plate(wall_origin, wall_u, wall_v, normal, ox, oy, w, bar, frame, name_ + "_f0", 0.03)
 	add_plate(wall_origin, wall_u, wall_v, normal, ox, oy + h - bar, w, bar, frame, name_ + "_f1", 0.03)
-	add_plate(wall_origin, wall_u, wall_v, normal, ox, oy, bar, h, frame, name_ + "_f2", 0.03)
-	add_plate(wall_origin, wall_u, wall_v, normal, ox + w - bar, oy, bar, h, frame, name_ + "_f3", 0.03)
-	add_plate(wall_origin, wall_u, wall_v, normal, ox + w * 0.5 - bar * 0.5, oy, bar, h, frame, name_ + "_f4", 0.03)
+	add_plate(wall_origin, wall_u, wall_v, normal, ox + w * 0.5 - bar * 0.5, oy, bar, h * 0.9, frame, name_ + "_f4", 0.03)
+
+
+## 切妻屋根（棟が Z 方向。正面が E/W の建物用）。
+func add_gable_roof_z(center: Vector3, size_x: float, size_z: float, rise: float, roof: Material, gable_wall: Material, name_: String, overhang := 0.5, thickness := 0.12) -> void:
+	var hx := size_x * 0.5 + overhang
+	var hz := size_z * 0.5 + overhang
+	var y0 := center.y
+	# 東斜面（+X 側）: 軒 (x = +hx) から棟へ
+	var eave_e := Vector3(center.x + hx, y0, center.z - hz)
+	add_face(eave_e, Vector3(0, 0, 2 * hz), Vector3(-hx, rise, 0), Vector3(rise, hx, 0).normalized(), roof, name_ + "_roofE", true, true)
+	var eave_w := Vector3(center.x - hx, y0, center.z + hz)
+	add_face(eave_w, Vector3(0, 0, -2 * hz), Vector3(hx, rise, 0), Vector3(-rise, hx, 0).normalized(), roof, name_ + "_roofW", true, true)
+	add_face(Vector3(center.x - hx, y0 - thickness, center.z - hz), Vector3(2 * hx, 0, 0), Vector3(0, 0, 2 * hz), Vector3.DOWN, gable_wall, name_ + "_soffit", false, true)
+	var wx := size_x * 0.5
+	add_tri(Vector3(center.x - wx, y0, center.z + size_z * 0.5), Vector3(2 * wx, 0, 0), Vector3(0, rise * (wx / hx), 0), Vector3.BACK, gable_wall, name_ + "_gableS")
+	add_tri(Vector3(center.x + wx, y0, center.z - size_z * 0.5), Vector3(-2 * wx, 0, 0), Vector3(0, rise * (wx / hx), 0), Vector3.FORWARD, gable_wall, name_ + "_gableN")
+	aabbs.append(AABB(Vector3(center.x - hx, y0, center.z - hz), Vector3(2 * hx, rise, 2 * hz)))
 
 
 # ---- 生成 ------------------------------------------------------------------------
-func finalize(baker: AoBaker) -> void:
+## cache: {"dir": "res://cache/fields/F05", "load": true/false}。load なら既存の PNG を読み、無ければ焼いて保存する。
+func finalize(baker: AoBaker, cache: Dictionary = {}) -> void:
 	if baker != null:
 		baker.occluders = aabbs.duplicate()
 		baker.texel_per_m = ao_texel
+	var cache_dir: String = cache.get("dir", "")
+	var use_cache := cache_dir != ""
+	if use_cache:
+		DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(cache_dir))
+	var idx := 0
 	for f in faces:
 		var mi := MeshInstance3D.new()
 		mi.name = f["name"]
 		var mat: Material = f["mat"]
 		if f["ao"] and baker != null and mat is StandardMaterial3D:
-			var img := baker.bake_face(f["origin"], f["u"], f["v"], f["normal"], f["skip_ground"])
+			var img: Image = null
+			var cpath := "%s/ao_%04d.png" % [cache_dir, idx]
+			if use_cache and cache.get("load", false) and FileAccess.file_exists(cpath):
+				img = Image.new()
+				img.load_png_from_buffer(FileAccess.get_file_as_bytes(cpath))
+				var conv := Image.create(img.get_width(), img.get_height(), false, Image.FORMAT_RF)
+				for y in img.get_height():
+					for x in img.get_width():
+						var v := img.get_pixel(x, y).r
+						conv.set_pixel(x, y, Color(v, v, v))
+				img = conv
+			if img == null:
+				img = baker.bake_face(f["origin"], f["u"], f["v"], f["normal"], f["skip_ground"])
+				if use_cache:
+					var out := Image.create(img.get_width(), img.get_height(), false, Image.FORMAT_RGBA8)
+					for y in img.get_height():
+						for x in img.get_width():
+							var v := img.get_pixel(x, y).r
+							out.set_pixel(x, y, Color(v, v, v, 1))
+					out.save_png(ProjectSettings.globalize_path(cpath))
+			idx += 1
 			if debug_ao:
 				var acc := 0.0
 				for y in img.get_height():
