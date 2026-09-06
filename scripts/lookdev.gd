@@ -44,7 +44,7 @@ const BASE_H := 720
 const DESIGN_H := 360                          # 構図を決める基準の描画高さ（px）。pixel=2 で 1 texel = 1 px
 var cam_distance := 18.0                        # fov と base_texel_per_meter から _apply_camera で逆算
 const ORTHO_DISTANCE := 30.0
-var cam_pitch_deg := -42.0                     # 俯角（負）。J-0 で 30/36/42 を比較
+var cam_pitch_deg := -30.0                     # 俯角（負）。フェーズ 9 M-1 で 42 → 30（参考ゲームに合わせる）
 var cam_yaw_deg := 60.0                        # 街路（X 軸）を斜めに奥へ見通す。v1 レイアウトは 34
 var cam_target := Vector3(-5.0, 0.0, -1.0)     # 注視点（v2: 街路の少し奥）。v1 は (2, 0, -3)
 

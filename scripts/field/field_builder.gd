@@ -3,7 +3,7 @@ extends RefCounted
 ## data/fields/<id>.json から 3D の街を組む（docs/FIELD_FORMAT.md 第 9 節）。
 ## 地面 → 道 → 区画（建物生成器）→ 塀 → 配置物と光源 → field_yaw で全体を回す。AO は res://cache/fields/<id>/ にキャッシュ。
 
-const TEX_VERSION := 3            # テクスチャ生成の版。上げるとキャッシュを焼き直す
+const TEX_VERSION := 4            # テクスチャ生成の版。上げるとキャッシュを焼き直す
 const T := FieldData.TILE
 
 var fd: FieldData
@@ -16,6 +16,7 @@ var billboards: Array[Node3D] = []
 var lights: Array[OmniLight3D] = []
 var lot_faces := {}                # lot id -> Array[MeshInstance3D]
 var lot_aabbs := {}                # lot id -> AABB（ローカル）
+var lot_quads := {}                # lot id -> Array[{o,u,v,tri}]（隠れ判定に使う実際の面）
 var bake_seconds := 0.0
 var cache_hit := false
 
@@ -30,10 +31,8 @@ func build(field: FieldData, parent: Node3D, flags: Dictionary, cam_yaw_deg: flo
 	baker = AoBaker.new([], 18.0, 24)
 	_build_materials(tex_mode)
 	_build_ground()
-	_build_roads()
-	for l in fd.d.get("lots", []):
-		if FieldData.when_ok(l.get("when"), flags):
-			_build_lot(l)
+	for l in fd.lots:          # FieldLayout が歩行可能マスクから決めた区画（when は適用済み）
+		_build_lot(l)
 	var t0 := Time.get_ticks_msec()
 	var cache_dir := "res://cache/fields/%s" % fd.d["id"]
 	var key := _cache_key()
@@ -60,7 +59,8 @@ func build(field: FieldData, parent: Node3D, flags: Dictionary, cam_yaw_deg: flo
 
 func _cache_key() -> String:
 	var txt := FileAccess.get_file_as_string("res://data/fields/%s.json" % fd.d["id"].to_lower())
-	return "%s:%d:%s" % [str(txt.hash()), TEX_VERSION, str(FileAccess.get_file_as_string("res://data/assets/objects.json").hash())]
+	var mask := FileAccess.get_md5(ProjectSettings.globalize_path(fd.mask_path))
+	return "%s:%s:%d:%s:%d" % [str(txt.hash()), mask, TEX_VERSION, str(FileAccess.get_file_as_string("res://data/assets/objects.json").hash()), int(fd.d.get("field_yaw", 0))]
 
 
 # ============================================================================
@@ -85,8 +85,9 @@ func _build_materials(tex_mode: String) -> void:
 	mats["plaster"] = [PT.material(PT.plaster())]
 	mats["kawara"] = [PT.material(PT.kawara()), PT.material(PT.kawara(32, Color(0.40, 0.36, 0.42), 0.22, 30)), PT.material(PT.kawara(32, Color(0.34, 0.40, 0.44), 0.24, 31))]
 	mats["corrugated"] = PT.material(PT.corrugated())
-	mats["shutter"] = [PT.material(PT.shutter()), PT.material(PT.shutter(24, 0.36, 24)), PT.material(PT.shutter(24, 0.44, 25))]
+	mats["shutter"] = [PT.material(PT.shutter()), PT.material(PT.shutter(32, 0.36, 24)), PT.material(PT.shutter(32, 0.44, 25))]
 	mats["block_fence"] = PT.material(PT.block_fence())
+	mats["hedge"] = PT.material(PT.hedge())
 	mats["glass"] = PT.material(PT.noise(8, Color(0.10, 0.12, 0.18), 0.02))
 	mats["frame"] = PT.material(PT.noise(8, Color(0.62, 0.62, 0.60), 0.02))
 	mats["wood"] = PT.material(PT.weatherboard(32, Color(0.48, 0.36, 0.26), 0.30, 17))
@@ -130,28 +131,25 @@ func _build_ground() -> void:
 	_rect_face([-margin, fd.size.y, fd.size.x + 2 * margin, margin], gm, "margin_s", 0.0, false)
 	_rect_face([-margin, 0, margin, fd.size.y], gm, "margin_w", 0.0, false)
 	_rect_face([fd.size.x, 0, margin, fd.size.y], gm, "margin_e", 0.0, false)
+	# 歩行可能マスクの種別ごとに、行の連続区間を 1 面にまとめて敷く
+	var tex := {FieldLayout.CLASS_WALK: mats[g.get("walk", "old_street")], FieldLayout.CLASS_NARROW: mats[g.get("narrow", "alley")], FieldLayout.CLASS_OPEN: mats[g.get("open", "gravel")]}
+	var names := {FieldLayout.CLASS_WALK: "walk", FieldLayout.CLASS_NARROW: "narrow", FieldLayout.CLASS_OPEN: "open"}
+	var n := 0
+	for y in fd.size.y:
+		var x := 0
+		while x < fd.size.x:
+			var c := fd.cls(x, y)
+			if c == FieldLayout.CLASS_BLOCKED:
+				x += 1
+				continue
+			var x1 := x
+			while x1 < fd.size.x and fd.cls(x1, y) == c:
+				x1 += 1
+			_rect_face([x, y, x1 - x, 1], tex[c], "%s_%03d" % [names[c], n], 0.01, true)
+			n += 1
+			x = x1
 	for p in g.get("patches", []):
-		_rect_face(p["rect"], mats[p["tex"]], "patch_" + p["id"], 0.005)
-
-
-func _build_roads() -> void:
-	for r in fd.d.get("roads", []):
-		var w := int(r["width"])
-		var line: Array = r["line"]
-		for i in range(line.size() - 1 if line.size() > 1 else 1):
-			var a: Array = line[i]
-			var b: Array = line[mini(i + 1, line.size() - 1)]
-			var x0 := mini(int(a[0]), int(b[0]))
-			var x1 := maxi(int(a[0]), int(b[0]))
-			var y0 := mini(int(a[1]), int(b[1]))
-			var y1 := maxi(int(a[1]), int(b[1]))
-			var half := (w - 1) / 2
-			var rect: Array
-			if x0 == x1:   # 縦
-				rect = [x0 - half, y0, w, y1 - y0 + 1]
-			else:          # 横
-				rect = [x0, y0 - half, x1 - x0 + 1, w]
-			_rect_face(rect, mats[r["kind"]], "road_%s_%d" % [r["id"], i], 0.012, true)
+		_rect_face(p["rect"], mats[p["tex"]], "patch_" + p["id"], 0.02)
 
 
 # ============================================================================
@@ -199,25 +197,50 @@ func _roof(l: Dictionary, box: Dictionary, h: float, roof_mat: Material, wall_ma
 func _build_lot(l: Dictionary) -> void:
 	var kind: String = l["kind"]
 	var box := _lot_box(l)
-	var variant := int(l.get("variant", 1))
+	var variant := int(l.get("variant", absi(hash(str(l.get("id", "")))) % 8))
 	var floors := int(l.get("floors", 1))
 	var h: float = float(l["height_m"]) if l.has("height_m") else floors * 3.0
 	# 隣接する区画が一枚の長屋に見えないよう、variant で軒高と屋根材を散らす（height_m 指定時はそのまま）
 	if not l.has("height_m") and kind in ["shop_shutter", "shop_wood", "dagashi", "house"]:
 		h += [0.0, -0.35, 0.3, -0.15, 0.45, 0.15, -0.45, 0.6][variant % 8]
+	# 近景の帯（M-3）: 屋根の頂まで 3 m 以内。軒 2.3 m + 棟の立ち上がり 0.7 m
+	var near_band: bool = l.get("near_band", false)
+	if near_band:
+		h = minf(h, 2.3)
 	var wall := _wall_mat(l.get("wall", "mortar"), variant)
 	var roof: StandardMaterial3D = mats["kawara"][variant % 3]
 	if kind in ["shop_shutter", "shop_wood", "house"] and variant % 4 == 3 and mats.has("corrugated"):
 		roof = mats["corrugated"] if not (mats["corrugated"] is Array) else mats["corrugated"][0]
+	if kind in FieldLayout.FENCE_KINDS:
+		# 塀・生垣は正面の縁に薄く立てる（区画の奥行きは 1 タイルだが厚みは 0.3 m）
+		var thick := 0.3
+		var c: Vector3 = box["center"]
+		var sz := Vector3(box["w"], 1.2, box["d"])
+		match l.get("front", "S"):
+			"S":
+				sz.z = thick
+				c.z = c.z + box["d"] * 0.5 - thick * 0.5
+			"N":
+				sz.z = thick
+				c.z = c.z - box["d"] * 0.5 + thick * 0.5
+			"E":
+				sz.x = thick
+				c.x = c.x + box["w"] * 0.5 - thick * 0.5
+			"W":
+				sz.x = thick
+				c.x = c.x - box["w"] * 0.5 + thick * 0.5
+		match kind:
+			"fence_block":
+				gen.add_box(c, sz, mats["block_fence"], mats["block_fence"], l["id"], true)
+			"hedge":
+				sz.y = 1.0
+				gen.add_box(c, Vector3(sz.x + 0.3, sz.y, sz.z + 0.3), mats["hedge"], mats["hedge"], l["id"], true)
+			"fence_wall":
+				sz.y = 1.8
+				gen.add_box(c, sz, mats["plaster"][0], mats["plaster"][0], l["id"], true, false)
+				gen.add_box(Vector3(c.x, 1.8, c.z), Vector3(sz.x + 0.2, 0.25, sz.z + 0.2), roof, roof, l["id"] + "_cap", false)
+		return
 	match kind:
-		"fence_block":
-			gen.add_box(box["center"], Vector3(maxf(box["w"], 0.2), 1.2, maxf(box["d"], 0.2)), mats["block_fence"], mats["block_fence"], l["id"], true)
-			return
-		"fence_wall":
-			var sz := Vector3(maxf(box["w"], 0.25), 1.8, maxf(box["d"], 0.25))
-			gen.add_box(box["center"], sz, mats["plaster"][0], mats["plaster"][0], l["id"], true, false)
-			gen.add_box(Vector3(box["center"].x, 1.8, box["center"].z), Vector3(sz.x + 0.2, 0.25, sz.z + 0.2), roof, roof, l["id"] + "_cap", false)
-			return
 		"temple_gate":
 			var fr := _front_frame(l, box, 3.6)
 			var along: Vector3 = (fr["u"] as Vector3).normalized()
@@ -235,7 +258,7 @@ func _build_lot(l: Dictionary) -> void:
 	var with_top: bool = l.get("roof", "gable") == "flat"
 	gen.add_box(box["center"], Vector3(box["w"], h, box["d"]), wall, wall, l["id"], true, with_top)
 	var overhang := 0.6
-	var rise := 1.5
+	var rise := 1.5 if not near_band else 0.7
 	if kind == "temple_hall":
 		overhang = 1.4
 		rise = 2.4
@@ -251,8 +274,9 @@ func _build_lot(l: Dictionary) -> void:
 	match kind:
 		"shop_shutter":
 			var sw := minf(L - 0.6, 3.4)
-			gen.add_plate(o, u, v, n, (L - sw) * 0.5, 0.05, sw, 2.5, mats["shutter"][variant % 3], l["id"] + "_shutter")
-			gen.add_plate(o, u, v, n, 0.2, 2.6, L - 0.4, 0.5, mats["sign_dark"], l["id"] + "_sign")
+			var sh := minf(2.5, h - 0.5)
+			gen.add_plate(o, u, v, n, (L - sw) * 0.5, 0.05, sw, sh, mats["shutter"][variant % 3], l["id"] + "_shutter")
+			gen.add_plate(o, u, v, n, 0.2, sh + 0.1, L - 0.4, minf(0.5, h - sh - 0.15), mats["sign_dark"], l["id"] + "_sign")
 			if floors >= 2:
 				gen.add_window(o, u, v, n, 0.4, 3.6, minf(1.6, L * 0.4), 1.1, mats["glass"], mats["frame"], l["id"] + "_w1")
 				gen.add_window(o, u, v, n, L - 0.4 - minf(1.6, L * 0.4), 3.6, minf(1.6, L * 0.4), 1.1, mats["glass"], mats["frame"], l["id"] + "_w2")
@@ -288,17 +312,29 @@ func _build_lot(l: Dictionary) -> void:
 
 
 func _collect_lot_faces() -> void:
+	for f in gen.faces:
+		var n: String = f["name"]
+		for l in fd.lots:
+			var id: String = l["id"]
+			if n == id or n.begins_with(id + "_"):
+				if not lot_quads.has(id):
+					lot_quads[id] = []
+				lot_quads[id].append({"o": f["origin"], "u": f["u"], "v": f["v"], "tri": f["tri"]})
+				break
 	for mi in root.get_children():
 		if not (mi is MeshInstance3D):
 			continue
 		var n: String = mi.name
-		for l in fd.d.get("lots", []):
+		for l in fd.lots:
 			var id: String = l["id"]
 			if n == id or n.begins_with(id + "_"):
+				# 区画の AABB は実際のメッシュから（平屋・塀は低いので、隠れ判定で 2 階建てと区別できる）
+				var bb: AABB = mi.transform * mi.get_aabb()
 				if not lot_faces.has(id):
 					lot_faces[id] = []
-					var r: Array = l["rect"]
-					lot_aabbs[id] = AABB(Vector3(float(r[0]) * T, 0, float(r[1]) * T), Vector3(float(r[2]) * T, 9.0, float(r[3]) * T))
+					lot_aabbs[id] = bb
+				else:
+					lot_aabbs[id] = (lot_aabbs[id] as AABB).merge(bb)
 				lot_faces[id].append(mi)
 				break
 

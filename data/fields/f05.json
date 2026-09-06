@@ -1,119 +1,741 @@
 {
-  "format": 1,
-  "id": "F05",
-  "name": "旧鹿之尾街道 商店街",
-  "size": [32, 40],
-  "elevation": 2,
-  "biome": "old_shopping_street",
-  "scene": "res://scenes/fields/f05_kaido.tscn",
-  "field_yaw": -15,
-  "note": "座標は refs/field/F05.png（32x40 タイル、左上原点）を読んで起こした。調べ物と出入口は docs/field/F05_spec.md の値そのまま。field_yaw -15 は J-2a の比較結果（夕方の西日が通りに沿い、手前の列に隠れない）。",
-
-  "ground": {
-    "default": "lot_ground",
-    "patches": [
-      { "id": "temple_yard", "rect": [18, 4, 13, 16], "tex": "gravel" }
-    ]
-  },
-
-  "roads": [
-    { "id": "kaido",   "kind": "old_street",  "width": 3, "line": [[9, 0], [9, 39]] },
-    { "id": "walk_w",  "kind": "sidewalk",    "width": 1, "line": [[7, 0], [7, 39]] },
-    { "id": "alley_w", "kind": "alley",       "width": 2, "line": [[0, 15], [7, 15]] },
-    { "id": "alley_e", "kind": "alley",       "width": 3, "line": [[11, 22], [31, 22]] },
-    { "id": "sando_s", "kind": "temple_path", "width": 2, "line": [[22, 20], [22, 20]] },
-    { "id": "sando",   "kind": "temple_path", "width": 2, "line": [[22, 11], [22, 18]] }
-  ],
-
-  "lots": [
-    { "id": "shop_a",   "kind": "shop_shutter", "rect": [4, 2, 3, 4],  "front": "E", "floors": 2, "roof": "gable", "wall": "weatherboard", "variant": 1 },
-    { "id": "shop_w2",  "kind": "shop_wood",    "rect": [4, 6, 3, 4],  "front": "E", "floors": 2, "roof": "gable", "wall": "weatherboard", "variant": 2 },
-    { "id": "shop_w3",  "kind": "shop_shutter", "rect": [4, 10, 3, 4], "front": "E", "floors": 2, "roof": "gable", "wall": "mortar",       "variant": 2 },
-    { "id": "dagashi",  "kind": "dagashi",      "rect": [4, 18, 3, 4], "front": "E", "floors": 2, "roof": "gable", "wall": "weatherboard", "variant": 1 },
-    { "id": "shop_w5",  "kind": "shop_wood",    "rect": [4, 22, 3, 3], "front": "E", "floors": 1, "roof": "gable", "wall": "namako",       "variant": 1 },
-    { "id": "shop_w6",  "kind": "shop_shutter", "rect": [4, 25, 3, 4], "front": "E", "floors": 2, "roof": "gable", "wall": "mortar",       "variant": 3 },
-    { "id": "shop_w7",  "kind": "shop_wood",    "rect": [4, 29, 3, 4], "front": "E", "floors": 2, "roof": "gable", "wall": "weatherboard", "variant": 3 },
-    { "id": "shop_w8",  "kind": "shop_shutter", "rect": [4, 33, 3, 4], "front": "E", "floors": 2, "roof": "gable", "wall": "weatherboard", "variant": 4 },
-    { "id": "house_w9", "kind": "house",        "rect": [4, 37, 3, 3], "front": "E", "floors": 1, "roof": "gable", "wall": "mortar",       "variant": 1 },
-
-    { "id": "shop_b",   "kind": "shop_shutter", "rect": [11, 2, 3, 4],  "front": "W", "floors": 2, "roof": "gable", "wall": "mortar",       "variant": 1 },
-    { "id": "shop_e2",  "kind": "shop_wood",    "rect": [11, 6, 3, 4],  "front": "W", "floors": 2, "roof": "gable", "wall": "weatherboard", "variant": 4 },
-    { "id": "shop_e3",  "kind": "shop_shutter", "rect": [11, 10, 3, 4], "front": "W", "floors": 2, "roof": "gable", "wall": "weatherboard", "variant": 5 },
-    { "id": "pharmacy", "kind": "shop_wood",    "rect": [11, 14, 3, 3], "front": "W", "floors": 2, "roof": "gable", "wall": "namako",       "variant": 2 },
-    { "id": "shop_e5",  "kind": "shop_shutter", "rect": [11, 17, 3, 4], "front": "W", "floors": 2, "roof": "gable", "wall": "mortar",       "variant": 6 },
-    { "id": "shop_e6",  "kind": "shop_wood",    "rect": [11, 25, 3, 4], "front": "W", "floors": 2, "roof": "gable", "wall": "weatherboard", "variant": 5 },
-    { "id": "shop_e7",  "kind": "shop_shutter", "rect": [11, 29, 3, 4], "front": "W", "floors": 2, "roof": "gable", "wall": "mortar",       "variant": 7 },
-    { "id": "shop_e8",  "kind": "shop_wood",    "rect": [11, 33, 3, 4], "front": "W", "floors": 2, "roof": "gable", "wall": "weatherboard", "variant": 6 },
-    { "id": "house_e9", "kind": "house",        "rect": [11, 37, 3, 3], "front": "W", "floors": 1, "roof": "gable", "wall": "mortar",       "variant": 2 },
-
-    { "id": "temple_hall", "kind": "temple_hall", "rect": [20, 6, 10, 5], "front": "S", "floors": 1, "roof": "gable", "wall": "plaster", "variant": 1 },
-    { "id": "temple_gate", "kind": "temple_gate", "rect": [21, 19, 3, 1], "front": "S", "floors": 1, "roof": "gable", "wall": "plaster", "variant": 1 },
-    { "id": "twall_n",  "kind": "fence_wall",  "rect": [18, 3, 13, 1], "front": "S" },
-    { "id": "twall_w",  "kind": "fence_wall",  "rect": [18, 4, 1, 15], "front": "E" },
-    { "id": "twall_e",  "kind": "fence_wall",  "rect": [30, 4, 1, 15], "front": "W" },
-    { "id": "twall_s1", "kind": "fence_wall",  "rect": [18, 19, 3, 1], "front": "S" },
-    { "id": "twall_s2", "kind": "fence_wall",  "rect": [24, 19, 7, 1], "front": "S" },
-
-    { "id": "bwall_w1", "kind": "fence_block", "rect": [3, 0, 1, 15],  "front": "E" },
-    { "id": "bwall_w2", "kind": "fence_block", "rect": [3, 17, 1, 23], "front": "E" },
-    { "id": "house_se1", "kind": "house",      "rect": [16, 26, 4, 4], "front": "W", "floors": 1, "roof": "gable", "wall": "mortar", "variant": 3 },
-    { "id": "house_se2", "kind": "house",      "rect": [23, 31, 5, 4], "front": "N", "floors": 2, "roof": "gable", "wall": "weatherboard", "variant": 7 },
-    { "id": "bwall_se", "kind": "fence_block", "rect": [15, 25, 1, 14], "front": "W" }
-  ],
-
-  "props": [
-    { "id": "pole_1", "asset": "obj_utility_pole", "at": [7.5, 3.5],  "facing": "E" },
-    { "id": "pole_2", "asset": "obj_utility_pole", "at": [7.5, 9.5],  "facing": "E" },
-    { "id": "pole_3", "asset": "obj_utility_pole", "at": [7.5, 26.5], "facing": "E" },
-    { "id": "pole_4", "asset": "obj_utility_pole", "at": [7.5, 32.5], "facing": "E" },
-    { "id": "light_1", "asset": "obj_street_light_led", "at": [10.5, 11.5], "facing": "W" },
-    { "id": "light_2", "asset": "obj_street_light_led", "at": [10.5, 27.5], "facing": "W" },
-    { "id": "vend_1",  "asset": "obj_vending_machine", "at": [7.5, 20.5], "facing": "E" },
-    { "id": "plant_1", "asset": "obj_potted_plant",    "at": [7.5, 18.5], "facing": "E" },
-    { "id": "mail_1",  "asset": "obj_mailbox",         "at": [7.5, 24.5], "facing": "E" },
-    { "id": "bench_1", "asset": "obj_bench",           "at": [10.5, 16.5], "facing": "W" },
-    { "id": "rack_1",  "asset": "obj_bicycle_rack",    "at": [10.5, 6.5], "facing": "W" },
-    { "id": "planter_1", "asset": "obj_planter_box",   "at": [7.5, 30.5], "facing": "E" },
-    { "id": "car_1",   "asset": "obj_kei_car",         "at": [9.0, 34.5], "facing": "N" },
-    { "id": "water_1", "asset": "obj_water_basin",     "at": [11.5, 24.5], "facing": "W" },
-    { "id": "board_1", "asset": "obj_bulletin_board",  "at": [19.5, 20.5], "facing": "S" },
-    { "id": "sign_1",  "asset": "obj_stone_marker",    "at": [10.5, 38.5], "facing": "W" },
-    { "id": "lant_1",  "asset": "obj_stone_lantern",   "at": [19.5, 13.5] },
-    { "id": "lant_2",  "asset": "obj_stone_lantern",   "at": [19.5, 16.5] },
-    { "id": "lant_3",  "asset": "obj_stone_lantern",   "at": [24.5, 13.5] },
-    { "id": "lant_4",  "asset": "obj_stone_lantern",   "at": [24.5, 16.5] },
-    { "id": "lant_5",  "asset": "obj_stone_lantern",   "at": [27.5, 13.5] },
-    { "id": "lant_6",  "asset": "obj_stone_lantern",   "at": [27.5, 16.5] },
-    { "id": "lant_7",  "asset": "obj_stone_lantern",   "at": [29.5, 13.5] },
-    { "id": "lant_8",  "asset": "obj_stone_lantern",   "at": [29.5, 16.5] },
-    { "id": "bell_1",  "asset": "obj_temple_bell",     "at": [28.5, 8.5] },
-    { "id": "offer_1", "asset": "obj_offering_box",    "at": [22.5, 11.5], "blocking": false }
-  ],
-
-  "collision": { "extra_blocked": [], "extra_open": [] },
-
-  "points": [
-    { "id": "toki_shop",    "at": [5, 20],  "kind": "shop",  "label": "たちばな屋" },
-    { "id": "calendar",     "at": [5, 21],  "kind": "item",  "label": "日めくり" },
-    { "id": "temple_gate",  "at": [22, 19], "kind": "door",  "label": "圓照寺 山門" },
-    { "id": "temple_board", "at": [19, 19], "kind": "board", "label": "圓照寺の掲示板" },
-    { "id": "water",        "at": [11, 24], "kind": "water", "label": "共同水道の跡" },
-    { "id": "signpost",     "at": [10, 38], "kind": "sign",  "label": "道標" },
-    { "id": "shutter_a",    "at": [5, 4],   "kind": "board", "label": "呉服店（閉店）" },
-    { "id": "shutter_b",    "at": [11, 4],  "kind": "board", "label": "時計店（閉店）" },
-    { "id": "wooden_door",  "at": [11, 15], "kind": "door",  "label": "薬屋（閉店）" },
-    { "id": "toki_npc",     "at": [6, 19],  "kind": "npc",   "label": "トキ", "when": "toki_present" }
-  ],
-
-  "exits": [
-    { "dir": "W", "at": [0, 15],  "to": "F01", "spawn": [1, 15],  "label": "路地を抜けて国道の駐車場裏へ" },
-    { "dir": "N", "at": [8, 0],   "to": "F06", "spawn": [8, 1],   "label": "旧街道を北へ" },
-    { "dir": "E", "at": [31, 22], "to": "F07", "spawn": [30, 22], "label": "寺町の路地" },
-    { "dir": "S", "at": [8, 39],  "to": "F12", "spawn": [8, 38],  "label": "旧街道を南へ" }
-  ],
-
-  "areas": [
-    { "id": "front_of_dagashi", "rect": [4, 18, 5, 4] },
-    { "id": "temple_yard", "rect": [18, 4, 13, 16] }
+ "format": 2,
+ "id": "F05",
+ "name": "旧鹿之尾街道 商店街",
+ "size": [
+  32,
+  40
+ ],
+ "elevation": 2,
+ "biome": "old_shopping_street",
+ "scene": "res://scenes/fields/f05_kaido.tscn",
+ "field_yaw": 40,
+ "sun_az": {
+  "evening": 230
+ },
+ "note": "歩ける範囲は F05_walkable.png（唯一の真実）。refs/field/F05.png を元に道幅 6 タイルへ作り直した（フェーズ 9 M-4）。調べ物・出入口は F05_spec.md の値。ずらした点は docs/lookdev/PHASE9.md に一覧。",
+ "walkable": "res://data/fields/F05_walkable.png",
+ "ground": {
+  "walk": "old_street",
+  "narrow": "alley",
+  "open": "gravel",
+  "default": "lot_ground",
+  "patches": [
+   {
+    "id": "temple_yard",
+    "rect": [
+     18,
+     5,
+     13,
+     15
+    ],
+    "tex": "gravel"
+   },
+   {
+    "id": "sando",
+    "rect": [
+     21,
+     11,
+     3,
+     10
+    ],
+    "tex": "stone_path"
+   }
   ]
+ },
+ "edge_fill": [
+  {
+   "rect": [
+    17,
+    4,
+    15,
+    17
+   ],
+   "kind": "fence_wall",
+   "reserve": true
+  },
+  {
+   "rect": [
+    0,
+    0,
+    32,
+    40
+   ],
+   "kind": "fence_block"
+  }
+ ],
+ "buildings": [
+  {
+   "id": "shutter_a",
+   "kind": "shop_shutter",
+   "width": 3,
+   "floors": 2,
+   "wall": "weatherboard",
+   "near": [
+    5,
+    4
+   ],
+   "note": "呉服店（閉店）"
+  },
+  {
+   "id": "shutter_b",
+   "kind": "shop_shutter",
+   "width": 3,
+   "floors": 2,
+   "wall": "mortar",
+   "near": [
+    12,
+    4
+   ],
+   "note": "時計店（閉店）"
+  },
+  {
+   "id": "pharmacy",
+   "kind": "shop_wood",
+   "width": 3,
+   "floors": 2,
+   "wall": "namako",
+   "near": [
+    12,
+    15
+   ],
+   "note": "薬屋（閉店）"
+  },
+  {
+   "id": "dagashi",
+   "kind": "dagashi",
+   "width": 3,
+   "floors": 2,
+   "wall": "weatherboard",
+   "near": [
+    5,
+    20
+   ],
+   "note": "たちばな屋"
+  },
+  {
+   "id": "shutter_c",
+   "kind": "shop_shutter",
+   "width": 3,
+   "floors": 2,
+   "wall": "mortar",
+   "near": [
+    12,
+    29
+   ],
+   "note": "シャッター商店 3 軒目"
+  },
+  {
+   "id": "temple_hall",
+   "kind": "temple_hall",
+   "width": 10,
+   "depth": 5,
+   "floors": 1,
+   "height_m": 4.5,
+   "wall": "plaster",
+   "near": [
+    24,
+    4
+   ]
+  },
+  {
+   "id": "temple_gate",
+   "kind": "temple_gate",
+   "width": 3,
+   "depth": 1,
+   "front": "S",
+   "at": [
+    22,
+    20
+   ]
+  },
+  {
+   "id": "b00",
+   "kind": "shop_wood",
+   "width": 4,
+   "floors": 2,
+   "wall": "weatherboard"
+  },
+  {
+   "id": "b01",
+   "kind": "shop_shutter",
+   "width": 3,
+   "floors": 2,
+   "wall": "mortar"
+  },
+  {
+   "id": "b02",
+   "kind": "house",
+   "width": 3,
+   "floors": 1,
+   "wall": "namako"
+  },
+  {
+   "id": "b03",
+   "kind": "shop_wood",
+   "width": 4,
+   "floors": 2,
+   "wall": "weatherboard"
+  },
+  {
+   "id": "b04",
+   "kind": "shop_shutter",
+   "width": 3,
+   "floors": 2,
+   "wall": "mortar"
+  },
+  {
+   "id": "b05",
+   "kind": "shop_wood",
+   "width": 3,
+   "floors": 2,
+   "wall": "weatherboard"
+  },
+  {
+   "id": "b06",
+   "kind": "house",
+   "width": 4,
+   "floors": 1,
+   "wall": "weatherboard"
+  },
+  {
+   "id": "b07",
+   "kind": "shop_shutter",
+   "width": 3,
+   "floors": 2,
+   "wall": "mortar"
+  },
+  {
+   "id": "b08",
+   "kind": "shop_wood",
+   "width": 3,
+   "floors": 2,
+   "wall": "namako"
+  },
+  {
+   "id": "b09",
+   "kind": "shop_shutter",
+   "width": 4,
+   "floors": 2,
+   "wall": "weatherboard"
+  },
+  {
+   "id": "b10",
+   "kind": "house",
+   "width": 3,
+   "floors": 1,
+   "wall": "mortar"
+  },
+  {
+   "id": "b11",
+   "kind": "shop_wood",
+   "width": 3,
+   "floors": 2,
+   "wall": "weatherboard"
+  },
+  {
+   "id": "b12",
+   "kind": "shop_shutter",
+   "width": 4,
+   "floors": 2,
+   "wall": "weatherboard"
+  },
+  {
+   "id": "b13",
+   "kind": "shop_wood",
+   "width": 3,
+   "floors": 2,
+   "wall": "mortar"
+  },
+  {
+   "id": "b14",
+   "kind": "house",
+   "width": 3,
+   "floors": 1,
+   "wall": "namako"
+  },
+  {
+   "id": "b15",
+   "kind": "shop_shutter",
+   "width": 4,
+   "floors": 2,
+   "wall": "weatherboard"
+  },
+  {
+   "id": "b16",
+   "kind": "shop_wood",
+   "width": 3,
+   "floors": 2,
+   "wall": "mortar"
+  },
+  {
+   "id": "b17",
+   "kind": "shop_shutter",
+   "width": 3,
+   "floors": 2,
+   "wall": "weatherboard"
+  },
+  {
+   "id": "b18",
+   "kind": "house",
+   "width": 4,
+   "floors": 1,
+   "wall": "weatherboard"
+  },
+  {
+   "id": "b19",
+   "kind": "shop_wood",
+   "width": 3,
+   "floors": 2,
+   "wall": "mortar"
+  },
+  {
+   "id": "b20",
+   "kind": "shop_shutter",
+   "width": 3,
+   "floors": 2,
+   "wall": "namako"
+  },
+  {
+   "id": "b21",
+   "kind": "shop_wood",
+   "width": 4,
+   "floors": 2,
+   "wall": "weatherboard"
+  },
+  {
+   "id": "b22",
+   "kind": "house",
+   "width": 3,
+   "floors": 1,
+   "wall": "mortar"
+  },
+  {
+   "id": "b23",
+   "kind": "shop_shutter",
+   "width": 3,
+   "floors": 2,
+   "wall": "weatherboard"
+  },
+  {
+   "id": "b24",
+   "kind": "shop_wood",
+   "width": 4,
+   "floors": 2,
+   "wall": "weatherboard"
+  },
+  {
+   "id": "b25",
+   "kind": "shop_shutter",
+   "width": 3,
+   "floors": 2,
+   "wall": "mortar"
+  },
+  {
+   "id": "b26",
+   "kind": "house",
+   "width": 3,
+   "floors": 1,
+   "wall": "namako"
+  },
+  {
+   "id": "b27",
+   "kind": "shop_wood",
+   "width": 4,
+   "floors": 2,
+   "wall": "weatherboard"
+  }
+ ],
+ "props": [
+  {
+   "id": "pole_1",
+   "asset": "obj_utility_pole",
+   "at": [
+    6.5,
+    3.5
+   ]
+  },
+  {
+   "id": "pole_2",
+   "asset": "obj_utility_pole",
+   "at": [
+    6.5,
+    11.5
+   ]
+  },
+  {
+   "id": "pole_3",
+   "asset": "obj_utility_pole",
+   "at": [
+    6.5,
+    27.5
+   ]
+  },
+  {
+   "id": "pole_4",
+   "asset": "obj_utility_pole",
+   "at": [
+    6.5,
+    35.5
+   ]
+  },
+  {
+   "id": "light_1",
+   "asset": "obj_street_light_led",
+   "at": [
+    11.5,
+    9.5
+   ],
+   "facing": "W"
+  },
+  {
+   "id": "light_2",
+   "asset": "obj_street_light_led",
+   "at": [
+    11.5,
+    30.5
+   ],
+   "facing": "W"
+  },
+  {
+   "id": "vend_1",
+   "asset": "obj_vending_machine",
+   "at": [
+    6.5,
+    22.5
+   ]
+  },
+  {
+   "id": "plant_1",
+   "asset": "obj_potted_plant",
+   "at": [
+    6.5,
+    18.5
+   ]
+  },
+  {
+   "id": "mail_1",
+   "asset": "obj_mailbox",
+   "at": [
+    6.5,
+    25.5
+   ]
+  },
+  {
+   "id": "bench_1",
+   "asset": "obj_bench",
+   "at": [
+    11.5,
+    17.5
+   ],
+   "facing": "W"
+  },
+  {
+   "id": "rack_1",
+   "asset": "obj_bicycle_rack",
+   "at": [
+    11.5,
+    6.5
+   ],
+   "facing": "W"
+  },
+  {
+   "id": "planter_1",
+   "asset": "obj_planter_box",
+   "at": [
+    6.5,
+    31.5
+   ]
+  },
+  {
+   "id": "car_1",
+   "asset": "obj_kei_car",
+   "at": [
+    9.0,
+    34.5
+   ],
+   "facing": "N"
+  },
+  {
+   "id": "water_1",
+   "asset": "obj_water_basin",
+   "at": [
+    11.5,
+    24.5
+   ],
+   "facing": "W"
+  },
+  {
+   "id": "board_1",
+   "asset": "obj_bulletin_board",
+   "at": [
+    19.5,
+    19.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "sign_1",
+   "asset": "obj_stone_marker",
+   "at": [
+    10.5,
+    38.5
+   ],
+   "facing": "W"
+  },
+  {
+   "id": "lant_1",
+   "asset": "obj_stone_lantern",
+   "at": [
+    19.5,
+    12.5
+   ]
+  },
+  {
+   "id": "lant_2",
+   "asset": "obj_stone_lantern",
+   "at": [
+    19.5,
+    16.5
+   ]
+  },
+  {
+   "id": "lant_3",
+   "asset": "obj_stone_lantern",
+   "at": [
+    25.5,
+    12.5
+   ]
+  },
+  {
+   "id": "lant_4",
+   "asset": "obj_stone_lantern",
+   "at": [
+    25.5,
+    16.5
+   ]
+  },
+  {
+   "id": "lant_5",
+   "asset": "obj_stone_lantern",
+   "at": [
+    28.5,
+    12.5
+   ]
+  },
+  {
+   "id": "lant_6",
+   "asset": "obj_stone_lantern",
+   "at": [
+    28.5,
+    16.5
+   ]
+  },
+  {
+   "id": "bell_1",
+   "asset": "obj_temple_bell",
+   "at": [
+    28.5,
+    8.5
+   ]
+  },
+  {
+   "id": "offer_1",
+   "asset": "obj_offering_box",
+   "at": [
+    22.5,
+    10.5
+   ],
+   "blocking": false
+  },
+  {
+   "id": "komainu_1",
+   "asset": "obj_komainu",
+   "at": [
+    20.5,
+    18.5
+   ]
+  },
+  {
+   "id": "komainu_2",
+   "asset": "obj_komainu",
+   "at": [
+    24.5,
+    18.5
+   ],
+   "facing": "W"
+  }
+ ],
+ "collision": {
+  "extra_blocked": [],
+  "extra_open": []
+ },
+ "points": [
+  {
+   "id": "toki_shop",
+   "at": [
+    5,
+    20
+   ],
+   "kind": "shop",
+   "label": "たちばな屋"
+  },
+  {
+   "id": "calendar",
+   "at": [
+    5,
+    21
+   ],
+   "kind": "item",
+   "label": "日めくり"
+  },
+  {
+   "id": "temple_gate",
+   "at": [
+    22,
+    19
+   ],
+   "kind": "door",
+   "label": "圓照寺 山門"
+  },
+  {
+   "id": "temple_board",
+   "at": [
+    19,
+    19
+   ],
+   "kind": "board",
+   "label": "圓照寺の掲示板"
+  },
+  {
+   "id": "water",
+   "at": [
+    11,
+    24
+   ],
+   "kind": "water",
+   "label": "共同水道の跡"
+  },
+  {
+   "id": "signpost",
+   "at": [
+    10,
+    38
+   ],
+   "kind": "sign",
+   "label": "道標"
+  },
+  {
+   "id": "shutter_a",
+   "at": [
+    5,
+    4
+   ],
+   "kind": "board",
+   "label": "呉服店（閉店）"
+  },
+  {
+   "id": "shutter_b",
+   "at": [
+    12,
+    4
+   ],
+   "kind": "board",
+   "label": "時計店（閉店）"
+  },
+  {
+   "id": "wooden_door",
+   "at": [
+    12,
+    15
+   ],
+   "kind": "door",
+   "label": "薬屋（閉店）"
+  },
+  {
+   "id": "toki_npc",
+   "at": [
+    6,
+    19
+   ],
+   "kind": "npc",
+   "label": "トキ",
+   "when": "toki_present"
+  }
+ ],
+ "exits": [
+  {
+   "dir": "W",
+   "at": [
+    0,
+    15
+   ],
+   "to": "F01",
+   "spawn": [
+    1,
+    15
+   ],
+   "label": "路地を抜けて国道の駐車場裏へ"
+  },
+  {
+   "dir": "N",
+   "at": [
+    8,
+    0
+   ],
+   "to": "F06",
+   "spawn": [
+    8,
+    1
+   ],
+   "label": "旧街道を北へ"
+  },
+  {
+   "dir": "E",
+   "at": [
+    31,
+    22
+   ],
+   "to": "F07",
+   "spawn": [
+    30,
+    22
+   ],
+   "label": "寺町の路地"
+  },
+  {
+   "dir": "S",
+   "at": [
+    8,
+    39
+   ],
+   "to": "F12",
+   "spawn": [
+    8,
+    38
+   ],
+   "label": "旧街道を南へ"
+  }
+ ],
+ "areas": [
+  {
+   "id": "front_of_dagashi",
+   "rect": [
+    5,
+    18,
+    4,
+    5
+   ]
+  },
+  {
+   "id": "temple_yard",
+   "rect": [
+    18,
+    5,
+    13,
+    15
+   ]
+  }
+ ],
+ "near_band_m": 8.8
 }

@@ -72,17 +72,19 @@ godot --path . res://scenes/block.tscn -- time=noon tex=pixellab street_angle=90
 
 ## フィールド（本番のデータ駆動の街）
 
-`data/fields/<id>.json`（形式は [docs/FIELD_FORMAT.md](docs/FIELD_FORMAT.md)）から `scripts/field/` が街を組む。F05 旧鹿之尾街道 商店街が最初の 1 枚。
+歩ける範囲のマスク `data/fields/<ID>_walkable.png`（1 px = 1 タイル、唯一の真実）と `data/fields/<id>.json`（建物リスト・配置物・調べ物・出入口）から
+`scripts/field/` が街を組む（形式は [docs/FIELD_FORMAT.md](docs/FIELD_FORMAT.md)）。建物の位置と向きは外周から自動で決まり、
+ミニマップはマスクから直接描く。F05 旧鹿之尾街道 商店街が最初の 1 枚。
 
 ```bash
-godot --path . res://scenes/fields/f05_kaido.tscn -- time=evening          # 歩く（WASD 画面基準、E 調べる、F1 デバッグ、F2 通行判定）
-godot --path . res://scenes/fields/f05_kaido.tscn -- field_yaw=0 regen=1   # 回転を試す / AO を焼き直す
-godot --headless --path . --script res://tests/field_validate.gd           # データの検証
+godot --path . res://scenes/fields/f05_kaido.tscn -- time=evening          # 歩く（WASD 画面基準、E 調べる、F1 デバッグ、F2 通行判定と区画）
+godot --path . res://scenes/fields/f05_kaido.tscn -- field_yaw=30 sun_az=230 regen=1   # 回転・太陽方位を試す / AO を焼き直す
+godot --headless --path . --script res://tests/field_validate.gd           # データの検証（道幅・連結性・narrow）
 godot --headless --path . --script res://tools/bake_fields.gd -- all       # 全フィールドの AO キャッシュを焼き直す
 ```
 
-生成物（AO・手続きテクスチャ）は `cache/fields/<id>/`（Git 管理外）に置き、キー（JSON とテクスチャ版のハッシュ）が変われば起動時に焼き直す。
-記録は [docs/lookdev/PHASE8.md](docs/lookdev/PHASE8.md)。
+生成物（AO・手続きテクスチャ）は `cache/fields/<ID>/`（Git 管理外）に置き、キー（JSON・マスク・テクスチャ版のハッシュ）が変われば起動時に焼き直す。
+記録は [docs/lookdev/PHASE9.md](docs/lookdev/PHASE9.md)。
 
 ## 縦切りプロトタイプ（8/1〜8/3）
 

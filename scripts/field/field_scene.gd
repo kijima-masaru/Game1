@@ -29,6 +29,7 @@ var msg: Label
 var debug_panel: PanelContainer
 var debug_label: Label
 var pass_rect: TextureRect
+var minimap: Minimap
 var mode := "explore"
 var near_point := {}
 var near_exit := {}
@@ -36,6 +37,7 @@ var _demo_state := {}
 var _frame_times: Array[float] = []
 var _fade_frames := 0
 var _faded := {}
+var _fade_ids := {}
 
 
 func _ready() -> void:
@@ -72,11 +74,20 @@ func _ready() -> void:
 	lookdev.layout = "empty"
 	add_child(lookdev)
 	fd = FieldData.new()
-	fd.load("res://data/fields/%s.json" % field_id.to_lower())
-	for e in fd.errors:
-		push_error("field %s: %s" % [field_id, e])
+	# field_yaw の上書きは配置（近景の帯）に効くので、読み込み後に再配置する
+	fd.load("res://data/fields/%s.json" % field_id.to_lower(), "res://data/assets/objects.json", flags)
 	if not is_nan(field_yaw_override):
 		fd.d["field_yaw"] = field_yaw_override
+		fd.relayout(flags)
+	for e in fd.errors:
+		push_error("field %s: %s" % [field_id, e])
+	for w in fd.warnings:
+		push_warning("field %s: %s" % [field_id, w])
+	# フィールドごとの太陽方位（カメラ基準、時間帯ごと。field_yaw とは独立）
+	var sa: Dictionary = fd.d.get("sun_az", {})
+	if sa.has(lookdev.time_name) and is_nan(lookdev.sun_az_override):   # 引数 sun_az= があればそちらを優先
+		lookdev.sun_az_override = float(sa[lookdev.time_name])
+		lookdev._apply_time()
 	builder = FieldBuilder.new()
 	builder.pixel_size = lookdev.pixel_size
 	field_root = builder.build(fd, self, flags, lookdev.cam_yaw_deg, regen)
@@ -93,6 +104,8 @@ func _ready() -> void:
 		lookdev._apply_camera()
 		fixed_target = true
 	_build_ui()
+	if OS.get_cmdline_user_args().has("measure=1"):
+		_print_ground_range()
 	if walk_demo:
 		var path := fd.find_path(Vector2i(_exit_spawn("N")), Vector2i(_exit_spawn("S")))
 		_demo_state = {"from": _exit_spawn("N"), "to": _exit_spawn("S"), "path": path, "i": 0, "done": path.is_empty(), "start_ms": Time.get_ticks_msec()}
@@ -222,6 +235,14 @@ func _build_ui() -> void:
 	pass_rect.modulate = Color(1, 1, 1, 0.75)
 	pass_rect.visible = false
 	ui.add_child(pass_rect)
+	minimap = Minimap.new()
+	minimap.fd = fd
+	minimap.field_root = field_root
+	minimap.cam = lookdev.cam
+	minimap.player = player
+	minimap.flags = flags
+	minimap.position = Vector2(640 - 128, 8)
+	ui.add_child(minimap)
 
 
 func _update_hud() -> void:
@@ -312,13 +333,18 @@ func _update_near() -> void:
 
 func _apply_occlusion(cam: Camera3D) -> void:
 	var from := field_root.to_local(cam.global_position)
-	var to := player.position + Vector3(0, 0.9, 0)
+	# 主人公の頭（1.6 m）が隠れるときだけ透過する。近景の帯の 3 m の建物は、頭を隠す範囲が (3 − 1.6) × 1.73 = 2.4 m
+	var to := player.position + Vector3(0, 1.6, 0)
 	var any := false
 	for id in builder.lot_aabbs:
+		if id.begins_with("fence"):
+			continue   # 塀・生垣（3 m 未満）は隠れとして扱わない
 		var bb: AABB = builder.lot_aabbs[id]
-		var hit := bb.intersects_segment(from, to) != null and not bb.has_point(to)
+		# AABB で粗く落としてから、実際の面（壁・屋根の板）と線分の交差を見る（切妻の軒先を箱で太らせない）
+		var hit := bb.intersects_segment(from, to) != null and not bb.has_point(to) and _segment_hits_quads(from, to, builder.lot_quads.get(id, []))
 		if hit:
 			any = true
+			_fade_ids[id] = int(_fade_ids.get(id, 0)) + 1
 		if hit == _faded.get(id, false):
 			continue
 		_faded[id] = hit
@@ -336,6 +362,31 @@ func _apply_occlusion(cam: Camera3D) -> void:
 				m.cull_mode = BaseMaterial3D.CULL_DISABLED
 	if any:
 		_fade_frames += 1
+
+
+## 線分と四角形（origin + a·u + b·v, 0 ≤ a, b ≤ 1。tri なら a + b ≤ 1）の交差
+static func _segment_hits_quads(from: Vector3, to: Vector3, quads: Array) -> bool:
+	var d := to - from
+	for q in quads:
+		var o: Vector3 = q["o"]
+		var u: Vector3 = q["u"]
+		var v: Vector3 = q["v"]
+		var n := u.cross(v)
+		var denom := n.dot(d)
+		if absf(denom) < 1e-6:
+			continue
+		var t := n.dot(o - from) / denom
+		if t < 0.0 or t > 1.0:
+			continue
+		var p := from + d * t - o
+		var a := p.dot(u) / u.length_squared()
+		var b := p.dot(v) / v.length_squared()
+		if a < 0.0 or b < 0.0 or a > 1.0 or b > 1.0:
+			continue
+		if q.get("tri", false) and a + b > 1.0:
+			continue
+		return true
+	return false
 
 
 func _update_debug() -> void:
@@ -377,6 +428,8 @@ func _demo_step(delta: float) -> void:
 			mx = maxf(mx, v)
 		avg /= maxf(ft.size(), 1)
 		print("WALK_DEMO {\"seconds\":%.1f,\"frames\":%d,\"frame_ms_avg\":%.2f,\"frame_ms_max\":%.2f,\"fade_frames\":%d,\"distance_m\":%.1f}" % [secs, ft.size(), avg, mx, _fade_frames, FieldData.tile_to_world(_demo_state["from"].x, _demo_state["from"].y).distance_to(target)])
+		var rel := field_root.to_local(get_viewport().get_camera_3d().global_position) - player.position
+		print("WALK_DEMO_DEBUG toward_cam_measured=(%.2f, %.2f) toward_cam_layout=%s faded=%s" % [Vector2(rel.x, rel.z).normalized().x, Vector2(rel.x, rel.z).normalized().y, str(fd.layout.toward_cam), str(_fade_ids)])
 		if OS.get_cmdline_user_args().has("quit_after_demo=1"):
 			get_tree().quit()
 		return
@@ -393,7 +446,7 @@ func _apply_areamask() -> void:
 		var kind := "wall"
 		if n.begins_with("margin_"):
 			kind = "margin"
-		elif n == "ground" or n.begins_with("road_") or n.begins_with("patch_"):
+		elif n == "ground" or n.begins_with("walk_") or n.begins_with("narrow_") or n.begins_with("open_") or n.begins_with("patch_"):
 			kind = "ground"
 		elif "_roof" in n or n.ends_with("_top") or "_soffit" in n or "_gable" in n or n.ends_with("_cap"):
 			kind = "roof"
@@ -404,3 +457,24 @@ func _apply_areamask() -> void:
 		mi.material_override = m
 	for p in builder.billboards:
 		p.visible = false
+	if minimap != null:
+		minimap.visible = false
+
+
+## M-1: 1 画面に写る地面の範囲（画面の四隅の視線と y = 0 の交点）
+func _print_ground_range() -> void:
+	var cam: Camera3D = lookdev.cam
+	var vp := get_viewport().get_visible_rect().size
+	var corners := [Vector2(0, 0), Vector2(vp.x, 0), Vector2(0, vp.y), Vector2(vp.x, vp.y)]
+	var pts: Array[Vector3] = []
+	for c in corners:
+		var o: Vector3 = cam.project_ray_origin(c)
+		var dir: Vector3 = cam.project_ray_normal(c)
+		var t: float = -o.y / dir.y
+		pts.append(o + dir * t)
+	var top: float = pts[0].distance_to(pts[1])
+	var bottom: float = pts[2].distance_to(pts[3])
+	var mid_top: Vector3 = (pts[0] + pts[1]) * 0.5
+	var mid_bottom: Vector3 = (pts[2] + pts[3]) * 0.5
+	var depth: float = mid_top.distance_to(mid_bottom)
+	print("GROUND_RANGE {\"pitch\":%.1f,\"top_m\":%.1f,\"bottom_m\":%.1f,\"depth_m\":%.1f,\"area_m2\":%.0f,\"cam_height_m\":%.1f,\"cam_distance_m\":%.1f}" % [-lookdev.cam_pitch_deg, top, bottom, depth, (top + bottom) * 0.5 * depth, cam.global_position.y, lookdev.cam_distance])

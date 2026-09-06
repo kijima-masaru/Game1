@@ -170,16 +170,16 @@ static func concrete(size: int = 32, albedo: float = 0.50, seed: int = 17) -> Im
 
 
 ## ブロック塀（横 12 × 縦 6 texel のブロック、目地 1 texel）
-static func block_fence(size: int = 24, albedo: float = 0.45, seed: int = 19) -> Image:
+static func block_fence(size: int = 32, albedo: float = 0.45, seed: int = 19) -> Image:
 	_seed(seed)
 	var base := _at_lum(Color(0.70, 0.69, 0.66), albedo)
 	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
 	for y in size:
-		var row := y / 6
+		var row := y / 8
 		for x in size:
-			var xx := (x + (6 if row % 2 == 1 else 0)) % 12
+			var xx := (x + (8 if row % 2 == 1 else 0)) % 16
 			var c := base
-			if y % 6 == 0 or xx == 0:
+			if y % 8 == 0 or xx == 0:
 				c = base.darkened(0.35)
 			elif _rng.randf() < 0.1:
 				c = base.darkened(0.06)
@@ -187,20 +187,22 @@ static func block_fence(size: int = 24, albedo: float = 0.45, seed: int = 19) ->
 	return img
 
 
-## シャッター（横のスラット 6 texel 周期）
-static func shutter(size: int = 24, albedo: float = 0.40, seed: int = 23) -> Image:
+## シャッター（横のスラット 8 texel 周期。フェーズ 9 M-1 で 6 → 8）
+static func shutter(size: int = 32, albedo: float = 0.40, seed: int = 23) -> Image:
 	_seed(seed)
 	var base := _at_lum(Color(0.62, 0.66, 0.70), albedo)
 	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
 	for y in size:
-		var row := y % 6
+		var row := y % 8
 		for x in size:
 			var c := base
 			if row == 0:
 				c = base.lightened(0.25)
-			elif row == 4:
-				c = base.darkened(0.25)
 			elif row == 5:
+				c = base.darkened(0.20)
+			elif row == 6:
+				c = base.darkened(0.30)
+			elif row == 7:
 				c = base.darkened(0.45)
 			img.set_pixel(x, y, c)
 	return img
@@ -234,19 +236,23 @@ static func kawara(size: int = 32, tint: Color = Color(0.36, 0.38, 0.46), albedo
 	return img
 
 
-## トタン（波板）。山 6 texel 周期
-static func corrugated(size: int = 24, albedo: float = 0.30, seed: int = 31) -> Image:
+## トタン（波板）。山 8 texel 周期（フェーズ 9 M-1 で 6 → 8）
+static func corrugated(size: int = 32, albedo: float = 0.30, seed: int = 31) -> Image:
 	_seed(seed)
 	var base := _at_lum(Color(0.55, 0.50, 0.42), albedo)
 	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
 	for y in size:
 		for x in size:
-			var col := x % 6
+			var col := x % 8
 			var c := base
 			if col == 0:
 				c = base.lightened(0.3)
-			elif col == 3:
+			elif col == 1:
+				c = base.lightened(0.12)
+			elif col == 4:
 				c = base.darkened(0.3)
+			elif col == 5:
+				c = base.darkened(0.15)
 			if _rng.randf() < 0.06:
 				c = c.darkened(0.2)           # 錆
 			img.set_pixel(x, y, c)
@@ -317,16 +323,16 @@ static func old_street(size: int = 64, seed: int = 51) -> Image:
 
 
 ## 側溝の蓋（コンクリート、6 texel 周期の横筋）。道の端に帯として貼る。
-static func gutter(size: int = 24, seed: int = 53) -> Image:
+static func gutter(size: int = 32, seed: int = 53) -> Image:
 	_seed(seed)
 	var base := Color(0.50, 0.49, 0.50)
 	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
 	for y in size:
 		for x in size:
 			var c := base
-			if y % 6 == 0:
+			if y % 8 == 0:
 				c = base.darkened(0.35)
-			elif y % 6 == 1:
+			elif y % 8 == 1:
 				c = base.lightened(0.10)
 			if _rng.randf() < 0.08:
 				c = c.darkened(0.08)
@@ -411,6 +417,18 @@ static func namako(size: int = 32, seed: int = 63) -> Image:
 
 
 ## 駄菓子屋の窓明かり（黄色。emission 板に使う）。格子の影を落とす。
+## 生垣（近景の帯の埋め物）。濃い緑の葉のむら、周期なし
+static func hedge(size: int = 32, seed: int = 67) -> Image:
+	_seed(seed)
+	var base := Color(0.22, 0.34, 0.20)
+	var pal := [base, base.darkened(0.25), base.darkened(0.45), base.lightened(0.15), Color(0.30, 0.38, 0.18)]
+	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
+	for y in size:
+		for x in size:
+			img.set_pixel(x, y, _pick(pal, [0.4, 0.2, 0.15, 0.15, 0.1]))
+	return img
+
+
 static func warm_window(size: int = 16, seed: int = 65) -> Image:
 	_seed(seed)
 	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
