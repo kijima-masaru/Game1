@@ -1146,7 +1146,7 @@
    "width": 4,
    "floors": 2,
    "wall": "mortar",
-   "depth": 2
+   "depth": 3
   },
   {
    "id": "b04",
@@ -1154,7 +1154,7 @@
    "width": 3,
    "floors": 2,
    "wall": "weatherboard",
-   "depth": 2
+   "depth": 3
   },
   {
    "id": "b05",
@@ -1162,7 +1162,7 @@
    "width": 4,
    "floors": 2,
    "wall": "namako",
-   "depth": 2
+   "depth": 3
   },
   {
    "id": "b06",
@@ -1170,7 +1170,7 @@
    "width": 4,
    "floors": 2,
    "wall": "mortar",
-   "depth": 2
+   "depth": 3
   },
   {
    "id": "b07",
@@ -1178,7 +1178,7 @@
    "width": 3,
    "floors": 2,
    "wall": "mortar",
-   "depth": 2
+   "depth": 3
   },
   {
    "id": "b08",
@@ -1186,7 +1186,7 @@
    "width": 4,
    "floors": 2,
    "wall": "weatherboard",
-   "depth": 2
+   "depth": 3
   },
   {
    "id": "b09",
@@ -1194,7 +1194,7 @@
    "width": 4,
    "floors": 2,
    "wall": "namako",
-   "depth": 2
+   "depth": 3
   },
   {
    "id": "b10",
@@ -1202,7 +1202,7 @@
    "width": 3,
    "floors": 2,
    "wall": "mortar",
-   "depth": 2
+   "depth": 3
   },
   {
    "id": "b11",
@@ -1210,7 +1210,7 @@
    "width": 4,
    "floors": 2,
    "wall": "mortar",
-   "depth": 2
+   "depth": 3
   },
   {
    "id": "b12",
@@ -1218,7 +1218,7 @@
    "width": 4,
    "floors": 2,
    "wall": "weatherboard",
-   "depth": 2
+   "depth": 3
   },
   {
    "id": "b13",
@@ -1226,7 +1226,7 @@
    "width": 3,
    "floors": 2,
    "wall": "namako",
-   "depth": 2
+   "depth": 3
   },
   {
    "id": "b14",
@@ -1234,7 +1234,7 @@
    "width": 4,
    "floors": 2,
    "wall": "mortar",
-   "depth": 2
+   "depth": 3
   },
   {
    "id": "b15",
@@ -1242,7 +1242,7 @@
    "width": 4,
    "floors": 2,
    "wall": "mortar",
-   "depth": 2
+   "depth": 3
   },
   {
    "id": "b16",
@@ -1250,7 +1250,7 @@
    "width": 3,
    "floors": 2,
    "wall": "weatherboard",
-   "depth": 2
+   "depth": 3
   },
   {
    "id": "b17",
@@ -1258,7 +1258,7 @@
    "width": 4,
    "floors": 2,
    "wall": "namako",
-   "depth": 2
+   "depth": 3
   },
   {
    "id": "b18",
@@ -1266,7 +1266,7 @@
    "width": 4,
    "floors": 2,
    "wall": "mortar",
-   "depth": 2
+   "depth": 3
   },
   {
    "id": "b19",
@@ -1274,7 +1274,7 @@
    "width": 3,
    "floors": 2,
    "wall": "mortar",
-   "depth": 2
+   "depth": 3
   },
   {
    "id": "b20",
@@ -1282,7 +1282,7 @@
    "width": 4,
    "floors": 2,
    "wall": "weatherboard",
-   "depth": 2
+   "depth": 3
   },
   {
    "id": "b21",
@@ -1290,7 +1290,7 @@
    "width": 4,
    "floors": 2,
    "wall": "namako",
-   "depth": 2
+   "depth": 3
   },
   {
    "id": "b22",
@@ -1298,7 +1298,7 @@
    "width": 3,
    "floors": 2,
    "wall": "mortar",
-   "depth": 2
+   "depth": 3
   },
   {
    "id": "b23",
@@ -1306,7 +1306,7 @@
    "width": 4,
    "floors": 2,
    "wall": "mortar",
-   "depth": 2
+   "depth": 3
   },
   {
    "id": "b24",
@@ -1314,7 +1314,7 @@
    "width": 4,
    "floors": 2,
    "wall": "weatherboard",
-   "depth": 2
+   "depth": 3
   },
   {
    "id": "b25",
@@ -1322,7 +1322,7 @@
    "width": 3,
    "floors": 2,
    "wall": "namako",
-   "depth": 2
+   "depth": 3
   },
   {
    "id": "b26",
@@ -1330,7 +1330,7 @@
    "width": 4,
    "floors": 2,
    "wall": "mortar",
-   "depth": 2
+   "depth": 3
   },
   {
    "id": "b27",
@@ -1338,7 +1338,7 @@
    "width": 4,
    "floors": 2,
    "wall": "mortar",
-   "depth": 2
+   "depth": 3
   },
   {
    "id": "b28",
@@ -1346,7 +1346,7 @@
    "width": 3,
    "floors": 2,
    "wall": "weatherboard",
-   "depth": 2
+   "depth": 3
   },
   {
    "id": "b29",
@@ -1354,7 +1354,7 @@
    "width": 4,
    "floors": 2,
    "wall": "namako",
-   "depth": 2
+   "depth": 3
   },
   {
    "id": "b30",
@@ -1362,7 +1362,7 @@
    "width": 4,
    "floors": 2,
    "wall": "mortar",
-   "depth": 2
+   "depth": 3
   },
   {
    "id": "b31",
@@ -1370,7 +1370,7 @@
    "width": 3,
    "floors": 2,
    "wall": "mortar",
-   "depth": 2
+   "depth": 3
   },
   {
    "id": "b32",
@@ -1378,7 +1378,7 @@
    "width": 4,
    "floors": 2,
    "wall": "weatherboard",
-   "depth": 2
+   "depth": 3
   }
  ],
  "barriers": [

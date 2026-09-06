@@ -360,17 +360,34 @@ func _build_lot(l: Dictionary) -> void:
 func _collect_lot_faces() -> void:
 	for f in gen.faces:
 		var n: String = f["name"]
-		for l in fd.lots:
-			var id: String = l["id"]
-			if n == id or n.begins_with(id + "_"):
-				if not lot_quads.has(id):
-					lot_quads[id] = []
-				lot_quads[id].append({"o": f["origin"], "u": f["u"], "v": f["v"], "tri": f["tri"]})
-				break
+		var id := ""
+		if n.begins_with("barrier"):
+			id = n.split("_")[0]   # barrierNN（塀・生垣・金網）もフェードの対象
+		else:
+			for l in fd.lots:
+				var lid: String = l["id"]
+				if n == lid or n.begins_with(lid + "_"):
+					id = lid
+					break
+		if id == "":
+			continue
+		if not lot_quads.has(id):
+			lot_quads[id] = []
+		lot_quads[id].append({"o": f["origin"], "u": f["u"], "v": f["v"], "tri": f["tri"]})
 	for mi in root.get_children():
 		if not (mi is MeshInstance3D):
 			continue
 		var n: String = mi.name
+		if n.begins_with("barrier"):
+			var bid: String = n.split("_")[0]
+			var bb: AABB = mi.transform * mi.get_aabb()
+			if not lot_faces.has(bid):
+				lot_faces[bid] = []
+				lot_aabbs[bid] = bb
+			else:
+				lot_aabbs[bid] = (lot_aabbs[bid] as AABB).merge(bb)
+			lot_faces[bid].append(mi)
+			continue
 		for l in fd.lots:
 			var id: String = l["id"]
 			if n == id or n.begins_with(id + "_"):

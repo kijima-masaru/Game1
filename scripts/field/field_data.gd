@@ -168,12 +168,7 @@ func _validate_static() -> void:
 		var at: Array = e["at"]
 		if not is_walk_class(int(at[0]), int(at[1])):
 			errors.append("exit %s (%d,%d) が歩行可能タイルの上に無い" % [e.get("dir", "?"), at[0], at[1]])
-		elif is_narrow(int(at[0]), int(at[1])):
-			errors.append("exit %s (%d,%d) が裏路地（narrow）の上にある" % [e.get("dir", "?"), at[0], at[1]])
-	for p in d.get("points", []):
-		var at: Array = p["at"]
-		if is_narrow(int(at[0]), int(at[1])):
-			errors.append("調べ物 %s (%d,%d) が裏路地（narrow）の上にある" % [p.get("id", "?"), at[0], at[1]])
+	# フェーズ 13 R-3: narrow（裏路地・袋小路）にも調べ物・出入口を置ける（隠れはフェードで解く）
 	# 道幅: 主要な歩行可能タイルは、縦横どちらかの連続長が 6 以上
 	var thin := 0
 	var first := ""
@@ -273,10 +268,10 @@ func _validate_connectivity() -> void:
 		for dy in range(-2, 3):
 			for dx in range(-2, 3):
 				var n := t + Vector2i(dx, dy)
-				if reach.has(n) and not is_narrow(n.x, n.y):
+				if reach.has(n):
 					ok = true
 		if not ok:
-			errors.append("調べ物 %s (%d,%d) の周囲 2 タイルに到達できる主要タイルが無い" % [p.get("id", "?"), t.x, t.y])
+			errors.append("調べ物 %s (%d,%d) の周囲 2 タイルに到達できる歩行可能タイルが無い" % [p.get("id", "?"), t.x, t.y])
 
 
 func _flood(start: Vector2i) -> Dictionary:

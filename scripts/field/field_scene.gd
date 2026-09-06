@@ -427,35 +427,73 @@ func _update_near() -> void:
 			near_exit = e
 
 
+## R-2: 主人公とカメラの間にある幾何をフェードで抜く（ART_SPEC 第 2 節）。
+## 判定は頭（1.6 m）と腰（0.9 m）の 2 点とカメラを結ぶ線分が、建物・塀の面（壁・屋根の板）に当たるか。
+## 建物・塀は α 0.35 まで、配置物（ビルボード）は α 0.5 まで。入り 0.15 s、戻り 0.35 s。シルエットは残す
+const FADE_ALPHA_BUILDING := 0.35
+const FADE_ALPHA_PROP := 0.5
+const FADE_IN_S := 0.15
+const FADE_OUT_S := 0.35
+var _fade_alpha := {}      # id -> 現在の α
+
 func _apply_occlusion(cam: Camera3D) -> void:
 	var from := field_root.to_local(cam.global_position)
-	# 主人公の頭（1.6 m）が隠れるときだけ透過する。近景の帯の 3 m の建物は、頭を隠す範囲が (3 − 1.6) × 1.73 = 2.4 m
-	var to := player.position + Vector3(0, 1.6, 0)
+	var targets := [player.position + Vector3(0, 1.6, 0), player.position + Vector3(0, 0.9, 0)]
+	var delta := get_process_delta_time()
 	var any := false
 	for id in builder.lot_aabbs:
-		if id.begins_with("fence"):
-			continue   # 塀・生垣（3 m 未満）は隠れとして扱わない
 		var bb: AABB = builder.lot_aabbs[id]
-		# AABB で粗く落としてから、実際の面（壁・屋根の板）と線分の交差を見る（切妻の軒先を箱で太らせない）
-		var hit := bb.intersects_segment(from, to) != null and not bb.has_point(to) and _segment_hits_quads(from, to, builder.lot_quads.get(id, []))
+		var hit := false
+		for to in targets:
+			if bb.intersects_segment(from, to) != null and not bb.has_point(to) and _segment_hits_quads(from, to, builder.lot_quads.get(id, [])):
+				hit = true
+				break
 		if hit:
 			any = true
 			_fade_ids[id] = int(_fade_ids.get(id, 0)) + 1
-		if hit == _faded.get(id, false):
+		var target := FADE_ALPHA_BUILDING if hit else 1.0
+		var cur: float = _fade_alpha.get(id, 1.0)
+		var rate := (1.0 - FADE_ALPHA_BUILDING) / (FADE_IN_S if hit else FADE_OUT_S)
+		var nxt := move_toward(cur, target, rate * delta)
+		if absf(nxt - cur) < 1e-4 and _faded.get(id, false) == hit and nxt == target:
 			continue
+		_fade_alpha[id] = nxt
 		_faded[id] = hit
 		for mi in builder.lot_faces[id]:
 			var m := mi.material_override as StandardMaterial3D
 			if m == null:
 				continue
-			if hit:
-				m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-				m.albedo_color = Color(1, 1, 1, 0.35)
-				m.cull_mode = BaseMaterial3D.CULL_BACK
-			else:
+			if nxt >= 0.999:
 				m.transparency = BaseMaterial3D.TRANSPARENCY_DISABLED
 				m.albedo_color = Color(1, 1, 1, 1)
 				m.cull_mode = BaseMaterial3D.CULL_DISABLED
+			else:
+				m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+				m.albedo_color = Color(1, 1, 1, nxt)
+				m.cull_mode = BaseMaterial3D.CULL_BACK
+	# 配置物（ビルボード）: カメラと主人公の間の帯（線分から 0.6 m 以内）に立つものを薄くする
+	for pv in builder.billboards:
+		if pv == player:
+			continue
+		var p := pv.position
+		var seg_a := from
+		var seg_b := player.position + Vector3(0, 0.9, 0)
+		var ab := seg_b - seg_a
+		var t := clampf((p - seg_a).dot(ab) / maxf(ab.length_squared(), 1e-6), 0.0, 1.0)
+		var closest := seg_a + ab * t
+		var near := t < 0.98 and Vector2(closest.x - p.x, closest.z - p.z).length() < 0.6 and closest.y < 2.5
+		var pid := "prop_" + pv.name
+		var ptarget := FADE_ALPHA_PROP if near else 1.0
+		var pcur: float = _fade_alpha.get(pid, 1.0)
+		var pnxt := move_toward(pcur, ptarget, (1.0 - FADE_ALPHA_PROP) / (FADE_IN_S if near else FADE_OUT_S) * delta)
+		if absf(pnxt - pcur) < 1e-4:
+			continue
+		_fade_alpha[pid] = pnxt
+		for sp in pv.get_children():
+			if sp is Sprite3D:
+				sp.modulate = Color(1, 1, 1, pnxt)
+		if near:
+			any = true
 	if any:
 		_fade_frames += 1
 
