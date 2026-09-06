@@ -122,6 +122,9 @@ var walk_to := Vector3(2.0, 0.0, 0.5)
 var walk_pivot: Node3D
 var walk_sprite: Sprite3D
 const WALK_TEX_H := 56          # 28x56 texel = 1x2 m
+var shadow_16bit := false        # 影アトラスの深度。16bit だと昼にシャドウアクネ（波状モアレ）が出る（フェーズ5 F-0a）
+var shadow_bias_override := NAN
+var shadow_normal_bias_override := NAN
 var ao_on := true               # 街区スケールの空の遮蔽を焼いた AO（E-2）。ao_light_affect=0 で環境光にのみ効く
 var ao_power := 1.0             # 焼いた AO に掛ける指数（芯を深くする較正ノブ）
 var ao_ray_len := 18.0          # 遮蔽レイの最大距離 (m)。建物高さの 2〜3 倍
@@ -268,6 +271,12 @@ func _parse_args() -> void:
 				var wt := v.split(",")
 				if wt.size() == 2:
 					walk_to = Vector3(float(wt[0]), 0.0, float(wt[1]))
+			"shadow16":
+				shadow_16bit = _b(v)
+			"shadow_bias":
+				shadow_bias_override = float(v)
+			"shadow_normal_bias":
+				shadow_normal_bias_override = float(v)
 			"ao":
 				ao_on = _b(v)
 			"ao_power":
@@ -611,6 +620,7 @@ func _ao_to_texture(img: Image, upscale: int) -> ImageTexture:
 			var a := pow(img.get_pixel(x, y).r, ao_power)
 			out.set_pixel(x, y, Color(a, a, a, 1.0))
 	out.resize(out.get_width() * upscale, out.get_height() * upscale, Image.INTERPOLATE_BILINEAR)
+	out.generate_mipmaps()   # F-0a: ミップマップ無しだと NEAREST_WITH_MIPMAPS でも AO だけ mip0 で標本化されモアレが戻る
 	return ImageTexture.create_from_image(out)
 
 
@@ -626,6 +636,8 @@ func _apply_ao(m: StandardMaterial3D, tex: ImageTexture) -> StandardMaterial3D:
 		mm.albedo_texture = null
 		mm.albedo_color = Color(1, 1, 1)
 		mm.uv1_triplanar = false
+	# F-0a: 複製した材質もフィルタ切替の対象にする（登録漏れで地面・壁が Nearest のまま残り、昼のモアレが戻っていた）
+	world_mats.append(mm)
 	return mm
 
 
@@ -911,8 +923,9 @@ func _build_lights() -> void:
 	sun.directional_shadow_max_distance = 70.0
 	sun.directional_shadow_split_1 = 0.4
 	sun.directional_shadow_fade_start = 0.9
-	sun.shadow_bias = 0.03
-	sun.shadow_normal_bias = 1.5
+	# F-0a: 昼（太陽 68°）の路面の波状モアレはシャドウアクネ。32bit 深度 + normal_bias 4.0 で高周波量 66 → 21（テクスチャのみの下限 16〜18）
+	sun.shadow_bias = 0.05 if is_nan(shadow_bias_override) else shadow_bias_override
+	sun.shadow_normal_bias = 4.0 if is_nan(shadow_normal_bias_override) else shadow_normal_bias_override
 	add_child(sun)
 
 	# 疑似スカイライト（D-1）。ほぼ真下向きの 2 本目の平行光。影あり・鏡面なし・広い半影。
@@ -1141,7 +1154,7 @@ func _apply_env_toggles() -> void:
 
 
 func _apply_shadows() -> void:
-	RenderingServer.directional_shadow_atlas_set_size(shadow_res, true)
+	RenderingServer.directional_shadow_atlas_set_size(shadow_res, shadow_16bit)
 	match soft_level:
 		0:
 			sun.shadow_blur = 0.0
