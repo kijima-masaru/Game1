@@ -10,6 +10,7 @@ var cam: Camera3D
 var player: Node3D
 var flags: Dictionary = {}
 var map_px := 120.0            # 描画領域の一辺（px、設計解像度）
+var heading := Vector2(0, 1)   # 現在地の矢印の向き（フィールドのローカル、タイル座標系）
 
 const COL_WALK := Color(0.82, 0.80, 0.72, 0.95)
 const COL_NARROW := Color(0.45, 0.44, 0.40, 0.95)
@@ -46,14 +47,10 @@ func _to_screen(v: Vector3) -> Vector2:
 func _draw() -> void:
 	if fd == null or cam == null:
 		return
+	# Q-3: 地図は回さない（2D 地図と同じ向き）。向きは現在地の矢印で示す
 	draw_rect(Rect2(Vector2.ZERO, size), COL_BG)
-	var diag := Vector2(fd.size).length()
-	var s := (map_px - 6.0) / diag
-	var center := size * 0.5
-	var ex := _to_screen(Vector3(1, 0, 0))
-	var angle := ex.angle()
-	var mc := Vector2(fd.size) * 0.5
-	draw_set_transform(center, angle, Vector2(s, s))
+	var s := minf((map_px - 6.0) / float(fd.size.x), (map_px - 6.0) / float(fd.size.y))
+	var origin := (size - Vector2(fd.size) * s) * 0.5
 	for y in fd.size.y:
 		var x := 0
 		while x < fd.size.x:
@@ -69,11 +66,10 @@ func _draw() -> void:
 				col = COL_NARROW
 			elif c == FieldLayout.CLASS_OPEN:
 				col = COL_OPEN
-			draw_rect(Rect2(Vector2(x, y) - mc, Vector2(x1 - x, 1)), col)
+			draw_rect(Rect2(origin + Vector2(x, y) * s, Vector2(x1 - x, 1) * s), col)
 			x = x1
-	# 出入口: 縁の外へ向く三角
 	for e in fd.d.get("exits", []):
-		var p := Vector2(float(e["at"][0]) + 0.5, float(e["at"][1]) + 0.5) - mc
+		var p := origin + (Vector2(float(e["at"][0]) + 0.5, float(e["at"][1]) + 0.5)) * s
 		var dir := Vector2.ZERO
 		match e.get("dir", "N"):
 			"N": dir = Vector2(0, -1)
@@ -81,24 +77,19 @@ func _draw() -> void:
 			"E": dir = Vector2(1, 0)
 			"W": dir = Vector2(-1, 0)
 		var side := Vector2(-dir.y, dir.x)
-		draw_colored_polygon(PackedVector2Array([p + dir * 2.2, p + side * 1.3 - dir * 0.3, p - side * 1.3 - dir * 0.3]), COL_EXIT)
-	# 調べ物
+		draw_colored_polygon(PackedVector2Array([p + dir * 2.2 * s, p + side * 1.3 * s - dir * 0.3 * s, p - side * 1.3 * s - dir * 0.3 * s]), COL_EXIT)
 	for pt in fd.d.get("points", []):
 		if not FieldData.when_ok(pt.get("when"), flags):
 			continue
-		var p := Vector2(float(pt["at"][0]) + 0.5, float(pt["at"][1]) + 0.5) - mc
-		draw_circle(p, 0.9, COL_NPC if pt.get("kind", "") == "npc" else COL_POINT)
-	# 現在地
+		var p := origin + (Vector2(float(pt["at"][0]) + 0.5, float(pt["at"][1]) + 0.5)) * s
+		draw_circle(p, maxf(0.9 * s, 1.5), COL_NPC if pt.get("kind", "") == "npc" else COL_POINT)
 	if player != null:
 		var lp := player.position
-		var p := Vector2(lp.x / FieldData.TILE, lp.z / FieldData.TILE) - mc
-		draw_circle(p, 1.6, Color(0, 0, 0, 0.8))
-		draw_circle(p, 1.1, COL_PLAYER)
-	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
-	# 北の矢印（右上）
-	var n := _to_screen(Vector3(0, 0, -1)).normalized()
-	var o := Vector2(size.x - 9.0, 9.0)
-	draw_line(o - n * 4.0, o + n * 4.0, Color(1, 1, 1), 1.0)
-	var side := Vector2(-n.y, n.x)
-	draw_colored_polygon(PackedVector2Array([o + n * 6.0, o + n * 2.0 + side * 2.5, o + n * 2.0 - side * 2.5]), Color(1, 0.3, 0.3))
+		var p := origin + Vector2(lp.x / FieldData.TILE, lp.z / FieldData.TILE) * s
+		# 進行方向の矢印（フィールドのローカル方向 = 地図の向き）。止まっているときは最後の向き
+		var d: Vector2 = heading if heading.length_squared() > 0.001 else Vector2(0, 1)
+		d = d.normalized()
+		var side := Vector2(-d.y, d.x)
+		draw_circle(p, maxf(1.8 * s, 3.0), Color(0, 0, 0, 0.8))
+		draw_colored_polygon(PackedVector2Array([p + d * maxf(2.4 * s, 4.0), p - d * maxf(1.2 * s, 2.0) + side * maxf(1.4 * s, 2.4), p - d * maxf(1.2 * s, 2.0) - side * maxf(1.4 * s, 2.4)]), COL_PLAYER)
 	draw_rect(Rect2(Vector2.ZERO, size), Color(1, 1, 1, 0.35), false, 1.0)

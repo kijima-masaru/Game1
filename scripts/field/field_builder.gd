@@ -72,6 +72,8 @@ func _build_materials(tex_mode: String) -> void:
 	mats["lot_ground"] = PT.material(PT.lot_ground())
 	mats["gravel"] = PT.material(PT.gravel())
 	mats["grass"] = PT.material(PT.grass())
+	mats["water"] = PT.material(PT.noise(32, Color(0.16, 0.22, 0.34), 0.03))
+	mats["tile"] = PT.material(PT.stone_path(32, 61))
 	mats["asphalt"] = PT.material(PT.asphalt_gravel())
 	mats["stone_path"] = PT.material(PT.stone_path())
 	mats["old_street"] = PT.material(PT.old_street())
@@ -395,6 +397,15 @@ func _build_barriers() -> void:
 		var along_x := int(r[2]) >= int(r[3])
 		var length := float(r[2] if along_x else r[3]) * T
 		var thick := 0.3
+		if kind == "overpass":
+			# 歩道橋: 高さ 4.5 m の床板と両端の柱。下は通れる
+			gen.add_box(Vector3(cx, 4.5, cz), Vector3(length, 0.3, 2.0) if along_x else Vector3(2.0, 0.3, length), mats["concrete"][0], mats["concrete"][0], "barrier%02d" % n, false)
+			gen.add_box(Vector3(cx, 5.1, cz), Vector3(length, 1.0, 0.1) if along_x else Vector3(0.1, 1.0, length), mats["frame"], mats["frame"], "barrier%02d_rail" % n, false)
+			var ends := [Vector3(cx - length * 0.5 + 0.4, 0, cz), Vector3(cx + length * 0.5 - 0.4, 0, cz)] if along_x else [Vector3(cx, 0, cz - length * 0.5 + 0.4), Vector3(cx, 0, cz + length * 0.5 - 0.4)]
+			for e in ends:
+				gen.add_box(e, Vector3(0.6, 4.5, 0.6), mats["concrete"][0], mats["concrete"][0], "barrier%02d_pier" % n, false)
+			n += 1
+			continue
 		var h: float = {"hedge": 1.0, "fence_block": 1.2, "fence_wall": 1.8, "wire_fence": 1.5, "guardrail": 0.8}.get(kind, 1.0)
 		var mat: Material = {"hedge": mats["hedge"], "fence_block": mats["block_fence"], "fence_wall": mats["plaster"][0], "wire_fence": mats["wire"], "guardrail": mats["frame"]}.get(kind, mats["hedge"])
 		var sz := Vector3(length, h, thick) if along_x else Vector3(thick, h, length)

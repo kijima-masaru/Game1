@@ -7,8 +7,8 @@ extends RefCounted
 
 const TILE := 1.143
 const LOT_KINDS := ["shop_shutter", "shop_wood", "dagashi", "house", "temple_hall", "temple_gate", "fence_wall", "fence_block", "hedge", "bldg_rc", "store", "apartment", "civic"]
-const BARRIER_KINDS := ["hedge", "fence_block", "fence_wall", "wire_fence", "guardrail"]
-const GROUND_TEX := ["lot_ground", "gravel", "asphalt", "stone_path", "old_street", "alley", "sidewalk", "grass"]
+const BARRIER_KINDS := ["hedge", "fence_block", "fence_wall", "wire_fence", "guardrail", "overpass"]
+const GROUND_TEX := ["lot_ground", "gravel", "asphalt", "stone_path", "old_street", "alley", "sidewalk", "grass", "water", "tile"]
 const PASSABLE_LOTS := ["temple_gate"]
 const MIN_STREET_WIDTH := 6
 
@@ -158,6 +158,8 @@ func _validate_static() -> void:
 		if not (b.get("kind", "hedge") in BARRIER_KINDS):
 			errors.append("barrier: 未定義の kind %s" % b.get("kind", ""))
 		var r: Array = b.get("rect", [0, 0, 0, 0])
+		if b.get("kind", "") == "overpass":
+			continue   # 歩道橋は歩けるタイルの上をまたぐ
 		for y in range(int(r[1]), int(r[1]) + int(r[3])):
 			for x in range(int(r[0]), int(r[0]) + int(r[2])):
 				if cls(x, y) != FieldLayout.CLASS_OPEN:

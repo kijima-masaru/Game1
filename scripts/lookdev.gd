@@ -1031,7 +1031,7 @@ func _build_camera() -> void:
 	cam_attr.dof_blur_far_distance = cam_distance + 12.0
 	cam_attr.dof_blur_far_transition = 40.0       # 遠景は弱く（画面の奥の端でもほとんど掛からない）
 	cam_attr.dof_blur_near_distance = cam_distance - 3.0
-	cam_attr.dof_blur_near_transition = 5.0       # 近景は強く（主人公の 3 m 手前から 5 m で最大）
+	cam_attr.dof_blur_near_transition = 10.0      # 近景: 主人公の 3 m 手前から 10 m で最大（フェーズ 12 Q-4 で半分に。近景の細かい物を溶かさない）
 	cam_attr.dof_blur_amount = dof_amount
 	cam.attributes = cam_attr
 	add_child(cam)
