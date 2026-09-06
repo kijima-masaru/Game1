@@ -110,7 +110,7 @@ func _build_materials(tex_mode: String) -> void:
 	wt.emission = Color(1, 1, 1)
 	wt.emission_texture = ImageTexture.create_from_image(PT.warm_window())
 	wt.emission_energy_multiplier = 0.35   # 2.5 / 1.0 は Filmic white 1.0 で白飛びした。Glow を切っている以上、発光は 0.3〜0.5 が上限（フェーズ8 J-3）
-	wt.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+	PT.register(wt)   # 世界テクスチャのフィルタに揃える（F-0a の漏れの再発防止）
 	wt.uv1_scale = Vector3(28.0 / 16.0, 28.0 / 16.0, 1)
 	wt.cull_mode = BaseMaterial3D.CULL_DISABLED
 	mats["warm_window"] = wt

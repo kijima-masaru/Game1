@@ -42,6 +42,11 @@ var _measure_frame := 0
 var _deltas: Array[float] = []
 var vignette := 0
 var vignette_rect: ColorRect
+var seq_dir := ""             # T-1: 等速パンの連番撮影先。seq_frames 枚、pan_m（m/フレーム）で北へ
+var seq_frames := 60
+var pan_m := 0.05
+var _seq_i := 0
+var _seq_warm := 0
 
 
 func _ready() -> void:
@@ -76,6 +81,16 @@ func _ready() -> void:
 				occl = kv[1]
 			"vignette":
 				vignette = clampi(int(kv[1]), 0, 3)
+			"wfilter":
+				PixelTextures.set_world_filter(kv[1])
+			"roof_contrast":
+				PixelTextures.roof_contrast = float(kv[1])
+			"fseq":
+				seq_dir = kv[1]
+			"fseq_frames":
+				seq_frames = maxi(int(kv[1]), 2)
+			"pan_m":
+				pan_m = float(kv[1])
 	lookdev = load("res://scenes/lookdev.tscn").instantiate()
 	lookdev.layout = "empty"
 	add_child(lookdev)
@@ -130,7 +145,10 @@ func _ready() -> void:
 		player.position = FieldData.tile_to_world(a.x, a.y) + Vector3(0, 0.02, 0)   # 自動歩行は始点から
 		if path.is_empty():
 			printerr("walk_demo: 経路が無い %s(passable %s) → %s(passable %s)" % [str(Vector2i(a)), str(fd.is_passable(int(a.x), int(a.y))), str(Vector2i(b)), str(fd.is_passable(int(b.x), int(b.y)))])
-	print("FIELD %s built in %.2fs (AO %.2fs, cache %s), faces=%d, passable=%d/%d" % [field_id, (Time.get_ticks_msec() - t0) / 1000.0, builder.bake_seconds, "hit" if builder.cache_hit else "baked", builder.gen.faces.size(), fd.reachable_count(), fd.size.x * fd.size.y])
+	print("FIELD %s built in %.2fs (AO %.2fs, cache %s), faces=%d, passable=%d/%d, world_mats=%d filter=%d" % [field_id, (Time.get_ticks_msec() - t0) / 1000.0, builder.bake_seconds, "hit" if builder.cache_hit else "baked", builder.gen.faces.size(), fd.reachable_count(), fd.size.x * fd.size.y, PixelTextures.world_material_count(), int(PixelTextures.world_filter)])
+	if seq_dir != "":
+		fixed_target = true
+		DirAccess.make_dir_recursive_absolute(seq_dir)
 
 
 func _lamps_on() -> bool:
@@ -400,6 +418,20 @@ func _process(delta: float) -> void:
 	_update_hud()
 	if debug_panel.visible:
 		_update_debug()
+	# T-1: 等速パンの連番撮影（主人公は動かさず、注視点を北へ pan_m / フレーム）
+	if seq_dir != "":
+		_seq_warm += 1
+		if _seq_warm > 10:
+			if _seq_i >= 1:
+				get_viewport().get_texture().get_image().save_png("%s/f%03d.png" % [seq_dir, _seq_i - 1])
+			var north := field_root.global_transform.basis * Vector3(0, 0, -1)
+			lookdev.cam_target += north.normalized() * pan_m
+			lookdev._apply_camera()
+			_seq_i += 1
+			if _seq_i > seq_frames:
+				print("FIELD seq done %d frames -> %s" % [seq_frames, seq_dir])
+				get_tree().quit()
+		return
 	# measure=1: カメラが主人公に追従した後（20 フレーム目）に、画面内の配置物の数を出す
 	_measure_frame += 1
 	if _measure_frame == 20 and OS.get_cmdline_user_args().has("measure=1"):

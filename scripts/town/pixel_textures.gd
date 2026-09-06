@@ -212,10 +212,14 @@ static func shutter(size: int = 32, albedo: float = 0.40, seed: int = 23) -> Ima
 # 屋根
 # ============================================================================
 ## 瓦（桟瓦）。1 枚 8 × 8 texel（0.29 m）、横にずらして重ねる。周期 8
+static var roof_contrast := 1.0   # T-1: 瓦の明暗の強さ（1.0 = 従来）。斜めから見た屋根のちらつきの検証用
+
+
 static func kawara(size: int = 32, tint: Color = Color(0.36, 0.38, 0.46), albedo: float = 0.22, seed: int = 29) -> Image:
 	_seed(seed)
 	var base := _at_lum(tint, albedo)
 	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
+	var k := roof_contrast
 	for y in size:
 		var row := y / 8
 		var ry := y % 8
@@ -223,13 +227,13 @@ static func kawara(size: int = 32, tint: Color = Color(0.36, 0.38, 0.46), albedo
 			var xx := (x + (4 if row % 2 == 1 else 0)) % 8
 			var c := base
 			if ry == 0:
-				c = base.lightened(0.30)       # 瓦の上縁（受光）
+				c = base.lightened(0.30 * k)   # 瓦の上縁（受光）
 			elif ry == 7:
-				c = base.darkened(0.5)         # 重なりの影
+				c = base.darkened(0.5 * k)     # 重なりの影
 			elif ry == 6:
-				c = base.darkened(0.2)
+				c = base.darkened(0.2 * k)
 			if xx == 0 and ry > 0 and ry < 6:
-				c = base.darkened(0.3)         # 瓦の継ぎ目（桟）
+				c = base.darkened(0.3 * k)     # 瓦の継ぎ目（桟）
 			if _rng.randf() < 0.05:
 				c = c.lightened(0.08)
 			img.set_pixel(x, y, c)
@@ -272,13 +276,38 @@ static func noise(size: int, base: Color, grain: float, seed: int = 1) -> Image:
 	return img
 
 
-## 材質を作る（Nearest + ミップマップ、UV は m 単位: uv1_scale = 1 / タイルの m）
+## 世界テクスチャ（地面・壁・屋根・塀）のフィルタ。フェーズ 14 T-1 で決める。field_scene の filter= で切り替え
+static var world_filter: BaseMaterial3D.TextureFilter = BaseMaterial3D.TEXTURE_FILTER_NEAREST_WITH_MIPMAPS_ANISOTROPIC
+static var _world_mats: Array = []   # 作った材質の一覧（漏れの確認と一括切り替え用）
+
+
+static func set_world_filter(name: String) -> void:
+	match name:
+		"nearest_mip": world_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST_WITH_MIPMAPS
+		"nearest_aniso": world_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST_WITH_MIPMAPS_ANISOTROPIC
+		"linear_aniso": world_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
+		"linear_mip": world_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+	for m in _world_mats:
+		m.texture_filter = world_filter
+
+
+static func register(m: StandardMaterial3D) -> StandardMaterial3D:
+	m.texture_filter = world_filter
+	_world_mats.append(m)
+	return m
+
+
+static func world_material_count() -> int:
+	return _world_mats.size()
+
+
+## 材質を作る（world_filter + ミップマップ、UV は m 単位: uv1_scale = 1 / タイルの m）
 static func material(img: Image, albedo_tex: bool = true) -> StandardMaterial3D:
 	var m := StandardMaterial3D.new()
 	var mip := img.duplicate() as Image
 	mip.generate_mipmaps()
 	m.albedo_texture = ImageTexture.create_from_image(mip)
-	m.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST_WITH_MIPMAPS
+	register(m)
 	m.roughness = 0.95
 	m.metallic = 0.0
 	m.specular_mode = BaseMaterial3D.SPECULAR_DISABLED
@@ -291,6 +320,7 @@ static func material(img: Image, albedo_tex: bool = true) -> StandardMaterial3D:
 ## 白い線・光る要素用（ART_SPEC 第 4 節: emission 板）
 static func emissive_material(color: Color, energy: float = 1.0) -> StandardMaterial3D:
 	var m := StandardMaterial3D.new()
+	register(m)
 	m.albedo_color = Color(0, 0, 0, 1)
 	m.emission_enabled = true
 	m.emission = color
