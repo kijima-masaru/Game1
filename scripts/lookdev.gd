@@ -13,7 +13,11 @@ extends Node3D
 ##   time=morning|noon|evening|night   proj=persp|ortho   tonemap=linear|reinhard|filmic|aces|agx
 ##   dof=0|1  glow=0|1  fog=0|1  ssao=0|1  ssil=0|1  pixel=1|2|3（描画解像度の縮小倍率）
 ##   soft=0|1|2（影のやわらかさ）  shadowres=2048|4096|8192  omnishadow=0|1
-##   billboard=y|full  shaded=0|1  filter=nearest|mipmap  glow_intensity=<f>  glow_threshold=<f>  glow_levels=3,5  emissive_energy=<f>  hud=0|1  sun_elev=<deg>  sun_az=<deg>  exposure=<f>
+##   billboard=y|full  shaded=0|1  filter=nearest|mipmap  glow_intensity=<f>  glow_threshold=<f>  glow_levels=3,5  emissive_energy=<f>  hud=0|1
+##   white=<f>（tonemap_white。Reinhard は 1.0 だと恒等写像になる）  lamps=0|1（点光源と発光板の強制 on/off）
+##   ambient_mul=<f>（環境光エネルギーの倍率。較正用）  ambient_desat=<f>（環境光の彩度を輝度一定で落とす。0〜1）  wall_albedo=<f>（壁の基準アルベド。未指定はプリセット色）
+##   bands=0|1（壁の白い細帯ジオメトリ）  probe=x,z;x,z（路面上の計測点。撮影時に画素値を PROBE 行で出力）
+##   probe_grid=1（路面全体の候補点を格子で出力。較正ツールが日向・日陰の芯を選ぶ）  sun_elev=<deg>  sun_az=<deg>  exposure=<f>
 ##   shot=<PNGの絶対パス>   指定フレーム後に撮影して終了
 ##   frames=<n>             撮影までに待つフレーム数（既定 40）
 ##
@@ -66,9 +70,9 @@ const TIMES := {
 		"sun_elev": 13.0, "sun_az": 205.0, "sun_color": Color(1.0, 0.84, 0.70), "sun_energy": 4.2,
 		"sky_top": Color(0.20, 0.18, 0.34), "sky_horizon": Color(0.85, 0.45, 0.30),
 		"ground_horizon": Color(0.30, 0.22, 0.26), "ground_bottom": Color(0.08, 0.07, 0.10),
-		"ambient": Color(0.28, 0.34, 0.62), "ambient_energy": 0.18,
+		"ambient": Color(0.327, 0.345, 0.429), "ambient_energy": 0.234,   # 輝度は (0.28,0.34,0.62) と同じ、彩度を 0.3 倍（影の彩度 0.80→0.54、参考 0.43）。0.18 x 1.30 で路面の影比 0.120
 		"fog_color": Color(0.55, 0.32, 0.30), "fog_density": 0.0015, "fog_energy": 0.7,
-		"exposure": 1.15, "lamps": true, "sky_energy": 0.7,
+		"exposure": 1.15, "lamps": false, "sky_energy": 0.7,   # 夕方は街灯を点けない（街灯が路面の大半を照らして較正を狂わせる）
 	},
 	"night": {
 		"sun_elev": 40.0, "sun_az": 120.0, "sun_color": Color(0.55, 0.65, 0.95), "sun_energy": 0.10,
@@ -87,7 +91,7 @@ var ortho := false
 var tonemap := "filmic"
 var dof_on := true
 var glow_on := true
-var fog_on := true
+var fog_on := false           # Fog は黒を浮かせる。参考画像に霞は無い
 var ssao_on := false
 var ssil_on := false
 var pixel_scale := 2            # 1 = 1280x720 そのまま、2 = 640x360 を 2 倍、3 = 426x240 を 3 倍
@@ -100,6 +104,15 @@ var mipmaps := false            # true: Nearest + ミップマップ（斜めの
 var hud_on := true
 var glow_intensity := 1.0
 var glow_threshold := 0.9
+var tonemap_white := 1.0
+var lamps_override := -1        # -1: プリセットに従う / 0,1: 強制
+var ambient_desat := 0.0        # 環境光の彩度を輝度を保って落とす割合（0 = そのまま、0.5 = 半分）
+var ambient_mul := 1.0          # 較正用。既定値 1.0 = プリセットの ambient_energy そのまま
+var wall_albedo := 0.50         # 壁の基準アルベド（リニア輝度）。0.35 未満は日陰で黒に潰れる。NAN でプリセット色
+var bands_on := true
+var probes: Array[Vector3] = []
+var probe_grid := false
+var bldg_aabbs: Array[AABB] = []
 var emissive_energy := 4.0     # 発光板の emission 倍率。1〜2 では Glow の閾値(0.9)に届かず光らない。4〜8 が実用域、12 以上は塊になる
 var glow_levels := "3,5"        # 有効にする Glow レベル（1 = 1/2 解像度 … 7 = 1/128）。Godot 既定は 3,5
 var sun_elev_override := NAN
@@ -188,6 +201,25 @@ func _parse_args() -> void:
 				glow_levels = v
 			"emissive_energy":
 				emissive_energy = float(v)
+			"white":
+				tonemap_white = float(v)
+			"lamps":
+				lamps_override = 1 if _b(v) else 0
+			"ambient_mul":
+				ambient_mul = float(v)
+			"ambient_desat":
+				ambient_desat = float(v)
+			"wall_albedo":
+				wall_albedo = float(v)
+			"bands":
+				bands_on = _b(v)
+			"probe":
+				for pt in v.split(";", false):
+					var xz := pt.split(",")
+					if xz.size() == 2:
+						probes.append(Vector3(float(xz[0]), 0.0, float(xz[1])))
+			"probe_grid":
+				probe_grid = _b(v)
 			"hud":
 				hud_on = _b(v)
 			"sun_elev":
@@ -302,6 +334,15 @@ func _box(size: Vector3, pos: Vector3, mat: Material, name_: String) -> MeshInst
 	return mi
 
 
+## 壁の基準色。wall_albedo が指定されていれば、色相を保って輝度（リニア）をその値に揃える。
+func _wall_base(preset: Color) -> Color:
+	if is_nan(wall_albedo):
+		return preset
+	var lum := 0.2126 * preset.r + 0.7152 * preset.g + 0.0722 * preset.b
+	var k := wall_albedo / maxf(lum, 0.001)
+	return Color(minf(preset.r * k, 1.0), minf(preset.g * k, 1.0), minf(preset.b * k, 1.0))
+
+
 func _build_world() -> void:
 	# 地面（路面）。街路は X 軸方向、幅 7m。
 	var asphalt := _mat(_asphalt_image(64, Color(0.42, 0.39, 0.47), 0.06))
@@ -333,9 +374,9 @@ func _build_world() -> void:
 		b.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 
 	# 建物: 直方体 + 屋根の薄い直方体。街路の両側に並べる。
-	var wall_a := _mat(_siding_image(Color(0.16, 0.16, 0.24), Color(0.62, 0.62, 0.70)))
-	var wall_b := _mat(_siding_image(Color(0.20, 0.18, 0.22), Color(0.55, 0.52, 0.55)))
-	var wall_c := _mat(_siding_image(Color(0.30, 0.28, 0.32), Color(0.70, 0.68, 0.72)))
+	var wall_a := _mat(_siding_image(_wall_base(Color(0.16, 0.16, 0.24)), Color(0.62, 0.62, 0.70)))
+	var wall_b := _mat(_siding_image(_wall_base(Color(0.20, 0.18, 0.22)), Color(0.55, 0.52, 0.55)))
+	var wall_c := _mat(_siding_image(_wall_base(Color(0.30, 0.28, 0.32)), Color(0.70, 0.68, 0.72)))
 	var roof := _mat(_roof_image())
 	var specs := [
 		# [x, side(+1 手前/-1 向こう), width, height, depth, wall]
@@ -351,6 +392,10 @@ func _build_world() -> void:
 		[6.0, 1, 8.0, 4.5, 7.0, wall_b],
 		[17.0, 1, 6.0, 4.0, 6.0, wall_c],
 	]
+	var band_mat := StandardMaterial3D.new()
+	band_mat.albedo_color = Color(0.85, 0.85, 0.85)
+	band_mat.roughness = 1.0
+	band_mat.specular_mode = BaseMaterial3D.SPECULAR_DISABLED
 	var idx := 0
 	for s in specs:
 		var x: float = s[0]
@@ -362,6 +407,16 @@ func _build_world() -> void:
 		var z := side * (3.5 + 1.8 + 1.0 + d * 0.5)
 		_box(Vector3(w, h, d), Vector3(x, h * 0.5, z), m, "Bldg%d" % idx)
 		_box(Vector3(w + 0.8, 0.35, d + 0.8), Vector3(x, h + 0.175, z), roof, "Roof%d" % idx)
+		bldg_aabbs.append(AABB(Vector3(x - w * 0.5, 0.0, z - d * 0.5), Vector3(w, h, d)))
+		bldg_aabbs.append(AABB(Vector3(x - (w + 0.8) * 0.5, h, z - (d + 0.8) * 0.5), Vector3(w + 0.8, 0.35, d + 0.8)))
+		if bands_on:
+			# 白い細帯（幅 0.1m・albedo 0.85）。街路に面した壁に数本。日陰で「線」として読めるかを見る
+			var face_z := z - side * (d * 0.5 + 0.02)
+			var band_y := 1.2
+			while band_y < h - 0.6:
+				var bb := _box(Vector3(w * 0.9, 0.1, 0.04), Vector3(x, band_y, face_z), band_mat, "Band%d_%d" % [idx, int(band_y * 10)])
+				bb.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+				band_y += 1.2
 		idx += 1
 
 
@@ -517,7 +572,9 @@ func _build_environment() -> void:
 	env.sky = sky
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	env.reflected_light_source = Environment.REFLECTION_SOURCE_DISABLED
-	env.tonemap_white = 1.0
+	env.tonemap_white = tonemap_white
+	env.sdfgi_enabled = false
+	env.ssr_enabled = false
 	env.glow_intensity = 1.0
 	env.glow_bloom = 0.0
 	env.glow_hdr_threshold = 0.9
@@ -619,14 +676,20 @@ func _apply_time() -> void:
 	sky_mat.ground_horizon_color = t["ground_horizon"]
 	sky_mat.ground_bottom_color = t["ground_bottom"]
 	sky_mat.energy_multiplier = t["sky_energy"]
-	env.ambient_light_color = t["ambient"]
-	env.ambient_light_energy = t["ambient_energy"]
+	var amb: Color = t["ambient"]
+	if ambient_desat > 0.0:
+		var y := 0.2126 * amb.r + 0.7152 * amb.g + 0.0722 * amb.b
+		amb = Color(lerpf(amb.r, y, ambient_desat), lerpf(amb.g, y, ambient_desat), lerpf(amb.b, y, ambient_desat))
+	env.ambient_light_color = amb
+	env.ambient_light_energy = t["ambient_energy"] * ambient_mul
 	env.fog_light_color = t["fog_color"]
 	env.fog_density = t["fog_density"]
 	env.fog_light_energy = t["fog_energy"]
 	env.tonemap_exposure = t["exposure"] if is_nan(exposure_override) else exposure_override
 
 	var lamps_on: bool = t["lamps"]
+	if lamps_override >= 0:
+		lamps_on = lamps_override == 1
 	for l in lamps:
 		l.visible = lamps_on
 	for e in emissives:
@@ -650,6 +713,7 @@ func _apply_camera() -> void:
 
 func _apply_env_toggles() -> void:
 	env.tonemap_mode = TONEMAPS[tonemap]
+	env.tonemap_white = tonemap_white
 	env.glow_enabled = glow_on
 	env.glow_intensity = glow_intensity
 	env.glow_hdr_threshold = glow_threshold
@@ -718,6 +782,67 @@ func _take_shot(path: String) -> void:
 	var img := get_viewport().get_texture().get_image()
 	var err := img.save_png(path)
 	print("lookdev: shot %s size=%s err=%d" % [path, img.get_size(), err])
+	_report_probes(img)
+
+
+## 路面上の計測点。ワールド座標 (x, 0, z) を画面へ投影し、3x3 の平均画素値と、
+## 太陽光が建物に遮られているか（幾何で判定）、日向/日陰の縁からの余裕（m）を出力する。
+## 出力は 1 行 1 点の JSON（先頭 "PROBE "）。較正ツールがこれを読む。
+func _report_probes(img: Image) -> void:
+	var pts := probes.duplicate()
+	if probe_grid:
+		for xi in range(-18, 19):
+			for zz in [-2.5, -1.25, 0.0, 1.25, 2.5]:
+				pts.append(Vector3(float(xi), 0.0, zz))
+	if pts.is_empty():
+		return
+	var sun_dir := -sun.global_transform.basis.z   # 光の進む向き
+	var size := img.get_size()
+	for p in pts:
+		if cam.is_position_behind(p):
+			continue
+		var sp := cam.unproject_position(p)
+		var px := int(round(sp.x))
+		var py := int(round(sp.y))
+		if px < 1 or py < 1 or px >= size.x - 1 or py >= size.y - 1:
+			continue
+		var acc := Vector3.ZERO
+		for dy in range(-1, 2):
+			for dx in range(-1, 2):
+				var c := img.get_pixel(px + dx, py + dy)
+				acc += Vector3(c.r, c.g, c.b)
+		acc /= 9.0
+		var shadow := _in_sun_shadow(p, sun_dir)
+		var margin := 0.0
+		for r in [0.5, 1.0, 1.5, 2.0]:
+			var same := true
+			for o in [Vector3(r, 0, 0), Vector3(-r, 0, 0), Vector3(0, 0, r), Vector3(0, 0, -r)]:
+				if _in_sun_shadow(p + o, sun_dir) != shadow:
+					same = false
+					break
+			if not same:
+				break
+			margin = r
+		var wall_dist := _dist_to_buildings(p)
+		print("PROBE {\"x\":%.2f,\"z\":%.2f,\"px\":%d,\"py\":%d,\"rgb\":[%.4f,%.4f,%.4f],\"shadow\":%s,\"margin\":%.1f,\"wall\":%.2f}" % [
+			p.x, p.z, px, py, acc.x, acc.y, acc.z, "true" if shadow else "false", margin, wall_dist])
+
+
+func _in_sun_shadow(p: Vector3, sun_dir: Vector3) -> bool:
+	var from := p + Vector3(0, 0.02, 0)
+	var to_sun := -sun_dir
+	for bb in bldg_aabbs:
+		if bb.intersects_ray(from, to_sun) != null:
+			return true
+	return false
+
+
+func _dist_to_buildings(p: Vector3) -> float:
+	var best := 1e9
+	for bb in bldg_aabbs:
+		var q := Vector3(clampf(p.x, bb.position.x, bb.end.x), p.y, clampf(p.z, bb.position.z, bb.end.z))
+		best = minf(best, p.distance_to(q))
+	return best
 
 
 # ============================================================================
