@@ -127,6 +127,7 @@ func _ready() -> void:
 					break
 		var path := fd.find_path(Vector2i(a), Vector2i(b))
 		_demo_state = {"from": a, "to": b, "path": path, "i": 0, "done": path.is_empty(), "start_ms": Time.get_ticks_msec()}
+		player.position = FieldData.tile_to_world(a.x, a.y) + Vector3(0, 0.02, 0)   # 自動歩行は始点から
 		if path.is_empty():
 			printerr("walk_demo: 経路が無い %s(passable %s) → %s(passable %s)" % [str(Vector2i(a)), str(fd.is_passable(int(a.x), int(a.y))), str(Vector2i(b)), str(fd.is_passable(int(b.x), int(b.y)))])
 	print("FIELD %s built in %.2fs (AO %.2fs, cache %s), faces=%d, passable=%d/%d" % [field_id, (Time.get_ticks_msec() - t0) / 1000.0, builder.bake_seconds, "hit" if builder.cache_hit else "baked", builder.gen.faces.size(), fd.reachable_count(), fd.size.x * fd.size.y])
