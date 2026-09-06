@@ -13,7 +13,7 @@
  "sun_az": {
   "evening": 235
  },
- "note": "歩ける範囲は F05_walkable.png（唯一の真実）。手前（西）側は 4 タイルの帯（生垣・塀・自転車・室外機）で屋根を 5 m 以上引く（フェーズ 11 P-2a）。調べ物・出入口は F05_spec.md の値。ずらした点は docs/lookdev/PHASE9.md に一覧。",
+ "note": "歩ける範囲は F05_walkable.png（唯一の真実）。西側は 2 タイルの帯（生垣・塀・自転車・室外機）、東側は 1 タイルの帯。両側とも 2 階建て（フェーズ 13: 式は助言、隠れはフェード）。調べ物・出入口は F05_spec.md の値（東の列へ移した点は docs/lookdev/PHASE9.md）。",
  "walkable": "res://data/fields/F05_walkable.png",
  "ground": {
   "walk": "old_street",
@@ -62,11 +62,21 @@
     "tex": "sidewalk"
    },
    {
+    "id": "gutter_e",
+    "rect": [
+     12,
+     0,
+     1,
+     40
+    ],
+    "tex": "sidewalk"
+   },
+   {
     "id": "gutter_pass",
     "rect": [
      0,
      19,
-     5,
+     6,
      1
     ],
     "tex": "sidewalk"
@@ -74,9 +84,9 @@
    {
     "id": "gutter_alley",
     "rect": [
-     12,
+     13,
      25,
-     20,
+     19,
      1
     ],
     "tex": "sidewalk"
@@ -84,9 +94,9 @@
    {
     "id": "parking",
     "rect": [
-     12,
+     13,
      26,
-     4,
+     3,
      2
     ],
     "tex": "asphalt"
@@ -122,7 +132,7 @@
    "floors": 2,
    "wall": "weatherboard",
    "near": [
-    5,
+    3,
     4
    ],
    "note": "呉服店（閉店）"
@@ -134,7 +144,7 @@
    "floors": 2,
    "wall": "mortar",
    "near": [
-    12,
+    13,
     4
    ],
    "note": "時計店（閉店）"
@@ -146,7 +156,7 @@
    "floors": 2,
    "wall": "namako",
    "near": [
-    12,
+    13,
     15
    ],
    "note": "薬屋（閉店）"
@@ -158,7 +168,7 @@
    "floors": 2,
    "wall": "weatherboard",
    "near": [
-    12,
+    13,
     20
    ],
    "note": "たちばな屋"
@@ -170,7 +180,7 @@
    "floors": 2,
    "wall": "mortar",
    "near": [
-    12,
+    13,
     29
    ],
    "note": "シャッター商店 3 軒目"
@@ -912,7 +922,7 @@
    "id": "w00",
    "asset": "obj_bicycle_rack",
    "at": [
-    3.0,
+    5.5,
     1.5
    ],
    "facing": "E"
@@ -921,7 +931,7 @@
    "id": "w01",
    "asset": "obj_air_conditioner_outdoor",
    "at": [
-    3.0,
+    5.5,
     3.5
    ],
    "facing": "E"
@@ -930,7 +940,7 @@
    "id": "w02",
    "asset": "obj_planter_box",
    "at": [
-    3.0,
+    5.5,
     6.5
    ],
    "facing": "E"
@@ -939,7 +949,7 @@
    "id": "w03",
    "asset": "obj_water_tank",
    "at": [
-    3.0,
+    5.5,
     9.5
    ],
    "facing": "E"
@@ -948,7 +958,7 @@
    "id": "w04",
    "asset": "obj_potted_plant",
    "at": [
-    3.0,
+    5.5,
     11.5
    ],
    "facing": "E"
@@ -957,8 +967,8 @@
    "id": "w05",
    "asset": "obj_bicycle_rack",
    "at": [
-    3.0,
-    23.5
+    5.5,
+    21.5
    ],
    "facing": "E"
   },
@@ -966,8 +976,8 @@
    "id": "w06",
    "asset": "obj_potted_plant",
    "at": [
-    3.0,
-    25.5
+    5.5,
+    23.5
    ],
    "facing": "E"
   },
@@ -975,8 +985,8 @@
    "id": "w07",
    "asset": "obj_air_conditioner_outdoor",
    "at": [
-    3.0,
-    27.5
+    5.5,
+    25.5
    ],
    "facing": "E"
   },
@@ -984,8 +994,8 @@
    "id": "w08",
    "asset": "obj_road_closure_sign",
    "at": [
-    3.0,
-    29.5
+    5.5,
+    27.5
    ],
    "facing": "E"
   },
@@ -993,7 +1003,7 @@
    "id": "w09",
    "asset": "obj_laundry_pole",
    "at": [
-    3.0,
+    5.5,
     33.5
    ],
    "facing": "E"
@@ -1002,7 +1012,7 @@
    "id": "w10",
    "asset": "obj_planter_box",
    "at": [
-    3.0,
+    5.5,
     35.5
    ],
    "facing": "E"
@@ -1011,44 +1021,8 @@
    "id": "w11",
    "asset": "obj_air_conditioner_outdoor",
    "at": [
-    3.0,
+    5.5,
     37.5
-   ],
-   "facing": "E"
-  },
-  {
-   "id": "g00",
-   "asset": "obj_traffic_cone",
-   "at": [
-    5.5,
-    2.5
-   ],
-   "facing": "E"
-  },
-  {
-   "id": "g01",
-   "asset": "obj_potted_plant",
-   "at": [
-    5.5,
-    8.5
-   ],
-   "facing": "E"
-  },
-  {
-   "id": "g02",
-   "asset": "obj_planter_box",
-   "at": [
-    5.5,
-    24.5
-   ],
-   "facing": "E"
-  },
-  {
-   "id": "g03",
-   "asset": "obj_traffic_cone",
-   "at": [
-    5.5,
-    34.5
    ],
    "facing": "E"
   }
@@ -1061,7 +1035,7 @@
   {
    "id": "toki_shop",
    "at": [
-    12,
+    13,
     20
    ],
    "kind": "shop",
@@ -1070,7 +1044,7 @@
   {
    "id": "calendar",
    "at": [
-    12,
+    13,
     21
    ],
    "kind": "item",
@@ -1124,7 +1098,7 @@
   {
    "id": "shutter_b",
    "at": [
-    12,
+    13,
     4
    ],
    "kind": "board",
@@ -1133,7 +1107,7 @@
   {
    "id": "wooden_door",
    "at": [
-    12,
+    13,
     15
    ],
    "kind": "door",
@@ -1208,7 +1182,7 @@
   {
    "id": "front_of_dagashi",
    "rect": [
-    8,
+    9,
     18,
     4,
     5
@@ -1231,16 +1205,16 @@
     4,
     0,
     1,
-    12
+    13
    ]
   },
   {
    "kind": "fence_block",
    "rect": [
     4,
-    22,
+    20,
     1,
-    8
+    10
    ]
   },
   {
@@ -1264,16 +1238,7 @@
   {
    "kind": "hedge",
    "rect": [
-    0,
-    20,
-    5,
-    1
-   ]
-  },
-  {
-   "kind": "hedge",
-   "rect": [
-    15,
+    18,
     5,
     1,
     16

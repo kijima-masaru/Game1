@@ -905,9 +905,10 @@
     16,
     5
    ],
+   "height_m": 11.5,
    "roof": "flat",
    "depth": 4,
-   "note": "A 棟（式で階数が落ちる）"
+   "note": "A 棟（4 階）"
   },
   {
    "id": "danchi_b",
@@ -919,9 +920,10 @@
     16,
     12
    ],
+   "height_m": 11.5,
    "roof": "flat",
    "depth": 4,
-   "note": "B 棟"
+   "note": "B 棟（4 階）"
   },
   {
    "id": "danchi_c",
@@ -933,9 +935,10 @@
     8,
     28
    ],
+   "height_m": 11.5,
    "roof": "flat",
    "depth": 4,
-   "note": "C 棟"
+   "note": "C 棟（4 階）"
   },
   {
    "id": "danchi_d",
@@ -947,9 +950,10 @@
     21,
     28
    ],
+   "height_m": 11.5,
    "roof": "flat",
    "depth": 4,
-   "note": "D 棟"
+   "note": "D 棟（4 階）"
   },
   {
    "id": "shisho",
@@ -959,10 +963,11 @@
    "wall": "concrete",
    "near": [
     33,
-    9
+    8
    ],
+   "height_m": 6.8,
    "roof": "flat",
-   "depth": 9,
+   "depth": 8,
    "note": "市役所支所"
   },
   {
@@ -975,6 +980,7 @@
     3,
     4
    ],
+   "height_m": 9.0,
    "roof": "flat",
    "depth": 3,
    "note": "給水塔（仮）"
@@ -985,7 +991,7 @@
    "width": 4,
    "floors": 2,
    "wall": "mortar",
-   "depth": 2
+   "depth": 3
   },
   {
    "id": "b07",
@@ -993,7 +999,7 @@
    "width": 3,
    "floors": 2,
    "wall": "weatherboard",
-   "depth": 2
+   "depth": 3
   },
   {
    "id": "b08",
@@ -1001,7 +1007,7 @@
    "width": 4,
    "floors": 2,
    "wall": "namako",
-   "depth": 2
+   "depth": 3
   },
   {
    "id": "b09",
@@ -1009,7 +1015,7 @@
    "width": 4,
    "floors": 2,
    "wall": "mortar",
-   "depth": 2
+   "depth": 3
   },
   {
    "id": "b10",
@@ -1017,7 +1023,7 @@
    "width": 3,
    "floors": 2,
    "wall": "mortar",
-   "depth": 2
+   "depth": 3
   },
   {
    "id": "b11",
@@ -1025,7 +1031,7 @@
    "width": 4,
    "floors": 2,
    "wall": "weatherboard",
-   "depth": 2
+   "depth": 3
   },
   {
    "id": "b12",
@@ -1033,7 +1039,7 @@
    "width": 4,
    "floors": 2,
    "wall": "namako",
-   "depth": 2
+   "depth": 3
   },
   {
    "id": "b13",
@@ -1041,7 +1047,7 @@
    "width": 3,
    "floors": 2,
    "wall": "mortar",
-   "depth": 2
+   "depth": 3
   },
   {
    "id": "b14",
@@ -1049,7 +1055,7 @@
    "width": 4,
    "floors": 2,
    "wall": "mortar",
-   "depth": 2
+   "depth": 3
   },
   {
    "id": "b15",
@@ -1057,7 +1063,7 @@
    "width": 4,
    "floors": 2,
    "wall": "weatherboard",
-   "depth": 2
+   "depth": 3
   },
   {
    "id": "b16",
@@ -1065,7 +1071,7 @@
    "width": 3,
    "floors": 2,
    "wall": "namako",
-   "depth": 2
+   "depth": 3
   },
   {
    "id": "b17",
@@ -1073,7 +1079,7 @@
    "width": 4,
    "floors": 2,
    "wall": "mortar",
-   "depth": 2
+   "depth": 3
   }
  ],
  "barriers": [],
@@ -1448,7 +1454,7 @@
    "id": "office_desk",
    "at": [
     32,
-    10
+    7
    ],
    "kind": "door",
    "label": "支所の受付"

@@ -25,7 +25,7 @@ func _init() -> void:
 			if l.get("lowered", false):
 				lowered += 1
 				print("  階数を落とした: %s %s ← %s" % [l["id"], str(l["rect"]), l.get("lowered_by", "")])
-		print("  遮蔽の式: 階数を落とした建物 %d、平屋でも隠す建物 %d、隠される歩行可能タイル %d" % [lowered, fd.lots.filter(func(l): return int(l.get("violates", 0)) > 0).size(), fd.layout.violations.size()])
+		print("  遮蔽の式（助言）: 主人公を隠しうる建物 %d、隠される歩行可能タイル %d（実行時はフェードで抜く）" % [fd.lots.filter(func(l): return int(l.get("violates", 0)) > 0).size(), fd.layout.violations.size()])
 		for v in fd.layout.violations.slice(0, 8):
 			print("    %s が (%d,%d) を隠す: %s まで %.1f m、必要 %.1f m" % [v["lot"], v["tile"].x, v["tile"].y, v["part"], v["dist_m"], v["need_m"]])
 		print("  近景の屋根（5 m 以内）: 建物 %d、歩行可能タイル %d" % [fd.lots.filter(func(l): return int(l.get("near_roof", 0)) > 0).size(), fd.layout.near_roofs.size()])

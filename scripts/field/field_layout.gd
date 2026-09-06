@@ -4,8 +4,8 @@ extends RefCounted
 ##
 ## 1. 歩行可能タイルに 4 近傍で接する「塞がれた」タイルを外周とし、向き（歩ける側）ごとに直線の列（run）へまとめる
 ## 2. `near` 付きの建物を最寄りの外周へ、残りは列の順に隙間なく詰める（contiguous）。奥行きは塞がれたタイルの中へ伸ばす
-## 3. 遮蔽の式（N-1）: 歩行可能タイルの主人公の頭（1.7 m）からカメラの方へ上がる視線が建物に当たるなら違反。
-##    必要距離 = (高さ − 1.7) / tan(俯角)。軒と棟のそれぞれで判定し、違反する建物は階数を落とす。平屋でも違反なら記録して報告
+## 3. 遮蔽の式（N-1）: 歩行可能タイルの主人公の頭（1.7 m）からカメラの方へ上がる視線が建物に当たるなら「隠す建物」。
+##    必要距離 = (高さ − 1.7) / tan(俯角)。フェーズ 13 から助言のみ（階数は落とさない）。隠れは実行時のフェードで解く
 ## 4. 建物の付かなかった外周は塀（edge_fill）で埋める（近景を空白にしない）
 ##
 ## 出力は lots の配列（rect / kind / front / floors / h_wall / rise / overhang …）。
@@ -292,7 +292,7 @@ func _fit_height(l: Dictionary) -> void:
 			h_wall = WALL_1F + FLOOR_M * (floors - 1)
 			rise = 0.0 if flat else (RISE_1F if floors == 1 else RISE_2F)
 		var bad := occluded_tiles(l["rect"], l["front"], h_wall, h_wall + rise, overhang)
-		if bad.is_empty() or floors <= 1 or fixed_h:
+		if true:   # フェーズ 13 R-2: 式は配置の助言。階数を落とさず、隠れる建物は実行時のフェードで解く
 			l["h_wall"] = h_wall
 			l["rise"] = rise
 			l["overhang"] = overhang
