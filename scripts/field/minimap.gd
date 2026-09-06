@@ -14,7 +14,7 @@ var map_px := 120.0            # 描画領域の一辺（px、設計解像度）
 const COL_WALK := Color(0.82, 0.80, 0.72, 0.95)
 const COL_NARROW := Color(0.45, 0.44, 0.40, 0.95)
 const COL_OPEN := Color(0.30, 0.34, 0.28, 0.6)
-const COL_BG := Color(0.05, 0.05, 0.08, 0.7)
+const COL_BG := Color(0.04, 0.04, 0.07, 0.78)
 const COL_EXIT := Color(1.0, 0.35, 0.25)
 const COL_POINT := Color(1.0, 0.85, 0.2)
 const COL_NPC := Color(0.4, 0.9, 1.0)
@@ -48,7 +48,7 @@ func _draw() -> void:
 		return
 	draw_rect(Rect2(Vector2.ZERO, size), COL_BG)
 	var diag := Vector2(fd.size).length()
-	var s := (map_px - 8.0) / diag
+	var s := (map_px - 6.0) / diag
 	var center := size * 0.5
 	var ex := _to_screen(Vector3(1, 0, 0))
 	var angle := ex.angle()
@@ -97,8 +97,8 @@ func _draw() -> void:
 	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
 	# 北の矢印（右上）
 	var n := _to_screen(Vector3(0, 0, -1)).normalized()
-	var o := Vector2(size.x - 12.0, 12.0)
-	draw_line(o - n * 6.0, o + n * 6.0, Color(1, 1, 1), 1.5)
+	var o := Vector2(size.x - 9.0, 9.0)
+	draw_line(o - n * 4.0, o + n * 4.0, Color(1, 1, 1), 1.0)
 	var side := Vector2(-n.y, n.x)
-	draw_colored_polygon(PackedVector2Array([o + n * 8.0, o + n * 3.0 + side * 3.0, o + n * 3.0 - side * 3.0]), Color(1, 0.3, 0.3))
+	draw_colored_polygon(PackedVector2Array([o + n * 6.0, o + n * 2.0 + side * 2.5, o + n * 2.0 - side * 2.5]), Color(1, 0.3, 0.3))
 	draw_rect(Rect2(Vector2.ZERO, size), Color(1, 1, 1, 0.35), false, 1.0)

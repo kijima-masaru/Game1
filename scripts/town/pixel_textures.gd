@@ -417,6 +417,18 @@ static func namako(size: int = 32, seed: int = 63) -> Image:
 
 
 ## 駄菓子屋の窓明かり（黄色。emission 板に使う）。格子の影を落とす。
+## 芝・草地（ニュータウンの緑地、空き地）
+static func grass(size: int = 32, seed: int = 69) -> Image:
+	_seed(seed)
+	var base := Color(0.34, 0.44, 0.24)
+	var pal := [base, base.darkened(0.15), base.lightened(0.10), Color(0.42, 0.44, 0.22), base.darkened(0.3)]
+	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
+	for y in size:
+		for x in size:
+			img.set_pixel(x, y, _pick(pal, [0.45, 0.2, 0.15, 0.12, 0.08]))
+	return img
+
+
 ## 生垣（近景の帯の埋め物）。濃い緑の葉のむら、周期なし
 static func hedge(size: int = 32, seed: int = 67) -> Image:
 	_seed(seed)

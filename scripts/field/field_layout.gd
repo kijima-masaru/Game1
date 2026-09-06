@@ -33,6 +33,8 @@ var runs: Array = []              # {dir: String, cells: Array[Vector2i]}
 var lots: Array = []
 var warnings: Array[String] = []
 var violations: Array = []        # {lot: id, tile: Vector2i, part: "eave"|"ridge", dist_m, need_m}
+var near_roofs: Array = []        # P-2a: 歩けるタイルからカメラ手前 5 m 以内に屋根が来る建物 {lot, tile, dist_m}
+const NEAR_ROOF_M := 5.0
 var toward_cam := Vector2(0, 1)   # フィールドのローカル座標でカメラの方へ向く単位ベクトル（タイル）
 var pitch_deg := CAM_PITCH_DEG
 var _edge_fill_spec = "fence_block"
@@ -79,7 +81,29 @@ func build(sz: Vector2i, cls: PackedByteArray, buildings: Array, edge_fill, fiel
 	_fill_runs(pool)
 	_fill_fences(edge_fill)
 	_unify_contiguous()
+	_check_near_roofs()
 	return lots
+
+
+## P-2a: 歩けるタイルから見てカメラ手前 5 m 以内に面積の大きい屋根（建物）が来ないこと。塀・生垣・通り抜け構造物は対象外
+func _check_near_roofs() -> void:
+	near_roofs = []
+	var T := FieldData.TILE
+	var reach := int(ceil(NEAR_ROOF_M / T)) + 1
+	for l in lots:
+		var kind: String = l.get("kind", "")
+		if kind in FENCE_KINDS or kind in PASSABLE_KINDS:
+			continue
+		var rect: Array = l["rect"]
+		for ty in range(int(rect[1]) - reach, int(rect[1]) + int(rect[3]) + reach + 1):
+			for tx in range(int(rect[0]) - reach, int(rect[0]) + int(rect[2]) + reach + 1):
+				if _cls(tx, ty) != CLASS_WALK:
+					continue
+				var c := Vector2(tx + 0.5, ty + 0.5)
+				var t_in := _ray_rect_entry(c, toward_cam, float(rect[0]), float(rect[1]), float(rect[0]) + float(rect[2]), float(rect[1]) + float(rect[3]))
+				if t_in > 1e-6 and t_in * T < NEAR_ROOF_M:
+					near_roofs.append({"lot": l["id"], "tile": Vector2i(tx, ty), "dist_m": t_in * T})
+					l["near_roof"] = int(l.get("near_roof", 0)) + 1
 
 
 ## 必要距離（m） = (高さ − 頭) / tan(俯角)
@@ -89,8 +113,15 @@ func need_m(height_m: float) -> float:
 
 # ---- 外周の列 --------------------------------------------------------------------------
 func _trace_runs() -> void:
+	# 歩けるタイルに面する外周を先に（建物はまずそこへ）、空き地にだけ面する外周を後に
 	runs = []
-	for dname in ["E", "W", "S", "N"]:
+	_trace_runs_pass(true)
+	_trace_runs_pass(false)
+
+
+func _trace_runs_pass(walk_side: bool) -> void:
+	# カメラ（西南西）から正面が見える向き（W、S）を先に埋める。E・N 向きの正面はカメラの裏側
+	for dname in ["W", "S", "E", "N"]:
 		var d: Vector2i = DIRS[dname]
 		var along_y := d.x != 0
 		var outer := size.x if along_y else size.y
@@ -104,7 +135,8 @@ func _trace_runs() -> void:
 				var ny := c.y + d.y
 				var inside := nx >= 0 and ny >= 0 and nx < size.x and ny < size.y   # 場外へ向く正面は作らない
 				var nb := _cls(nx, ny)
-				var is_b := inside and _cls(c.x, c.y) == CLASS_BLOCKED and (nb == CLASS_WALK or nb == CLASS_NARROW or nb == CLASS_OPEN)
+				var faces_walk := nb == CLASS_WALK or nb == CLASS_NARROW
+				var is_b := inside and _cls(c.x, c.y) == CLASS_BLOCKED and (faces_walk if walk_side else nb == CLASS_OPEN)
 				if is_b:
 					cur.append(c)
 				elif not cur.is_empty():

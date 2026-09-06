@@ -6,8 +6,9 @@ extends RefCounted
 ## 座標はタイル（左上原点、右 +x、下 +y）。ワールドは x → +X、y → +Z。
 
 const TILE := 1.143
-const LOT_KINDS := ["shop_shutter", "shop_wood", "dagashi", "house", "temple_hall", "temple_gate", "fence_wall", "fence_block", "hedge", "bldg_rc"]
-const GROUND_TEX := ["lot_ground", "gravel", "asphalt", "stone_path", "old_street", "alley", "sidewalk"]
+const LOT_KINDS := ["shop_shutter", "shop_wood", "dagashi", "house", "temple_hall", "temple_gate", "fence_wall", "fence_block", "hedge", "bldg_rc", "store", "apartment", "civic"]
+const BARRIER_KINDS := ["hedge", "fence_block", "fence_wall", "wire_fence", "guardrail"]
+const GROUND_TEX := ["lot_ground", "gravel", "asphalt", "stone_path", "old_street", "alley", "sidewalk", "grass"]
 const PASSABLE_LOTS := ["temple_gate"]
 const MIN_STREET_WIDTH := 6
 
@@ -153,6 +154,14 @@ func _validate_static() -> void:
 	for p in d.get("props", []):
 		if not assets.has(p.get("asset", "")):
 			errors.append("prop %s: 未定義の asset %s" % [p.get("id", "?"), p.get("asset", "")])
+	for b in d.get("barriers", []):
+		if not (b.get("kind", "hedge") in BARRIER_KINDS):
+			errors.append("barrier: 未定義の kind %s" % b.get("kind", ""))
+		var r: Array = b.get("rect", [0, 0, 0, 0])
+		for y in range(int(r[1]), int(r[1]) + int(r[3])):
+			for x in range(int(r[0]), int(r[0]) + int(r[2])):
+				if cls(x, y) != FieldLayout.CLASS_OPEN:
+					errors.append("barrier %s: (%d,%d) が空き地（128）ではない" % [b.get("kind", "?"), x, y])
 	for e in d.get("exits", []):
 		var at: Array = e["at"]
 		if not is_walk_class(int(at[0]), int(at[1])):

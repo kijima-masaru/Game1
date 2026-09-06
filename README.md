@@ -74,7 +74,7 @@ godot --path . res://scenes/block.tscn -- time=noon tex=pixellab street_angle=90
 
 歩ける範囲のマスク `data/fields/<ID>_walkable.png`（1 px = 1 タイル、唯一の真実）と `data/fields/<id>.json`（建物リスト・配置物・調べ物・出入口）から
 `scripts/field/` が街を組む（形式は [docs/FIELD_FORMAT.md](docs/FIELD_FORMAT.md)）。建物の位置と向きは外周から自動で決まり、
-ミニマップはマスクから直接描く。建物の高さは遮蔽の式（必要距離 = (高さ − 1.7) / tan 30°）で自動的に決まる。F05 旧鹿之尾街道 商店街が最初の 1 枚。
+ミニマップはマスクから直接描く。建物の高さは遮蔽の式（必要距離 = (高さ − 1.7) / tan 30°）で自動的に決まる。F05 旧鹿之尾街道 商店街に続き、A 群（F01 / F06 / F12 / F13 / F02）を `tools/gen_fields_a.py` で生成した（フェーズ 11）。
 
 ```bash
 godot --path . res://scenes/fields/f05_kaido.tscn -- time=evening          # 歩く（WASD 画面基準、E 調べる、F1 デバッグ、F2 通行判定と区画）

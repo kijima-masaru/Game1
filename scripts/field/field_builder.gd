@@ -33,6 +33,7 @@ func build(field: FieldData, parent: Node3D, flags: Dictionary, cam_yaw_deg: flo
 	_build_ground()
 	for l in fd.lots:          # FieldLayout が歩行可能マスクから決めた区画（when は適用済み）
 		_build_lot(l)
+	_build_barriers()
 	var t0 := Time.get_ticks_msec()
 	var cache_dir := "res://cache/fields/%s" % fd.d["id"]
 	var key := _cache_key()
@@ -70,6 +71,7 @@ func _build_materials(tex_mode: String) -> void:
 	var PT := PixelTextures
 	mats["lot_ground"] = PT.material(PT.lot_ground())
 	mats["gravel"] = PT.material(PT.gravel())
+	mats["grass"] = PT.material(PT.grass())
 	mats["asphalt"] = PT.material(PT.asphalt_gravel())
 	mats["stone_path"] = PT.material(PT.stone_path())
 	mats["old_street"] = PT.material(PT.old_street())
@@ -88,6 +90,12 @@ func _build_materials(tex_mode: String) -> void:
 	mats["shutter"] = [PT.material(PT.shutter()), PT.material(PT.shutter(32, 0.36, 24)), PT.material(PT.shutter(32, 0.44, 25))]
 	mats["block_fence"] = PT.material(PT.block_fence())
 	mats["hedge"] = PT.material(PT.hedge())
+	mats["wire"] = PT.material(PT.noise(8, Color(0.42, 0.44, 0.46), 0.08))
+	mats["sign_red"] = PT.emissive_material(Color(0.85, 0.15, 0.12), 0.25)
+	mats["sign_blue"] = PT.emissive_material(Color(0.15, 0.35, 0.8), 0.25)
+	mats["sign_yellow"] = PT.emissive_material(Color(0.95, 0.75, 0.15), 0.25)
+	mats["sign_white"] = PT.emissive_material(Color(0.95, 0.95, 0.9), 0.2)
+	mats["glass_bright"] = PT.material(PT.noise(8, Color(0.30, 0.40, 0.50), 0.03))
 	mats["glass"] = PT.material(PT.noise(8, Color(0.10, 0.12, 0.18), 0.02))
 	mats["frame"] = PT.material(PT.noise(8, Color(0.62, 0.62, 0.60), 0.02))
 	mats["wood"] = PT.material(PT.weatherboard(32, Color(0.48, 0.36, 0.26), 0.30, 17))
@@ -187,7 +195,7 @@ func _roof(l: Dictionary, box: Dictionary, h: float, roof_mat: Material, wall_ma
 	var end_overhang := overhang
 	if l.get("contiguous", false) and (fd.layout.has_neighbor(l, -1) or fd.layout.has_neighbor(l, 1)):
 		end_overhang = 0.0
-	if l.get("roof", "gable") == "flat":
+	if l.get("roof", "gable") == "flat" or l.get("kind", "") in ["store", "apartment", "civic"]:
 		gen.add_face(Vector3(c.x - box["w"] * 0.5, h, c.z - box["d"] * 0.5), Vector3(box["w"], 0, 0), Vector3(0, 0, box["d"]), Vector3.UP, roof_mat, l["id"] + "_top", true, true)
 		return
 	if l.get("roof", "gable") == "none":
@@ -256,7 +264,7 @@ func _build_lot(l: Dictionary) -> void:
 				gen.add_gable_roof(Vector3(c.x, 3.6, c.z), box["w"], maxf(box["d"], 1.0), 1.0, roof, mats["wood"], l["id"], 0.5)
 			return
 	# --- 壁のある建物 ---
-	var with_top: bool = l.get("roof", "gable") == "flat"
+	var with_top: bool = l.get("roof", "gable") == "flat" or kind in ["store", "apartment", "civic"]
 	gen.add_box(box["center"], Vector3(box["w"], h, box["d"]), wall, wall, l["id"], true, with_top)
 	_roof(l, box, h, roof, wall, overhang, rise)
 	var fr := _front_frame(l, box, h)
@@ -315,6 +323,36 @@ func _build_lot(l: Dictionary) -> void:
 		"bldg_rc":
 			for fl in floors:
 				gen.add_window(o, u, v, n, 0.5, 0.9 + fl * 3.0, L - 1.0, 1.2, mats["glass"], mats["frame"], "%s_w%d" % [l["id"], fl])
+		"store":
+			# 大型店の記号（F01）: 看板の帯（色）、自動ドア（明るいガラス 2 枚）、庇。建物は大きくしない
+			var sign_mat: Material = mats.get("sign_" + String(l.get("sign", "red")), mats["sign_red"])
+			gen.add_plate(o, u, v, n, 0.2, h - 1.1, L - 0.4, 0.9, sign_mat, l["id"] + "_sign", 0.04)
+			var dw := minf(L * 0.4, 3.0)
+			gen.add_plate(o, u, v, n, (L - dw) * 0.5, 0.05, dw, 2.4, mats["glass_bright"], l["id"] + "_door")
+			gen.add_plate(o, u, v, n, (L - dw) * 0.5 + dw * 0.5 - 0.04, 0.05, 0.08, 2.4, mats["frame"], l["id"] + "_doorframe")
+			gen.add_plate(o, u, v, n, 0.1, 2.5, L - 0.2, 0.15, mats["frame"], l["id"] + "_canopy", 0.3)
+			var ww := (L - dw) * 0.5 - 0.6
+			if ww > 0.8:
+				gen.add_window(o, u, v, n, 0.3, 0.6, ww, 1.8, mats["glass_bright"], mats["frame"], l["id"] + "_w1")
+				gen.add_window(o, u, v, n, L - 0.3 - ww, 0.6, ww, 1.8, mats["glass_bright"], mats["frame"], l["id"] + "_w2")
+		"apartment":
+			# 団地（F12）: 各階に窓の列とベランダの手すり
+			for fl in floors:
+				var y0 := 0.9 + fl * 3.0
+				var k := 0
+				var x := 0.4
+				while x + 1.2 <= L - 0.4:
+					gen.add_window(o, u, v, n, x, y0, 1.2, 1.1, mats["glass"], mats["frame"], "%s_w%d_%d" % [l["id"], fl, k])
+					x += 1.8
+					k += 1
+				if fl > 0:
+					gen.add_plate(o, u, v, n, 0.2, y0 - 0.9, L - 0.4, 0.9, mats["concrete"][0], "%s_balc%d" % [l["id"], fl], 0.35)
+		"civic":
+			# 市民センター・交番（F06）: RC 2 階、正面に庇付きの入口と横長の窓
+			gen.add_plate(o, u, v, n, L * 0.5 - 1.2, 0.05, 2.4, 2.4, mats["glass_bright"], l["id"] + "_entrance")
+			gen.add_plate(o, u, v, n, L * 0.5 - 1.6, 2.5, 3.2, 0.2, mats["frame"], l["id"] + "_canopy", 0.5)
+			for fl in floors:
+				gen.add_window(o, u, v, n, 0.5, 0.9 + fl * 3.0, L - 1.0, 1.2, mats["glass"], mats["frame"], "%s_w%d" % [l["id"], fl])
 
 
 func _collect_lot_faces() -> void:
@@ -344,6 +382,26 @@ func _collect_lot_faces() -> void:
 					lot_aabbs[id] = (lot_aabbs[id] as AABB).merge(bb)
 				lot_faces[id].append(mi)
 				break
+
+
+## barriers: 空き地（open）の上に明示した塀・生垣・金網（P-2a の近景）。矩形の細い方の軸に沿って薄い箱を立てる
+func _build_barriers() -> void:
+	var n := 0
+	for b in fd.d.get("barriers", []):
+		var r: Array = b["rect"]
+		var kind: String = b.get("kind", "hedge")
+		var cx := (float(r[0]) + float(r[2]) * 0.5) * T
+		var cz := (float(r[1]) + float(r[3]) * 0.5) * T
+		var along_x := int(r[2]) >= int(r[3])
+		var length := float(r[2] if along_x else r[3]) * T
+		var thick := 0.3
+		var h: float = {"hedge": 1.0, "fence_block": 1.2, "fence_wall": 1.8, "wire_fence": 1.5, "guardrail": 0.8}.get(kind, 1.0)
+		var mat: Material = {"hedge": mats["hedge"], "fence_block": mats["block_fence"], "fence_wall": mats["plaster"][0], "wire_fence": mats["wire"], "guardrail": mats["frame"]}.get(kind, mats["hedge"])
+		var sz := Vector3(length, h, thick) if along_x else Vector3(thick, h, length)
+		if kind == "hedge":
+			sz = Vector3(length, h, 0.6) if along_x else Vector3(0.6, h, length)
+		gen.add_box(Vector3(cx, 0, cz), sz, mat, mat, "barrier%02d" % n, true)
+		n += 1
 
 
 ## 正面（歩ける側）にある面に meta front=true を付ける（N-2c の計測用）。壁の面は正面の縁に接するもの、板類は名前で判定

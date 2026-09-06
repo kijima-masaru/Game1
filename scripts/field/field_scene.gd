@@ -39,6 +39,9 @@ var _fade_frames := 0
 var _faded := {}
 var _fade_ids := {}
 var _measure_frame := 0
+var _deltas: Array[float] = []
+var vignette := 0
+var vignette_rect: ColorRect
 
 
 func _ready() -> void:
@@ -71,9 +74,15 @@ func _ready() -> void:
 				areamask = kv[1] == "1"
 			"occl":
 				occl = kv[1]
+			"vignette":
+				vignette = clampi(int(kv[1]), 0, 3)
 	lookdev = load("res://scenes/lookdev.tscn").instantiate()
 	lookdev.layout = "empty"
 	add_child(lookdev)
+	if not OS.get_cmdline_user_args().has("hud=1"):
+		lookdev.hud_on = false   # lookdev の検証用 HUD はフィールドでは出さない
+		if lookdev.hud != null:
+			lookdev.hud.visible = false
 	fd = FieldData.new()
 	# field_yaw の上書きは配置（近景の帯）に効くので、読み込み後に再配置する
 	fd.load("res://data/fields/%s.json" % field_id.to_lower(), "res://data/assets/objects.json", flags)
@@ -108,10 +117,18 @@ func _ready() -> void:
 	if OS.get_cmdline_user_args().has("measure=1"):
 		_print_ground_range()
 	if walk_demo:
-		var path := fd.find_path(Vector2i(_exit_spawn("N")), Vector2i(_exit_spawn("S")))
-		_demo_state = {"from": _exit_spawn("N"), "to": _exit_spawn("S"), "path": path, "i": 0, "done": path.is_empty(), "start_ms": Time.get_ticks_msec()}
+		var exits: Array = fd.d.get("exits", [])
+		var b := _exit_spawn("S") if _has_exit("S") else _spawn_of(exits[exits.size() - 1])
+		var a := _exit_spawn("N") if _has_exit("N") else b
+		if a == b:
+			for e in exits:   # 北の出入口が無ければ、終点と違う最初の出入口から
+				if _spawn_of(e) != b:
+					a = _spawn_of(e)
+					break
+		var path := fd.find_path(Vector2i(a), Vector2i(b))
+		_demo_state = {"from": a, "to": b, "path": path, "i": 0, "done": path.is_empty(), "start_ms": Time.get_ticks_msec()}
 		if path.is_empty():
-			printerr("walk_demo: 北→南の経路が無い")
+			printerr("walk_demo: 経路が無い %s(passable %s) → %s(passable %s)" % [str(Vector2i(a)), str(fd.is_passable(int(a.x), int(a.y))), str(Vector2i(b)), str(fd.is_passable(int(b.x), int(b.y)))])
 	print("FIELD %s built in %.2fs (AO %.2fs, cache %s), faces=%d, passable=%d/%d" % [field_id, (Time.get_ticks_msec() - t0) / 1000.0, builder.bake_seconds, "hit" if builder.cache_hit else "baked", builder.gen.faces.size(), fd.reachable_count(), fd.size.x * fd.size.y])
 
 
@@ -119,10 +136,24 @@ func _lamps_on() -> bool:
 	return bool(lookdev.TIMES[lookdev.time_name]["lamps"])
 
 
+func _has_exit(dir: String) -> bool:
+	for e in fd.d.get("exits", []):
+		if e["dir"] == dir:
+			return true
+	return false
+
+
+func _spawn_of(e: Dictionary) -> Vector2:
+	return Vector2(float(e["spawn"][0]) + 0.5, float(e["spawn"][1]) + 0.5)
+
+
 func _exit_spawn(dir: String) -> Vector2:
 	for e in fd.d.get("exits", []):
 		if e["dir"] == dir:
 			return Vector2(float(e["spawn"][0]) + 0.5, float(e["spawn"][1]) + 0.5)
+	var exits: Array = fd.d.get("exits", [])
+	if not exits.is_empty():
+		return _spawn_of(exits[0])   # その向きの出入口が無ければ最初の出入口（中央は建物の中のことがある）
 	return Vector2(fd.size.x * 0.5, fd.size.y * 0.5)
 
 
@@ -130,19 +161,47 @@ func _exit_spawn(dir: String) -> Vector2:
 # 主人公
 # ============================================================================
 func _figure_image() -> Image:
-	var w := 16
-	var h := 48
+	# 仮の主人公 28×56 texel（P-3）。頭・髪・胴・腕・脚・靴を色分け。本番の素材はシナリオレビュー後
+	var w := 28
+	var h := 56
 	var img := Image.create(w, h, false, Image.FORMAT_RGBA8)
 	img.fill(Color(0, 0, 0, 0))
-	img.fill_rect(Rect2i(4, 0, 8, 8), Color(0.85, 0.72, 0.6))
-	img.fill_rect(Rect2i(3, 8, 10, 22), Color(0.55, 0.58, 0.62))
-	img.fill_rect(Rect2i(3, 30, 4, 18), Color(0.35, 0.36, 0.40))
-	img.fill_rect(Rect2i(9, 30, 4, 18), Color(0.35, 0.36, 0.40))
+	var hair := Color(0.20, 0.15, 0.13)
+	var skin := Color(0.90, 0.76, 0.64)
+	var shirt := Color(0.36, 0.44, 0.58)
+	var shirt_d := Color(0.28, 0.34, 0.46)
+	var pants := Color(0.22, 0.22, 0.27)
+	var shoe := Color(0.12, 0.10, 0.10)
+	img.fill_rect(Rect2i(8, 2, 12, 12), skin)          # 顔
+	img.fill_rect(Rect2i(7, 0, 14, 5), hair)           # 髪
+	img.fill_rect(Rect2i(6, 3, 3, 7), hair)
+	img.fill_rect(Rect2i(19, 3, 3, 6), hair)
+	img.fill_rect(Rect2i(11, 8, 2, 2), Color(0.1, 0.1, 0.12))   # 目
+	img.fill_rect(Rect2i(16, 8, 2, 2), Color(0.1, 0.1, 0.12))
+	img.fill_rect(Rect2i(12, 14, 4, 2), skin)          # 首
+	img.fill_rect(Rect2i(6, 16, 16, 18), shirt)        # 胴
+	img.fill_rect(Rect2i(6, 16, 3, 18), shirt_d)       # 胴の陰
+	img.fill_rect(Rect2i(3, 17, 3, 14), shirt)         # 腕
+	img.fill_rect(Rect2i(22, 17, 3, 14), shirt_d)
+	img.fill_rect(Rect2i(3, 31, 3, 4), skin)           # 手
+	img.fill_rect(Rect2i(22, 31, 3, 4), skin)
+	img.fill_rect(Rect2i(7, 34, 6, 18), pants)         # 脚
+	img.fill_rect(Rect2i(15, 34, 6, 18), pants)
+	img.fill_rect(Rect2i(6, 52, 7, 4), shoe)           # 靴
+	img.fill_rect(Rect2i(15, 52, 7, 4), shoe)
+	# 輪郭 1 px（暗色）
+	var src := img.duplicate()
 	for y in h:
 		for x in w:
-			var c := img.get_pixel(x, y)
-			if c.a > 0.0 and (x == 3 or x == 12 or y == 0 or y == h - 1 or (y == 8 and x >= 4 and x <= 11)):
-				img.set_pixel(x, y, Color(0.08, 0.08, 0.1))
+			if src.get_pixel(x, y).a > 0.0:
+				continue
+			var edge := false
+			for o in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+				var q: Vector2i = Vector2i(x, y) + o
+				if q.x >= 0 and q.y >= 0 and q.x < w and q.y < h and src.get_pixel(q.x, q.y).a > 0.0:
+					edge = true
+			if edge:
+				img.set_pixel(x, y, Color(0.08, 0.07, 0.09))
 	return img
 
 
@@ -196,7 +255,8 @@ func _build_ui() -> void:
 	add_child(ui)
 	hud = Label.new()
 	hud.position = Vector2(8, 6)
-	hud.add_theme_font_size_override("font_size", 13)
+	hud.size = Vector2(get_window().content_scale_size.x - 100, 40)   # ミニマップ（右上 72 px）と重ねない
+	hud.add_theme_font_size_override("font_size", 12)
 	hud.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.9))
 	hud.add_theme_constant_override("shadow_offset_x", 1)
 	hud.add_theme_constant_override("shadow_offset_y", 1)
@@ -204,7 +264,7 @@ func _build_ui() -> void:
 	msg = Label.new()
 	msg.anchor_left = 0.05
 	msg.anchor_right = 0.95
-	msg.anchor_top = 0.82
+	msg.anchor_top = 0.84
 	msg.anchor_bottom = 0.98
 	msg.add_theme_font_size_override("font_size", 14)
 	msg.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.9))
@@ -242,15 +302,36 @@ func _build_ui() -> void:
 	minimap.cam = lookdev.cam
 	minimap.player = player
 	minimap.flags = flags
-	minimap.position = Vector2(get_window().content_scale_size.x - 128, 8)
+	minimap.map_px = 72.0
+	minimap.position = Vector2(get_window().content_scale_size.x - 80, 8)
+	# ビネット（P-2b）: 画面周辺を落とす。vignette=1..3
+	if vignette > 0:
+		vignette_rect = ColorRect.new()
+		vignette_rect.anchor_right = 1.0
+		vignette_rect.anchor_bottom = 1.0
+		vignette_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		var sh := Shader.new()
+		sh.code = "shader_type canvas_item;\nuniform float strength = 0.5;\nvoid fragment() { vec2 p = (UV - 0.5) * vec2(1.0, 0.8); float d = length(p) * 2.0; float v = smoothstep(0.55, 1.35, d); COLOR = vec4(0.0, 0.0, 0.0, v * strength); }"
+		var sm := ShaderMaterial.new()
+		sm.shader = sh
+		sm.set_shader_parameter("strength", [0.0, 0.35, 0.55, 0.75][vignette])
+		vignette_rect.material = sm
+		ui.add_child(vignette_rect)
+		ui.move_child(vignette_rect, 0)
 	ui.add_child(minimap)
 
 
+func _frame_ms() -> float:
+	var sum := 0.0
+	for v in _deltas:
+		sum += v
+	return sum / maxf(_deltas.size(), 1) * 1000.0
+
+
 func _update_hud() -> void:
-	var t := _player_tile()
-	var parts := ["%s %s   tile (%.1f, %.1f)   %.1f ms/frame  %d fps" % [field_id, fd.d["name"], t.x, t.y, Performance.get_monitor(Performance.TIME_PROCESS) * 1000.0, int(Engine.get_frames_per_second())]]
-	parts.append("[WASD] 移動（画面基準）  [E] 調べる  [F1] デバッグ  [F2] 通行判定  field_yaw %d" % int(fd.d.get("field_yaw", 0)))
-	hud.text = "\n".join(parts)
+	# 通常時の HUD は日付と所持品だけ（P-1b）。座標・フレーム時間は F1 のデバッグ画面
+	var tod: String = {"morning": "朝", "noon": "昼", "evening": "夕方", "night": "夜"}.get(lookdev.time_name, "")
+	hud.text = "8月20日（%s）  %s\n所持品: なし" % [tod, fd.d["name"]]
 	if not near_point.is_empty():
 		msg.text = "[E] %s" % near_point["label"]
 	elif not near_exit.is_empty():
@@ -281,7 +362,10 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _process(delta: float) -> void:
 	var cam: Camera3D = lookdev.cam
-	_frame_times.append(Performance.get_monitor(Performance.TIME_PROCESS) * 1000.0)
+	_frame_times.append(delta * 1000.0)
+	_deltas.append(delta)
+	if _deltas.size() > 30:
+		_deltas.pop_front()
 	if walk_demo and not _demo_state.get("done", true):
 		_demo_step(delta)
 	else:
@@ -403,7 +487,8 @@ func _update_debug() -> void:
 	var lines := ["field %s  yaw %d  flags %s" % [field_id, int(fd.d.get("field_yaw", 0)), str(flags.keys())]]
 	lines.append("tile (%.2f, %.2f)  passable %s" % [t.x, t.y, fd.is_passable_world(player.position)])
 	lines.append("faces %d  AO %.2fs (%s)  lights %d" % [builder.gen.faces.size(), builder.bake_seconds, "cache" if builder.cache_hit else "baked", builder.lights.size()])
-	lines.append("frame %.2f ms  fps %d  fade frames %d" % [Performance.get_monitor(Performance.TIME_PROCESS) * 1000.0, int(Engine.get_frames_per_second()), _fade_frames])
+	lines.append("frame %.2f ms  fps %d  fade frames %d  (process %.2f ms)" % [_frame_ms(), int(round(1000.0 / maxf(_frame_ms(), 0.01))), _fade_frames, Performance.get_monitor(Performance.TIME_PROCESS) * 1000.0])
+	lines.append("[WASD] 移動（画面基準）  [E] 調べる  [F2] 通行判定  [Esc] 終了")
 	lines.append("draw calls %d  objects %d" % [Performance.get_monitor(Performance.RENDER_TOTAL_DRAW_CALLS_IN_FRAME), Performance.get_monitor(Performance.RENDER_TOTAL_OBJECTS_IN_FRAME)])
 	lines.append("near: %s / %s" % [near_point.get("id", "-"), near_exit.get("dir", "-")])
 	for w in fd.warnings:
@@ -470,6 +555,8 @@ func _apply_areamask() -> void:
 		p.visible = false
 	if minimap != null:
 		minimap.visible = false
+	if vignette_rect != null:
+		vignette_rect.visible = false
 
 
 ## M-1: 1 画面に写る地面の範囲（画面の四隅の視線と y = 0 の交点）
