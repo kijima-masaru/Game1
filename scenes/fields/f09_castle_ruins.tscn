@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://c1game1fieldf09"]
+
+[ext_resource type="Script" path="res://scripts/field/field_scene.gd" id="1_field"]
+
+[node name="F09" type="Node3D"]
+script = ExtResource("1_field")
+field_id = "F09"
