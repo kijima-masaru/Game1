@@ -9,11 +9,11 @@
  "elevation": 2,
  "biome": "old_shopping_street",
  "scene": "res://scenes/fields/f05_kaido.tscn",
- "field_yaw": 40,
+ "field_yaw": 45,
  "sun_az": {
-  "evening": 230
+  "evening": 232
  },
- "note": "歩ける範囲は F05_walkable.png（唯一の真実）。refs/field/F05.png を元に道幅 6 タイルへ作り直した（フェーズ 9 M-4）。調べ物・出入口は F05_spec.md の値。ずらした点は docs/lookdev/PHASE9.md に一覧。",
+ "note": "歩ける範囲は F05_walkable.png（唯一の真実）。refs/field/F05.png を元に道幅 6 タイルへ作り直した（フェーズ 9）。調べ物・出入口は F05_spec.md の値。駄菓子屋は正面がカメラから見える東の列へ移した。ずらした点は docs/lookdev/PHASE9.md に一覧。",
  "walkable": "res://data/fields/F05_walkable.png",
  "ground": {
   "walk": "old_street",
@@ -24,10 +24,10 @@
    {
     "id": "temple_yard",
     "rect": [
-     18,
+     19,
      5,
-     13,
-     15
+     12,
+     12
     ],
     "tex": "gravel"
    },
@@ -35,11 +35,81 @@
     "id": "sando",
     "rect": [
      21,
-     11,
+     9,
      3,
-     10
+     12
     ],
     "tex": "stone_path"
+   },
+   {
+    "id": "forecourt",
+    "rect": [
+     19,
+     18,
+     8,
+     3
+    ],
+    "tex": "stone_path"
+   },
+   {
+    "id": "gutter_w1",
+    "rect": [
+     5,
+     0,
+     1,
+     13
+    ],
+    "tex": "sidewalk"
+   },
+   {
+    "id": "gutter_w2",
+    "rect": [
+     5,
+     20,
+     1,
+     10
+    ],
+    "tex": "sidewalk"
+   },
+   {
+    "id": "gutter_w3",
+    "rect": [
+     5,
+     32,
+     1,
+     8
+    ],
+    "tex": "sidewalk"
+   },
+   {
+    "id": "gutter_pass",
+    "rect": [
+     0,
+     19,
+     5,
+     1
+    ],
+    "tex": "sidewalk"
+   },
+   {
+    "id": "gutter_alley",
+    "rect": [
+     12,
+     25,
+     20,
+     1
+    ],
+    "tex": "sidewalk"
+   },
+   {
+    "id": "parking",
+    "rect": [
+     12,
+     26,
+     4,
+     2
+    ],
+    "tex": "asphalt"
    }
   ]
  },
@@ -49,7 +119,7 @@
     17,
     4,
     15,
-    17
+    14
    ],
    "kind": "fence_wall",
    "reserve": true
@@ -108,7 +178,7 @@
    "floors": 2,
    "wall": "weatherboard",
    "near": [
-    5,
+    12,
     20
    ],
    "note": "たちばな屋"
@@ -146,202 +216,218 @@
    "front": "S",
    "at": [
     22,
-    20
+    17
    ]
   },
   {
    "id": "b00",
-   "kind": "shop_wood",
+   "kind": "shop_shutter",
    "width": 4,
    "floors": 2,
    "wall": "weatherboard"
   },
   {
    "id": "b01",
-   "kind": "shop_shutter",
+   "kind": "shop_wood",
    "width": 3,
    "floors": 2,
    "wall": "mortar"
   },
   {
    "id": "b02",
-   "kind": "house",
+   "kind": "shop_shutter",
    "width": 3,
-   "floors": 1,
+   "floors": 2,
    "wall": "namako"
   },
   {
    "id": "b03",
-   "kind": "shop_wood",
+   "kind": "house",
    "width": 4,
-   "floors": 2,
+   "floors": 1,
    "wall": "weatherboard"
   },
   {
    "id": "b04",
-   "kind": "shop_shutter",
+   "kind": "shop_wood",
    "width": 3,
    "floors": 2,
    "wall": "mortar"
   },
   {
    "id": "b05",
-   "kind": "shop_wood",
+   "kind": "shop_shutter",
    "width": 3,
    "floors": 2,
    "wall": "weatherboard"
   },
   {
    "id": "b06",
-   "kind": "house",
+   "kind": "shop_wood",
    "width": 4,
-   "floors": 1,
+   "floors": 2,
    "wall": "weatherboard"
   },
   {
    "id": "b07",
-   "kind": "shop_shutter",
+   "kind": "house",
    "width": 3,
-   "floors": 2,
+   "floors": 1,
    "wall": "mortar"
   },
   {
    "id": "b08",
-   "kind": "shop_wood",
+   "kind": "shop_shutter",
    "width": 3,
    "floors": 2,
    "wall": "namako"
   },
   {
    "id": "b09",
-   "kind": "shop_shutter",
+   "kind": "shop_wood",
    "width": 4,
    "floors": 2,
-   "wall": "weatherboard"
+   "wall": "weatherboard",
+   "gap": 1
   },
   {
    "id": "b10",
-   "kind": "house",
+   "kind": "shop_shutter",
    "width": 3,
-   "floors": 1,
+   "floors": 2,
    "wall": "mortar"
   },
   {
    "id": "b11",
-   "kind": "shop_wood",
+   "kind": "house",
    "width": 3,
-   "floors": 2,
+   "floors": 1,
    "wall": "weatherboard"
   },
   {
    "id": "b12",
-   "kind": "shop_shutter",
+   "kind": "shop_wood",
    "width": 4,
    "floors": 2,
    "wall": "weatherboard"
   },
   {
    "id": "b13",
-   "kind": "shop_wood",
+   "kind": "shop_shutter",
    "width": 3,
    "floors": 2,
    "wall": "mortar"
   },
   {
    "id": "b14",
-   "kind": "house",
+   "kind": "shop_wood",
    "width": 3,
-   "floors": 1,
+   "floors": 2,
    "wall": "namako"
   },
   {
    "id": "b15",
-   "kind": "shop_shutter",
+   "kind": "house",
    "width": 4,
-   "floors": 2,
+   "floors": 1,
    "wall": "weatherboard"
   },
   {
    "id": "b16",
-   "kind": "shop_wood",
+   "kind": "shop_shutter",
    "width": 3,
    "floors": 2,
    "wall": "mortar"
   },
   {
    "id": "b17",
-   "kind": "shop_shutter",
+   "kind": "shop_wood",
    "width": 3,
    "floors": 2,
    "wall": "weatherboard"
   },
   {
    "id": "b18",
-   "kind": "house",
+   "kind": "shop_shutter",
    "width": 4,
-   "floors": 1,
+   "floors": 2,
    "wall": "weatherboard"
   },
   {
    "id": "b19",
-   "kind": "shop_wood",
+   "kind": "house",
    "width": 3,
-   "floors": 2,
+   "floors": 1,
    "wall": "mortar"
   },
   {
    "id": "b20",
-   "kind": "shop_shutter",
+   "kind": "shop_wood",
    "width": 3,
    "floors": 2,
    "wall": "namako"
   },
   {
    "id": "b21",
-   "kind": "shop_wood",
+   "kind": "shop_shutter",
    "width": 4,
    "floors": 2,
-   "wall": "weatherboard"
+   "wall": "weatherboard",
+   "gap": 1
   },
   {
    "id": "b22",
-   "kind": "house",
+   "kind": "shop_wood",
    "width": 3,
-   "floors": 1,
+   "floors": 2,
    "wall": "mortar"
   },
   {
    "id": "b23",
-   "kind": "shop_shutter",
+   "kind": "house",
    "width": 3,
-   "floors": 2,
+   "floors": 1,
    "wall": "weatherboard"
   },
   {
    "id": "b24",
-   "kind": "shop_wood",
+   "kind": "shop_shutter",
    "width": 4,
    "floors": 2,
    "wall": "weatherboard"
   },
   {
    "id": "b25",
-   "kind": "shop_shutter",
+   "kind": "shop_wood",
    "width": 3,
    "floors": 2,
    "wall": "mortar"
   },
   {
    "id": "b26",
-   "kind": "house",
+   "kind": "shop_shutter",
    "width": 3,
-   "floors": 1,
+   "floors": 2,
    "wall": "namako"
   },
   {
    "id": "b27",
-   "kind": "shop_wood",
+   "kind": "house",
    "width": 4,
+   "floors": 1,
+   "wall": "weatherboard"
+  },
+  {
+   "id": "b28",
+   "kind": "shop_wood",
+   "width": 3,
+   "floors": 2,
+   "wall": "mortar"
+  },
+  {
+   "id": "b29",
+   "kind": "shop_shutter",
+   "width": 3,
    "floors": 2,
    "wall": "weatherboard"
   }
@@ -401,17 +487,19 @@
    "id": "vend_1",
    "asset": "obj_vending_machine",
    "at": [
-    6.5,
-    22.5
-   ]
+    11.5,
+    18.5
+   ],
+   "facing": "W"
   },
   {
    "id": "plant_1",
    "asset": "obj_potted_plant",
    "at": [
-    6.5,
-    18.5
-   ]
+    11.5,
+    21.5
+   ],
+   "facing": "W"
   },
   {
    "id": "mail_1",
@@ -425,10 +513,10 @@
    "id": "bench_1",
    "asset": "obj_bench",
    "at": [
-    11.5,
+    6.5,
     17.5
    ],
-   "facing": "W"
+   "facing": "E"
   },
   {
    "id": "rack_1",
@@ -469,8 +557,8 @@
    "id": "board_1",
    "asset": "obj_bulletin_board",
    "at": [
-    19.5,
-    19.5
+    18.5,
+    18.5
    ],
    "facing": "S"
   },
@@ -496,7 +584,7 @@
    "asset": "obj_stone_lantern",
    "at": [
     19.5,
-    16.5
+    15.5
    ]
   },
   {
@@ -512,7 +600,7 @@
    "asset": "obj_stone_lantern",
    "at": [
     25.5,
-    16.5
+    15.5
    ]
   },
   {
@@ -528,7 +616,7 @@
    "asset": "obj_stone_lantern",
    "at": [
     28.5,
-    16.5
+    15.5
    ]
   },
   {
@@ -544,7 +632,7 @@
    "asset": "obj_offering_box",
    "at": [
     22.5,
-    10.5
+    9.5
    ],
    "blocking": false
   },
@@ -574,7 +662,7 @@
   {
    "id": "toki_shop",
    "at": [
-    5,
+    12,
     20
    ],
    "kind": "shop",
@@ -583,7 +671,7 @@
   {
    "id": "calendar",
    "at": [
-    5,
+    12,
     21
    ],
    "kind": "item",
@@ -655,7 +743,7 @@
   {
    "id": "toki_npc",
    "at": [
-    6,
+    11,
     19
    ],
    "kind": "npc",
@@ -721,7 +809,7 @@
   {
    "id": "front_of_dagashi",
    "rect": [
-    5,
+    8,
     18,
     4,
     5
@@ -730,12 +818,11 @@
   {
    "id": "temple_yard",
    "rect": [
-    18,
+    19,
     5,
-    13,
-    15
+    12,
+    12
    ]
   }
- ],
- "near_band_m": 8.8
+ ]
 }

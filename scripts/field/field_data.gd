@@ -53,7 +53,7 @@ func load(field_path: String, assets_path: String = "res://data/assets/objects.j
 ## フラグに応じて区画と通行判定を作り直す（when 付きの建物・配置物）
 func relayout(flags: Dictionary) -> void:
 	layout = FieldLayout.new()
-	lots = layout.build(size, classes, d.get("buildings", []), d.get("edge_fill", "fence_block"), float(d.get("field_yaw", 0)), flags, float(d.get("near_band_m", FieldLayout.NEAR_BAND_M)))
+	lots = layout.build(size, classes, d.get("buildings", []), d.get("edge_fill", "fence_block"), float(d.get("field_yaw", 0)), flags, float(d.get("cam_pitch_deg", FieldLayout.CAM_PITCH_DEG)))
 	for w in layout.warnings:
 		if not warnings.has(w):
 			warnings.append(w)
@@ -72,22 +72,35 @@ func _load_mask(field_path: String) -> bool:
 		return false
 	classes = PackedByteArray()
 	classes.resize(size.x * size.y)
+	var bad: Array[String] = []
 	for y in size.y:
 		for x in size.x:
-			classes[y * size.x + x] = class_of(img.get_pixel(x, y))
+			var c := class_of(img.get_pixel(x, y))
+			if c < 0:
+				if bad.size() < 10:
+					bad.append("(%d,%d)=%s" % [x, y, img.get_pixel(x, y).to_html(true)])
+				c = FieldLayout.CLASS_BLOCKED
+			classes[y * size.x + x] = c
+	if not bad.is_empty():
+		errors.append("歩行可能マスクに 255/192/128/0 以外の画素がある（アンチエイリアスや再保存を疑う）: %s%s" % [", ".join(bad), " …" if bad.size() >= 10 else ""])
+		return false
 	return true
 
 
-## 白 = 歩ける、明るい灰 = 歩ける（裏路地）、暗い灰 = 歩けない空き地（建物なし）、黒 = 歩けない（建物の候補地）
+## 厳密な 4 値（N-2a）。R = G = B かつ A = 255 で、255 = 歩ける、192 = 裏路地、128 = 空き地、0 = 建物の候補地。それ以外は −1（読み込み失敗）
 static func class_of(c: Color) -> int:
-	var v := c.get_luminance() * c.a
-	if v >= 0.85:
-		return FieldLayout.CLASS_WALK
-	if v >= 0.60:
-		return FieldLayout.CLASS_NARROW
-	if v >= 0.30:
-		return FieldLayout.CLASS_OPEN
-	return FieldLayout.CLASS_BLOCKED
+	var r := int(round(c.r * 255.0))
+	var g := int(round(c.g * 255.0))
+	var b := int(round(c.b * 255.0))
+	var a := int(round(c.a * 255.0))
+	if r != g or g != b or a != 255:
+		return -1
+	match r:
+		255: return FieldLayout.CLASS_WALK
+		192: return FieldLayout.CLASS_NARROW
+		128: return FieldLayout.CLASS_OPEN
+		0: return FieldLayout.CLASS_BLOCKED
+	return -1
 
 
 func cls(x: int, y: int) -> int:
@@ -320,14 +333,14 @@ func passable_image() -> Image:
 				c = Color(0.55, 0.55, 0.55, 1) if is_narrow(x, y) else Color(1, 1, 1, 1)
 			elif cls(x, y) == FieldLayout.CLASS_OPEN:
 				c = Color(0.3, 0.35, 0.25, 1)
-			elif layout != null and layout.near_band[y * size.x + x] == 1:
-				c = Color(0.6, 0.2, 0.4, 1)
 			img.set_pixel(x, y, c)
 	for l in lots:
 		var r: Array = l["rect"]
 		var col := Color(0.8, 0.2, 0.2, 1) if not (l.get("kind", "") in FieldLayout.FENCE_KINDS) else Color(0.4, 0.3, 0.2, 1)
-		if l.get("near_band", false):
-			col = Color(0.9, 0.5, 0.2, 1)
+		if l.get("lowered", false):
+			col = Color(0.9, 0.55, 0.2, 1)
+		if int(l.get("violates", 0)) > 0:
+			col = Color(0.95, 0.3, 0.6, 1)
 		for y in range(int(r[1]), int(r[1]) + int(r[3])):
 			for x in range(int(r[0]), int(r[0]) + int(r[2])):
 				if x >= 0 and y >= 0 and x < size.x and y < size.y:

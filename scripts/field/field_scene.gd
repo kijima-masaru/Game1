@@ -91,7 +91,7 @@ func _ready() -> void:
 	builder = FieldBuilder.new()
 	builder.pixel_size = lookdev.pixel_size
 	field_root = builder.build(fd, self, flags, lookdev.cam_yaw_deg, regen)
-	builder.set_lights(_lamps_on())
+	builder.set_lights(_lamps_on(), lookdev.time_name in ["evening", "night"])
 	if areamask:
 		_apply_areamask()
 	# 主人公: 既定は北の出入口の spawn
@@ -438,7 +438,7 @@ func _demo_step(delta: float) -> void:
 
 
 func _apply_areamask() -> void:
-	var cols := {"wall": Color(1, 0, 0), "roof": Color(0, 1, 0), "ground": Color(0, 0, 1), "margin": Color(1, 0, 1)}
+	var cols := {"wall": Color(1, 0, 0), "front": Color(1, 1, 0), "roof": Color(0, 1, 0), "ground": Color(0, 0, 1), "margin": Color(1, 0, 1)}
 	for mi in field_root.get_children():
 		if not (mi is MeshInstance3D):
 			continue
@@ -450,6 +450,8 @@ func _apply_areamask() -> void:
 			kind = "ground"
 		elif "_roof" in n or n.ends_with("_top") or "_soffit" in n or "_gable" in n or n.ends_with("_cap"):
 			kind = "roof"
+		elif mi.has_meta("front"):
+			kind = "front"
 		var m := StandardMaterial3D.new()
 		m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 		m.albedo_color = cols[kind]
