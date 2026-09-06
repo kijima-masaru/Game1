@@ -1,0 +1,1029 @@
+{
+ "format": 2,
+ "id": "F16",
+ "name": "薬師谷",
+ "size": [
+  32,
+  48
+ ],
+ "elevation": 5,
+ "biome": "forbidden_valley_temple",
+ "scene": "res://scenes/fields/f16_yakushidani.tscn",
+ "field_yaw": 50,
+ "sun_az": {
+  "evening": 235
+ },
+ "note": "歩ける範囲は F16_walkable.png（唯一の真実）。座標は refs/field/F16.png と docs/field/F16_spec.md（調べ物・出入口はそのまま）。道は 6 タイル以上に広げた。 高さは F16_height.png（1 階調 = 0.15 m）。 tools/gen_fields_*.py が生成（フェーズ 12〜14）。岩壁は北・東 9.6 m、西の縁は谷底 + 1.8 m（カメラ側を低く）。谷の底 4.8 m、奥の間 6.0 m、石段 32 段（資料に高さの記載なし）。台座 4 点の出現条件（when）は物語側の名前で置き換える。",
+ "walkable": "res://data/fields/F16_walkable.png",
+ "height": "res://data/fields/F16_height.png",
+ "terrain": {
+  "wall": "rock",
+  "rects": [
+   {
+    "kind": "stairs",
+    "rect": [
+     17,
+     32,
+     4,
+     8
+    ],
+    "wall": "stone_wall"
+   },
+   {
+    "kind": "slope",
+    "rect": [
+     16,
+     14,
+     3,
+     3
+    ]
+   }
+  ]
+ },
+ "ground": {
+  "walk": "grass",
+  "narrow": "dirt",
+  "open": "grass",
+  "default": "rock",
+  "patches": [
+   {
+    "id": "p000",
+    "rect": [
+     17,
+     7,
+     1,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p001",
+    "rect": [
+     14,
+     8,
+     5,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p002",
+    "rect": [
+     14,
+     9,
+     5,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p003",
+    "rect": [
+     14,
+     10,
+     5,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p004",
+    "rect": [
+     14,
+     11,
+     5,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p005",
+    "rect": [
+     14,
+     12,
+     5,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p006",
+    "rect": [
+     14,
+     13,
+     5,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p007",
+    "rect": [
+     16,
+     14,
+     3,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p008",
+    "rect": [
+     16,
+     15,
+     3,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p009",
+    "rect": [
+     16,
+     16,
+     3,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p010",
+    "rect": [
+     5,
+     17,
+     23,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p011",
+    "rect": [
+     5,
+     18,
+     23,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p012",
+    "rect": [
+     5,
+     19,
+     8,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p013",
+    "rect": [
+     23,
+     19,
+     5,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p014",
+    "rect": [
+     5,
+     20,
+     8,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p015",
+    "rect": [
+     23,
+     20,
+     5,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p016",
+    "rect": [
+     5,
+     21,
+     8,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p017",
+    "rect": [
+     23,
+     21,
+     5,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p018",
+    "rect": [
+     5,
+     22,
+     8,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p019",
+    "rect": [
+     23,
+     22,
+     5,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p020",
+    "rect": [
+     5,
+     23,
+     8,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p021",
+    "rect": [
+     23,
+     23,
+     5,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p022",
+    "rect": [
+     5,
+     24,
+     8,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p023",
+    "rect": [
+     23,
+     24,
+     5,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p024",
+    "rect": [
+     5,
+     25,
+     8,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p025",
+    "rect": [
+     23,
+     25,
+     5,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p026",
+    "rect": [
+     5,
+     26,
+     23,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p027",
+    "rect": [
+     5,
+     27,
+     23,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p028",
+    "rect": [
+     5,
+     28,
+     23,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p029",
+    "rect": [
+     5,
+     29,
+     23,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p030",
+    "rect": [
+     5,
+     30,
+     23,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p031",
+    "rect": [
+     5,
+     31,
+     23,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p032",
+    "rect": [
+     17,
+     32,
+     4,
+     1
+    ],
+    "tex": "stone_step"
+   },
+   {
+    "id": "p033",
+    "rect": [
+     17,
+     33,
+     4,
+     1
+    ],
+    "tex": "stone_step"
+   },
+   {
+    "id": "p034",
+    "rect": [
+     17,
+     34,
+     4,
+     1
+    ],
+    "tex": "stone_step"
+   },
+   {
+    "id": "p035",
+    "rect": [
+     17,
+     35,
+     4,
+     1
+    ],
+    "tex": "stone_step"
+   },
+   {
+    "id": "p036",
+    "rect": [
+     17,
+     36,
+     4,
+     1
+    ],
+    "tex": "stone_step"
+   },
+   {
+    "id": "p037",
+    "rect": [
+     17,
+     37,
+     4,
+     1
+    ],
+    "tex": "stone_step"
+   },
+   {
+    "id": "p038",
+    "rect": [
+     17,
+     38,
+     4,
+     1
+    ],
+    "tex": "stone_step"
+   },
+   {
+    "id": "p039",
+    "rect": [
+     17,
+     39,
+     4,
+     1
+    ],
+    "tex": "stone_step"
+   },
+   {
+    "id": "p040",
+    "rect": [
+     16,
+     40,
+     6,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p041",
+    "rect": [
+     16,
+     41,
+     6,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p042",
+    "rect": [
+     16,
+     42,
+     6,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p043",
+    "rect": [
+     16,
+     43,
+     6,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p044",
+    "rect": [
+     16,
+     44,
+     6,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p045",
+    "rect": [
+     16,
+     45,
+     6,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p046",
+    "rect": [
+     16,
+     46,
+     6,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p047",
+    "rect": [
+     16,
+     47,
+     6,
+     1
+    ],
+    "tex": "dirt"
+   }
+  ]
+ },
+ "edge_fill": [
+  {
+   "rect": [
+    0,
+    0,
+    32,
+    48
+   ],
+   "kind": "none"
+  }
+ ],
+ "buildings": [
+  {
+   "id": "yakushido",
+   "kind": "temple_hall",
+   "width": 9,
+   "floors": 1,
+   "wall": "plaster",
+   "near": [
+    17,
+    26
+   ],
+   "depth": 7,
+   "height_m": 5.0,
+   "note": "廃寺の薬師堂"
+  }
+ ],
+ "barriers": [],
+ "props": [
+  {
+   "id": "inner_gate",
+   "asset": "ph_rock",
+   "at": [
+    17.5,
+    15.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "rock_b",
+   "asset": "ph_rock",
+   "at": [
+    18.5,
+    16.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "rockfall",
+   "asset": "ph_rock",
+   "at": [
+    24.5,
+    30.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "masks",
+   "asset": "obj_stone_marker",
+   "at": [
+    23.5,
+    24.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "spring",
+   "asset": "obj_water_basin",
+   "at": [
+    8.5,
+    27.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "salt_spot",
+   "asset": "obj_stone_marker",
+   "at": [
+    19.5,
+    27.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "pedestal_e",
+   "asset": "ph_stone_pillar",
+   "at": [
+    18.5,
+    11.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "pedestal_s",
+   "asset": "ph_stone_pillar",
+   "at": [
+    16.5,
+    13.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "pedestal_w",
+   "asset": "ph_stone_pillar",
+   "at": [
+    14.5,
+    11.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "pedestal_n",
+   "asset": "ph_stone_pillar",
+   "at": [
+    16.5,
+    10.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o010",
+   "asset": "ph_tree_conifer",
+   "at": [
+    5.5,
+    16.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o011",
+   "asset": "ph_tree_conifer",
+   "at": [
+    7.5,
+    16.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o012",
+   "asset": "ph_tree_conifer",
+   "at": [
+    9.5,
+    16.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o013",
+   "asset": "ph_tree_conifer",
+   "at": [
+    11.5,
+    16.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o014",
+   "asset": "ph_tree_conifer",
+   "at": [
+    13.5,
+    16.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o015",
+   "asset": "ph_tree_conifer",
+   "at": [
+    15.5,
+    16.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o016",
+   "asset": "ph_tree_conifer",
+   "at": [
+    19.5,
+    16.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o017",
+   "asset": "ph_tree_conifer",
+   "at": [
+    21.5,
+    16.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o018",
+   "asset": "ph_tree_conifer",
+   "at": [
+    23.5,
+    16.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o019",
+   "asset": "ph_tree_conifer",
+   "at": [
+    25.5,
+    16.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o020",
+   "asset": "ph_tree_conifer",
+   "at": [
+    27.5,
+    16.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o021",
+   "asset": "ph_tree_conifer",
+   "at": [
+    5.5,
+    32.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o022",
+   "asset": "ph_tree_conifer",
+   "at": [
+    7.5,
+    32.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o023",
+   "asset": "ph_tree_conifer",
+   "at": [
+    9.5,
+    32.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o024",
+   "asset": "ph_tree_conifer",
+   "at": [
+    11.5,
+    32.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o025",
+   "asset": "ph_tree_conifer",
+   "at": [
+    13.5,
+    32.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o026",
+   "asset": "ph_tree_conifer",
+   "at": [
+    15.5,
+    32.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o027",
+   "asset": "ph_tree_conifer",
+   "at": [
+    21.5,
+    32.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o028",
+   "asset": "ph_tree_conifer",
+   "at": [
+    23.5,
+    32.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o029",
+   "asset": "ph_tree_conifer",
+   "at": [
+    25.5,
+    32.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o030",
+   "asset": "ph_tree_conifer",
+   "at": [
+    27.5,
+    32.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o031",
+   "asset": "ph_tree_conifer",
+   "at": [
+    14.5,
+    41.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o032",
+   "asset": "ph_tree_conifer",
+   "at": [
+    14.5,
+    42.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o033",
+   "asset": "ph_tree_conifer",
+   "at": [
+    14.5,
+    44.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o034",
+   "asset": "ph_tree_conifer",
+   "at": [
+    14.5,
+    46.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o035",
+   "asset": "ph_tree_conifer",
+   "at": [
+    23.5,
+    40.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o036",
+   "asset": "ph_tree_conifer",
+   "at": [
+    23.5,
+    43.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o037",
+   "asset": "ph_tree_conifer",
+   "at": [
+    23.5,
+    45.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o038",
+   "asset": "ph_tree_conifer",
+   "at": [
+    23.5,
+    47.5
+   ],
+   "facing": "E"
+  }
+ ],
+ "collision": {
+  "extra_blocked": [],
+  "extra_open": []
+ },
+ "points": [
+  {
+   "id": "zushi",
+   "at": [
+    16,
+    25
+   ],
+   "kind": "item",
+   "label": "薬師堂の厨子"
+  },
+  {
+   "id": "masks",
+   "at": [
+    23,
+    24
+   ],
+   "kind": "item",
+   "label": "積まれた面"
+  },
+  {
+   "id": "spring",
+   "at": [
+    8,
+    27
+   ],
+   "kind": "item",
+   "label": "湧水"
+  },
+  {
+   "id": "rockfall",
+   "at": [
+    24,
+    30
+   ],
+   "kind": "item",
+   "label": "落石の跡"
+  },
+  {
+   "id": "salt_spot",
+   "at": [
+    19,
+    27
+   ],
+   "kind": "item",
+   "label": "堂の前の石"
+  },
+  {
+   "id": "inner_gate",
+   "at": [
+    16,
+    15
+   ],
+   "kind": "item",
+   "label": "堂の裏の落石"
+  },
+  {
+   "id": "pedestal_e",
+   "at": [
+    18,
+    11
+   ],
+   "kind": "item",
+   "label": "東の台座",
+   "when": "pedestals_appear"
+  },
+  {
+   "id": "pedestal_s",
+   "at": [
+    16,
+    13
+   ],
+   "kind": "item",
+   "label": "南の台座",
+   "when": "pedestals_appear"
+  },
+  {
+   "id": "pedestal_w",
+   "at": [
+    14,
+    11
+   ],
+   "kind": "item",
+   "label": "西の台座",
+   "when": "pedestals_appear"
+  },
+  {
+   "id": "pedestal_n",
+   "at": [
+    16,
+    10
+   ],
+   "kind": "item",
+   "label": "北の台座",
+   "when": "pedestals_appear"
+  }
+ ],
+ "exits": [
+  {
+   "dir": "S",
+   "at": [
+    18,
+    47
+   ],
+   "to": "F14",
+   "spawn": [
+    18,
+    46
+   ],
+   "label": "林道を下って朝和の里へ",
+   "when": "flag_yakushi_open"
+  }
+ ],
+ "areas": []
+}

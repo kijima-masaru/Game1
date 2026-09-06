@@ -387,6 +387,131 @@
     1
    ],
    "blocking": true
+  },
+  "ph_tree_broadleaf": {
+   "file": "assets/placeholder/ph_tree_broadleaf.png",
+   "kind": "billboard",
+   "height_m": 5.0,
+   "footprint": [
+    1,
+    1
+   ],
+   "blocking": true,
+   "placeholder": true
+  },
+  "ph_tree_conifer": {
+   "file": "assets/placeholder/ph_tree_conifer.png",
+   "kind": "billboard",
+   "height_m": 6.0,
+   "footprint": [
+    1,
+    1
+   ],
+   "blocking": true,
+   "placeholder": true
+  },
+  "ph_tree_ume": {
+   "file": "assets/placeholder/ph_tree_ume.png",
+   "kind": "billboard",
+   "height_m": 3.0,
+   "footprint": [
+    1,
+    1
+   ],
+   "blocking": true,
+   "placeholder": true
+  },
+  "ph_tree_kaki": {
+   "file": "assets/placeholder/ph_tree_kaki.png",
+   "kind": "billboard",
+   "height_m": 3.6,
+   "footprint": [
+    1,
+    1
+   ],
+   "blocking": true,
+   "placeholder": true
+  },
+  "ph_rock": {
+   "file": "assets/placeholder/ph_rock.png",
+   "kind": "billboard",
+   "height_m": 1.0,
+   "footprint": [
+    1,
+    1
+   ],
+   "blocking": true,
+   "placeholder": true
+  },
+  "ph_light_tower": {
+   "file": "assets/placeholder/ph_light_tower.png",
+   "kind": "billboard",
+   "height_m": 10.0,
+   "footprint": [
+    1,
+    1
+   ],
+   "blocking": true,
+   "placeholder": true,
+   "emissive": {
+    "color": [
+     0.9,
+     0.95,
+     1.0
+    ],
+    "energy": 3.0,
+    "offset_m": [
+     0,
+     9.4,
+     0
+    ],
+    "range_m": 14.0
+   }
+  },
+  "ph_fire_tower": {
+   "file": "assets/placeholder/ph_fire_tower.png",
+   "kind": "billboard",
+   "height_m": 8.0,
+   "footprint": [
+    1,
+    1
+   ],
+   "blocking": true,
+   "placeholder": true
+  },
+  "ph_stone_pillar": {
+   "file": "assets/placeholder/ph_stone_pillar.png",
+   "kind": "billboard",
+   "height_m": 1.6,
+   "footprint": [
+    1,
+    1
+   ],
+   "blocking": true,
+   "placeholder": true
+  },
+  "ph_backnet": {
+   "file": "assets/placeholder/ph_backnet.png",
+   "kind": "billboard",
+   "height_m": 5.0,
+   "footprint": [
+    2,
+    1
+   ],
+   "blocking": true,
+   "placeholder": true
+  },
+  "ph_cow_statue": {
+   "file": "assets/placeholder/ph_cow_statue.png",
+   "kind": "billboard",
+   "height_m": 1.0,
+   "footprint": [
+    1,
+    1
+   ],
+   "blocking": true,
+   "placeholder": true
   }
- }
+ },
+ "note_placeholder": "ph_* はフェーズ 14 T-3 のプレースホルダ（tools/gen_placeholders.py が生成）。素材の工程で差し替える"
 }

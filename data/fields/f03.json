@@ -1,0 +1,1065 @@
+{
+ "format": 2,
+ "id": "F03",
+ "name": "磐戸バスストップ・高架下",
+ "size": [
+  48,
+  28
+ ],
+ "elevation": 2,
+ "biome": "highway_underpass",
+ "scene": "res://scenes/fields/f03_bus_stop.tscn",
+ "field_yaw": 50,
+ "sun_az": {
+  "evening": 145
+ },
+ "note": "歩ける範囲は F03_walkable.png（唯一の真実）。座標は refs/field/F03.png と docs/field/F03_spec.md（調べ物・出入口はそのまま）。道は 6 タイル以上に広げた。 高さは F03_height.png（1 階調 = 0.15 m）。 tools/gen_fields_*.py が生成（フェーズ 12〜14）。高さ: 道 3.0 m、高速 9.0 m、南の法面の下 0。法面の階段は 20 段（資料に高低差の記載なし、DEVIATIONS.md）。",
+ "walkable": "res://data/fields/F03_walkable.png",
+ "height": "res://data/fields/F03_height.png",
+ "terrain": {
+  "wall": "retaining_wall",
+  "rects": [
+   {
+    "kind": "stairs",
+    "rect": [
+     8,
+     24,
+     2,
+     4
+    ],
+    "wall": "stone_wall"
+   },
+   {
+    "kind": "slope",
+    "rect": [
+     0,
+     24,
+     30,
+     3
+    ]
+   }
+  ]
+ },
+ "ground": {
+  "walk": "asphalt",
+  "narrow": "alley",
+  "open": "grass",
+  "default": "grass",
+  "patches": [
+   {
+    "id": "p000",
+    "rect": [
+     30,
+     7,
+     18,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p001",
+    "rect": [
+     30,
+     8,
+     18,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p002",
+    "rect": [
+     30,
+     9,
+     18,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p003",
+    "rect": [
+     34,
+     10,
+     5,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p004",
+    "rect": [
+     34,
+     11,
+     5,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p005",
+    "rect": [
+     0,
+     12,
+     34,
+     1
+    ],
+    "tex": "asphalt"
+   },
+   {
+    "id": "p006",
+    "rect": [
+     34,
+     12,
+     5,
+     1
+    ],
+    "tex": "concrete_slab"
+   },
+   {
+    "id": "p007",
+    "rect": [
+     39,
+     12,
+     9,
+     1
+    ],
+    "tex": "asphalt"
+   },
+   {
+    "id": "p008",
+    "rect": [
+     0,
+     13,
+     34,
+     1
+    ],
+    "tex": "asphalt"
+   },
+   {
+    "id": "p009",
+    "rect": [
+     34,
+     13,
+     5,
+     1
+    ],
+    "tex": "concrete_slab"
+   },
+   {
+    "id": "p010",
+    "rect": [
+     39,
+     13,
+     9,
+     1
+    ],
+    "tex": "asphalt"
+   },
+   {
+    "id": "p011",
+    "rect": [
+     0,
+     14,
+     34,
+     1
+    ],
+    "tex": "asphalt"
+   },
+   {
+    "id": "p012",
+    "rect": [
+     34,
+     14,
+     5,
+     1
+    ],
+    "tex": "concrete_slab"
+   },
+   {
+    "id": "p013",
+    "rect": [
+     39,
+     14,
+     9,
+     1
+    ],
+    "tex": "asphalt"
+   },
+   {
+    "id": "p014",
+    "rect": [
+     0,
+     15,
+     34,
+     1
+    ],
+    "tex": "asphalt"
+   },
+   {
+    "id": "p015",
+    "rect": [
+     34,
+     15,
+     5,
+     1
+    ],
+    "tex": "concrete_slab"
+   },
+   {
+    "id": "p016",
+    "rect": [
+     39,
+     15,
+     9,
+     1
+    ],
+    "tex": "asphalt"
+   },
+   {
+    "id": "p017",
+    "rect": [
+     0,
+     16,
+     34,
+     1
+    ],
+    "tex": "asphalt"
+   },
+   {
+    "id": "p018",
+    "rect": [
+     34,
+     16,
+     5,
+     1
+    ],
+    "tex": "concrete_slab"
+   },
+   {
+    "id": "p019",
+    "rect": [
+     39,
+     16,
+     9,
+     1
+    ],
+    "tex": "asphalt"
+   },
+   {
+    "id": "p020",
+    "rect": [
+     34,
+     17,
+     5,
+     1
+    ],
+    "tex": "concrete_slab"
+   },
+   {
+    "id": "p021",
+    "rect": [
+     0,
+     18,
+     48,
+     1
+    ],
+    "tex": "sidewalk"
+   },
+   {
+    "id": "p022",
+    "rect": [
+     0,
+     23,
+     30,
+     1
+    ],
+    "tex": "sidewalk"
+   },
+   {
+    "id": "p023",
+    "rect": [
+     30,
+     23,
+     18,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p024",
+    "rect": [
+     0,
+     24,
+     8,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p025",
+    "rect": [
+     8,
+     24,
+     2,
+     1
+    ],
+    "tex": "stone_step"
+   },
+   {
+    "id": "p026",
+    "rect": [
+     10,
+     24,
+     20,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p027",
+    "rect": [
+     30,
+     24,
+     18,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p028",
+    "rect": [
+     0,
+     25,
+     8,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p029",
+    "rect": [
+     8,
+     25,
+     2,
+     1
+    ],
+    "tex": "stone_step"
+   },
+   {
+    "id": "p030",
+    "rect": [
+     10,
+     25,
+     20,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p031",
+    "rect": [
+     30,
+     25,
+     18,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p032",
+    "rect": [
+     0,
+     26,
+     8,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p033",
+    "rect": [
+     8,
+     26,
+     2,
+     1
+    ],
+    "tex": "stone_step"
+   },
+   {
+    "id": "p034",
+    "rect": [
+     10,
+     26,
+     20,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p035",
+    "rect": [
+     30,
+     26,
+     18,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p036",
+    "rect": [
+     8,
+     27,
+     2,
+     1
+    ],
+    "tex": "stone_step"
+   }
+  ]
+ },
+ "edge_fill": [
+  {
+   "rect": [
+    0,
+    0,
+    48,
+    28
+   ],
+   "kind": "none"
+  }
+ ],
+ "buildings": [
+  {
+   "id": "bus_shelter",
+   "kind": "shelter",
+   "width": 3,
+   "floors": 1,
+   "wall": "concrete",
+   "near": [
+    12,
+    17
+   ],
+   "depth": 1,
+   "front": "S",
+   "note": "高速バス停の待合"
+  }
+ ],
+ "barriers": [
+  {
+   "kind": "sound_wall",
+   "rect": [
+    1,
+    12,
+    33,
+    1
+   ]
+  },
+  {
+   "kind": "sound_wall",
+   "rect": [
+    39,
+    12,
+    9,
+    1
+   ]
+  },
+  {
+   "kind": "sound_wall",
+   "rect": [
+    1,
+    16,
+    33,
+    1
+   ]
+  },
+  {
+   "kind": "sound_wall",
+   "rect": [
+    39,
+    16,
+    9,
+    1
+   ]
+  },
+  {
+   "kind": "overpass",
+   "rect": [
+    34,
+    12,
+    5,
+    5
+   ],
+   "height_m": 5.7,
+   "width_m": 5.7
+  }
+ ],
+ "props": [
+  {
+   "id": "bus_pole",
+   "asset": "obj_bus_stop_pole",
+   "at": [
+    11.5,
+    18.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "timetable",
+   "asset": "obj_bulletin_board",
+   "at": [
+    10.5,
+    18.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "bench",
+   "asset": "obj_bench",
+   "at": [
+    13.5,
+    18.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "vending",
+   "asset": "obj_vending_machine",
+   "at": [
+    15.5,
+    18.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o004",
+   "asset": "obj_street_light_led",
+   "at": [
+    4.5,
+    18.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o005",
+   "asset": "obj_street_light_led",
+   "at": [
+    20.5,
+    18.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o006",
+   "asset": "obj_street_light_led",
+   "at": [
+    26.5,
+    18.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o007",
+   "asset": "obj_street_light_led",
+   "at": [
+    32.5,
+    18.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o008",
+   "asset": "obj_street_light_led",
+   "at": [
+    44.5,
+    18.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o009",
+   "asset": "obj_utility_pole",
+   "at": [
+    2.5,
+    23.5
+   ],
+   "facing": "N"
+  },
+  {
+   "id": "o010",
+   "asset": "obj_utility_pole",
+   "at": [
+    18.5,
+    23.5
+   ],
+   "facing": "N"
+  },
+  {
+   "id": "o011",
+   "asset": "obj_utility_pole",
+   "at": [
+    28.5,
+    23.5
+   ],
+   "facing": "N"
+  },
+  {
+   "id": "o012",
+   "asset": "obj_utility_pole",
+   "at": [
+    40.5,
+    23.5
+   ],
+   "facing": "N"
+  },
+  {
+   "id": "o013",
+   "asset": "obj_utility_pole",
+   "at": [
+    43.5,
+    6.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o014",
+   "asset": "obj_road_mirror",
+   "at": [
+    38.5,
+    10.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "fence1",
+   "asset": "obj_wire_fence",
+   "at": [
+    45.5,
+    23.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "fence2",
+   "asset": "obj_wire_fence",
+   "at": [
+    45.5,
+    24.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "fence_notice",
+   "asset": "obj_road_closure_sign",
+   "at": [
+    46.5,
+    24.5
+   ],
+   "facing": "W"
+  },
+  {
+   "id": "o018",
+   "asset": "obj_guardrail",
+   "at": [
+    30.5,
+    24.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o019",
+   "asset": "obj_guardrail",
+   "at": [
+    30.5,
+    26.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o020",
+   "asset": "ph_tree_conifer",
+   "at": [
+    3.5,
+    27.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o021",
+   "asset": "ph_tree_conifer",
+   "at": [
+    7.5,
+    27.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o022",
+   "asset": "ph_tree_conifer",
+   "at": [
+    11.5,
+    27.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o023",
+   "asset": "ph_tree_conifer",
+   "at": [
+    20.5,
+    27.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o024",
+   "asset": "ph_tree_conifer",
+   "at": [
+    22.5,
+    27.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o025",
+   "asset": "ph_tree_conifer",
+   "at": [
+    25.5,
+    27.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o026",
+   "asset": "ph_tree_conifer",
+   "at": [
+    27.5,
+    27.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o027",
+   "asset": "ph_tree_conifer",
+   "at": [
+    35.5,
+    27.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o028",
+   "asset": "ph_tree_conifer",
+   "at": [
+    36.5,
+    27.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o029",
+   "asset": "ph_tree_conifer",
+   "at": [
+    41.5,
+    27.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o030",
+   "asset": "ph_tree_conifer",
+   "at": [
+    45.5,
+    27.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o031",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    4.5,
+    2.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o032",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    11.5,
+    2.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o033",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    17.5,
+    5.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o034",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    23.5,
+    4.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o035",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    24.5,
+    3.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o036",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    31.5,
+    5.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o037",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    36.5,
+    1.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o038",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    42.5,
+    2.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o039",
+   "asset": "ph_tree_kaki",
+   "at": [
+    4.5,
+    2.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o040",
+   "asset": "ph_tree_kaki",
+   "at": [
+    8.5,
+    4.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o041",
+   "asset": "ph_tree_kaki",
+   "at": [
+    10.5,
+    2.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o042",
+   "asset": "ph_tree_kaki",
+   "at": [
+    16.5,
+    6.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o043",
+   "asset": "ph_tree_kaki",
+   "at": [
+    23.5,
+    4.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o044",
+   "asset": "ph_tree_kaki",
+   "at": [
+    27.5,
+    2.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o045",
+   "asset": "ph_tree_kaki",
+   "at": [
+    2.5,
+    10.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o046",
+   "asset": "ph_tree_kaki",
+   "at": [
+    6.5,
+    10.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o047",
+   "asset": "ph_tree_kaki",
+   "at": [
+    14.5,
+    11.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o048",
+   "asset": "ph_tree_kaki",
+   "at": [
+    15.5,
+    8.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o049",
+   "asset": "ph_tree_kaki",
+   "at": [
+    24.5,
+    11.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o050",
+   "asset": "ph_tree_kaki",
+   "at": [
+    27.5,
+    11.5
+   ],
+   "facing": "E"
+  }
+ ],
+ "collision": {
+  "extra_blocked": [],
+  "extra_open": []
+ },
+ "points": [
+  {
+   "id": "timetable",
+   "at": [
+    10,
+    20
+   ],
+   "kind": "board",
+   "label": "時刻表（欠便の張り紙）"
+  },
+  {
+   "id": "bench_item",
+   "at": [
+    13,
+    21
+   ],
+   "kind": "item",
+   "label": "待合ベンチの忘れ物"
+  },
+  {
+   "id": "vending_broken",
+   "at": [
+    15,
+    20
+   ],
+   "kind": "item",
+   "label": "自販機（故障）"
+  },
+  {
+   "id": "graffiti",
+   "at": [
+    35,
+    14
+   ],
+   "kind": "board",
+   "label": "隧道内の落書き"
+  },
+  {
+   "id": "fence_notice",
+   "at": [
+    46,
+    25
+   ],
+   "kind": "board",
+   "label": "施錠フェンスの掲示"
+  }
+ ],
+ "exits": [
+  {
+   "dir": "W",
+   "at": [
+    0,
+    18
+   ],
+   "to": "F02",
+   "spawn": [
+    1,
+    18
+   ],
+   "label": "法面下の生活道路"
+  },
+  {
+   "dir": "S",
+   "at": [
+    8,
+    27
+   ],
+   "to": "F06",
+   "spawn": [
+    8,
+    26
+   ],
+   "label": "法面の階段を下りて市民センターへ"
+  },
+  {
+   "dir": "E",
+   "at": [
+    47,
+    8
+   ],
+   "to": "F04",
+   "spawn": [
+    46,
+    8
+   ],
+   "label": "隧道を抜けた北側から農道へ"
+  },
+  {
+   "dir": "E",
+   "at": [
+    47,
+    26
+   ],
+   "to": "F09",
+   "spawn": [
+    46,
+    26
+   ],
+   "label": "隧道を抜け、高速北側の法面下を東へ。城址の搦手口。フェンス施錠",
+   "when": "key_tunnel_fence"
+  }
+ ],
+ "areas": []
+}

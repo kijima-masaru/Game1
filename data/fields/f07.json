@@ -1,0 +1,1772 @@
+{
+ "format": 2,
+ "id": "F07",
+ "name": "光明院 門前",
+ "size": [
+  48,
+  36
+ ],
+ "elevation": 3,
+ "biome": "temple_precinct",
+ "scene": "res://scenes/fields/f07_komyoin.tscn",
+ "field_yaw": 50,
+ "sun_az": {
+  "evening": 235
+ },
+ "note": "歩ける範囲は F07_walkable.png（唯一の真実）。座標は refs/field/F07.png と docs/field/F07_spec.md（調べ物・出入口はそのまま）。道は 6 タイル以上に広げた。 高さは F07_height.png（1 階調 = 0.15 m）。 tools/gen_fields_*.py が生成（フェーズ 12〜14）。境内は砂利で歩ける。裏手の石段は登り口 4 タイル（16 段・2.4 m）だけ。",
+ "walkable": "res://data/fields/F07_walkable.png",
+ "height": "res://data/fields/F07_height.png",
+ "terrain": {
+  "wall": "stone_wall",
+  "rects": [
+   {
+    "kind": "stairs",
+    "rect": [
+     44,
+     11,
+     4,
+     3
+    ],
+    "wall": "stone_wall"
+   }
+  ]
+ },
+ "ground": {
+  "walk": "gravel",
+  "narrow": "alley",
+  "open": "grass",
+  "default": "grass",
+  "patches": [
+   {
+    "id": "p000",
+    "rect": [
+     12,
+     0,
+     4,
+     1
+    ],
+    "tex": "stone_path"
+   },
+   {
+    "id": "p001",
+    "rect": [
+     2,
+     1,
+     10,
+     1
+    ],
+    "tex": "alley"
+   },
+   {
+    "id": "p002",
+    "rect": [
+     12,
+     1,
+     4,
+     1
+    ],
+    "tex": "stone_path"
+   },
+   {
+    "id": "p003",
+    "rect": [
+     2,
+     2,
+     10,
+     1
+    ],
+    "tex": "alley"
+   },
+   {
+    "id": "p004",
+    "rect": [
+     12,
+     2,
+     4,
+     1
+    ],
+    "tex": "stone_path"
+   },
+   {
+    "id": "p005",
+    "rect": [
+     2,
+     3,
+     3,
+     1
+    ],
+    "tex": "alley"
+   },
+   {
+    "id": "p006",
+    "rect": [
+     12,
+     3,
+     4,
+     1
+    ],
+    "tex": "stone_path"
+   },
+   {
+    "id": "p007",
+    "rect": [
+     2,
+     4,
+     3,
+     1
+    ],
+    "tex": "alley"
+   },
+   {
+    "id": "p008",
+    "rect": [
+     12,
+     4,
+     4,
+     1
+    ],
+    "tex": "stone_path"
+   },
+   {
+    "id": "p009",
+    "rect": [
+     2,
+     5,
+     3,
+     1
+    ],
+    "tex": "alley"
+   },
+   {
+    "id": "p010",
+    "rect": [
+     12,
+     5,
+     4,
+     1
+    ],
+    "tex": "stone_path"
+   },
+   {
+    "id": "p011",
+    "rect": [
+     2,
+     6,
+     3,
+     1
+    ],
+    "tex": "alley"
+   },
+   {
+    "id": "p012",
+    "rect": [
+     12,
+     6,
+     4,
+     1
+    ],
+    "tex": "stone_path"
+   },
+   {
+    "id": "p013",
+    "rect": [
+     2,
+     7,
+     3,
+     1
+    ],
+    "tex": "alley"
+   },
+   {
+    "id": "p014",
+    "rect": [
+     12,
+     7,
+     4,
+     1
+    ],
+    "tex": "stone_path"
+   },
+   {
+    "id": "p015",
+    "rect": [
+     2,
+     8,
+     3,
+     1
+    ],
+    "tex": "alley"
+   },
+   {
+    "id": "p016",
+    "rect": [
+     12,
+     8,
+     4,
+     1
+    ],
+    "tex": "stone_path"
+   },
+   {
+    "id": "p017",
+    "rect": [
+     2,
+     9,
+     3,
+     1
+    ],
+    "tex": "alley"
+   },
+   {
+    "id": "p018",
+    "rect": [
+     12,
+     9,
+     4,
+     1
+    ],
+    "tex": "stone_path"
+   },
+   {
+    "id": "p019",
+    "rect": [
+     2,
+     10,
+     3,
+     1
+    ],
+    "tex": "alley"
+   },
+   {
+    "id": "p020",
+    "rect": [
+     12,
+     10,
+     4,
+     1
+    ],
+    "tex": "stone_path"
+   },
+   {
+    "id": "p021",
+    "rect": [
+     2,
+     11,
+     3,
+     1
+    ],
+    "tex": "alley"
+   },
+   {
+    "id": "p022",
+    "rect": [
+     12,
+     11,
+     4,
+     1
+    ],
+    "tex": "stone_path"
+   },
+   {
+    "id": "p023",
+    "rect": [
+     44,
+     11,
+     4,
+     1
+    ],
+    "tex": "stone_step"
+   },
+   {
+    "id": "p024",
+    "rect": [
+     2,
+     12,
+     3,
+     1
+    ],
+    "tex": "alley"
+   },
+   {
+    "id": "p025",
+    "rect": [
+     12,
+     12,
+     4,
+     1
+    ],
+    "tex": "stone_path"
+   },
+   {
+    "id": "p026",
+    "rect": [
+     44,
+     12,
+     4,
+     1
+    ],
+    "tex": "stone_step"
+   },
+   {
+    "id": "p027",
+    "rect": [
+     2,
+     13,
+     3,
+     1
+    ],
+    "tex": "alley"
+   },
+   {
+    "id": "p028",
+    "rect": [
+     12,
+     13,
+     4,
+     1
+    ],
+    "tex": "stone_path"
+   },
+   {
+    "id": "p029",
+    "rect": [
+     44,
+     13,
+     4,
+     1
+    ],
+    "tex": "stone_step"
+   },
+   {
+    "id": "p030",
+    "rect": [
+     2,
+     14,
+     3,
+     1
+    ],
+    "tex": "alley"
+   },
+   {
+    "id": "p031",
+    "rect": [
+     12,
+     14,
+     4,
+     1
+    ],
+    "tex": "stone_path"
+   },
+   {
+    "id": "p032",
+    "rect": [
+     18,
+     14,
+     13,
+     1
+    ],
+    "tex": "tile"
+   },
+   {
+    "id": "p033",
+    "rect": [
+     2,
+     15,
+     3,
+     1
+    ],
+    "tex": "alley"
+   },
+   {
+    "id": "p034",
+    "rect": [
+     12,
+     15,
+     4,
+     1
+    ],
+    "tex": "stone_path"
+   },
+   {
+    "id": "p035",
+    "rect": [
+     18,
+     15,
+     13,
+     1
+    ],
+    "tex": "tile"
+   },
+   {
+    "id": "p036",
+    "rect": [
+     2,
+     16,
+     3,
+     1
+    ],
+    "tex": "alley"
+   },
+   {
+    "id": "p037",
+    "rect": [
+     12,
+     16,
+     4,
+     1
+    ],
+    "tex": "stone_path"
+   },
+   {
+    "id": "p038",
+    "rect": [
+     18,
+     16,
+     13,
+     1
+    ],
+    "tex": "tile"
+   },
+   {
+    "id": "p039",
+    "rect": [
+     2,
+     17,
+     3,
+     1
+    ],
+    "tex": "alley"
+   },
+   {
+    "id": "p040",
+    "rect": [
+     12,
+     17,
+     4,
+     1
+    ],
+    "tex": "stone_path"
+   },
+   {
+    "id": "p041",
+    "rect": [
+     18,
+     17,
+     13,
+     1
+    ],
+    "tex": "tile"
+   },
+   {
+    "id": "p042",
+    "rect": [
+     2,
+     18,
+     3,
+     1
+    ],
+    "tex": "alley"
+   },
+   {
+    "id": "p043",
+    "rect": [
+     12,
+     18,
+     4,
+     1
+    ],
+    "tex": "stone_path"
+   },
+   {
+    "id": "p044",
+    "rect": [
+     18,
+     18,
+     13,
+     1
+    ],
+    "tex": "tile"
+   },
+   {
+    "id": "p045",
+    "rect": [
+     2,
+     19,
+     3,
+     1
+    ],
+    "tex": "alley"
+   },
+   {
+    "id": "p046",
+    "rect": [
+     12,
+     19,
+     4,
+     1
+    ],
+    "tex": "stone_path"
+   },
+   {
+    "id": "p047",
+    "rect": [
+     18,
+     19,
+     13,
+     1
+    ],
+    "tex": "tile"
+   },
+   {
+    "id": "p048",
+    "rect": [
+     0,
+     20,
+     5,
+     1
+    ],
+    "tex": "alley"
+   },
+   {
+    "id": "p049",
+    "rect": [
+     12,
+     20,
+     6,
+     1
+    ],
+    "tex": "stone_path"
+   },
+   {
+    "id": "p050",
+    "rect": [
+     18,
+     20,
+     13,
+     1
+    ],
+    "tex": "tile"
+   },
+   {
+    "id": "p051",
+    "rect": [
+     31,
+     20,
+     2,
+     1
+    ],
+    "tex": "stone_path"
+   },
+   {
+    "id": "p052",
+    "rect": [
+     0,
+     21,
+     5,
+     1
+    ],
+    "tex": "alley"
+   },
+   {
+    "id": "p053",
+    "rect": [
+     12,
+     21,
+     21,
+     1
+    ],
+    "tex": "stone_path"
+   },
+   {
+    "id": "p054",
+    "rect": [
+     12,
+     22,
+     21,
+     1
+    ],
+    "tex": "stone_path"
+   },
+   {
+    "id": "p055",
+    "rect": [
+     22,
+     23,
+     4,
+     1
+    ],
+    "tex": "stone_path"
+   },
+   {
+    "id": "p056",
+    "rect": [
+     22,
+     24,
+     4,
+     1
+    ],
+    "tex": "stone_path"
+   },
+   {
+    "id": "p057",
+    "rect": [
+     22,
+     25,
+     4,
+     1
+    ],
+    "tex": "stone_path"
+   },
+   {
+    "id": "p058",
+    "rect": [
+     22,
+     26,
+     4,
+     1
+    ],
+    "tex": "stone_path"
+   },
+   {
+    "id": "p059",
+    "rect": [
+     22,
+     27,
+     4,
+     1
+    ],
+    "tex": "stone_path"
+   },
+   {
+    "id": "p060",
+    "rect": [
+     22,
+     28,
+     4,
+     1
+    ],
+    "tex": "stone_path"
+   },
+   {
+    "id": "p061",
+    "rect": [
+     22,
+     29,
+     4,
+     1
+    ],
+    "tex": "stone_path"
+   },
+   {
+    "id": "p062",
+    "rect": [
+     22,
+     30,
+     4,
+     1
+    ],
+    "tex": "stone_path"
+   },
+   {
+    "id": "p063",
+    "rect": [
+     22,
+     31,
+     4,
+     1
+    ],
+    "tex": "stone_path"
+   },
+   {
+    "id": "p064",
+    "rect": [
+     22,
+     32,
+     4,
+     1
+    ],
+    "tex": "stone_path"
+   },
+   {
+    "id": "p065",
+    "rect": [
+     22,
+     33,
+     4,
+     1
+    ],
+    "tex": "stone_path"
+   },
+   {
+    "id": "p066",
+    "rect": [
+     22,
+     34,
+     4,
+     1
+    ],
+    "tex": "stone_path"
+   },
+   {
+    "id": "p067",
+    "rect": [
+     22,
+     35,
+     4,
+     1
+    ],
+    "tex": "stone_path"
+   }
+  ]
+ },
+ "edge_fill": [
+  {
+   "rect": [
+    6,
+    6,
+    40,
+    28
+   ],
+   "kind": "fence_wall"
+  },
+  {
+   "rect": [
+    0,
+    0,
+    48,
+    36
+   ],
+   "kind": "none"
+  }
+ ],
+ "buildings": [
+  {
+   "id": "kannondo",
+   "kind": "temple_hall",
+   "width": 6,
+   "floors": 1,
+   "wall": "plaster",
+   "near": [
+    33,
+    15
+   ],
+   "depth": 7,
+   "height_m": 4.5,
+   "note": "観音堂（格子から灯明）"
+  },
+  {
+   "id": "sanmon",
+   "kind": "temple_gate",
+   "width": 4,
+   "floors": 1,
+   "wall": "wood",
+   "at": [
+    14,
+    7
+   ],
+   "depth": 2,
+   "front": "S",
+   "note": "山門"
+  }
+ ],
+ "barriers": [],
+ "props": [
+  {
+   "id": "history_board",
+   "asset": "obj_bulletin_board",
+   "at": [
+    9.5,
+    10.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "basin",
+   "asset": "obj_water_basin",
+   "at": [
+    15.5,
+    11.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o002",
+   "asset": "obj_stone_lantern",
+   "at": [
+    32.5,
+    12.5
+   ],
+   "facing": "W"
+  },
+  {
+   "id": "o003",
+   "asset": "obj_stone_lantern",
+   "at": [
+    32.5,
+    17.5
+   ],
+   "facing": "W"
+  },
+  {
+   "id": "o004",
+   "asset": "obj_offering_box",
+   "at": [
+    32.5,
+    15.5
+   ],
+   "facing": "W"
+  },
+  {
+   "id": "o005",
+   "asset": "obj_stone_marker",
+   "at": [
+    10.5,
+    24.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o006",
+   "asset": "obj_stone_marker",
+   "at": [
+    12.5,
+    24.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o007",
+   "asset": "obj_stone_marker",
+   "at": [
+    14.5,
+    24.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o008",
+   "asset": "obj_stone_marker",
+   "at": [
+    16.5,
+    24.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o009",
+   "asset": "obj_stone_marker",
+   "at": [
+    10.5,
+    26.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o010",
+   "asset": "obj_stone_marker",
+   "at": [
+    12.5,
+    26.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o011",
+   "asset": "obj_stone_marker",
+   "at": [
+    14.5,
+    26.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o012",
+   "asset": "obj_stone_marker",
+   "at": [
+    16.5,
+    26.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o013",
+   "asset": "obj_stone_marker",
+   "at": [
+    10.5,
+    28.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o014",
+   "asset": "obj_stone_marker",
+   "at": [
+    12.5,
+    28.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o015",
+   "asset": "obj_stone_marker",
+   "at": [
+    14.5,
+    28.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o016",
+   "asset": "obj_stone_marker",
+   "at": [
+    16.5,
+    28.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "ginkgo",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    30.5,
+    23.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o018",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    32.5,
+    25.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o019",
+   "asset": "obj_stone_marker",
+   "at": [
+    20.5,
+    17.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o020",
+   "asset": "obj_stone_marker",
+   "at": [
+    24.5,
+    16.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o021",
+   "asset": "obj_stone_marker",
+   "at": [
+    27.5,
+    18.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o022",
+   "asset": "obj_stone_lantern",
+   "at": [
+    11.5,
+    9.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o023",
+   "asset": "obj_stone_lantern",
+   "at": [
+    16.5,
+    9.5
+   ],
+   "facing": "W"
+  },
+  {
+   "id": "o024",
+   "asset": "ph_tree_conifer",
+   "at": [
+    9.5,
+    30.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o025",
+   "asset": "ph_tree_conifer",
+   "at": [
+    11.5,
+    30.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o026",
+   "asset": "ph_tree_conifer",
+   "at": [
+    12.5,
+    30.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o027",
+   "asset": "ph_tree_conifer",
+   "at": [
+    15.5,
+    30.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o028",
+   "asset": "ph_tree_conifer",
+   "at": [
+    16.5,
+    30.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o029",
+   "asset": "ph_tree_conifer",
+   "at": [
+    18.5,
+    31.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o030",
+   "asset": "ph_tree_conifer",
+   "at": [
+    21.5,
+    30.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o031",
+   "asset": "ph_tree_conifer",
+   "at": [
+    26.5,
+    30.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o032",
+   "asset": "ph_tree_conifer",
+   "at": [
+    28.5,
+    31.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o033",
+   "asset": "ph_tree_conifer",
+   "at": [
+    30.5,
+    30.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o034",
+   "asset": "ph_tree_conifer",
+   "at": [
+    32.5,
+    30.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o035",
+   "asset": "ph_tree_conifer",
+   "at": [
+    35.5,
+    31.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o036",
+   "asset": "ph_tree_conifer",
+   "at": [
+    36.5,
+    30.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o037",
+   "asset": "ph_tree_conifer",
+   "at": [
+    39.5,
+    30.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o038",
+   "asset": "ph_tree_conifer",
+   "at": [
+    40.5,
+    30.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o039",
+   "asset": "ph_tree_conifer",
+   "at": [
+    43.5,
+    30.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o040",
+   "asset": "ph_tree_conifer",
+   "at": [
+    8.5,
+    0.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o041",
+   "asset": "ph_tree_conifer",
+   "at": [
+    9.5,
+    0.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o042",
+   "asset": "ph_tree_conifer",
+   "at": [
+    11.5,
+    0.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o043",
+   "asset": "ph_tree_conifer",
+   "at": [
+    10.5,
+    3.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o044",
+   "asset": "ph_tree_conifer",
+   "at": [
+    6.5,
+    4.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o045",
+   "asset": "ph_tree_conifer",
+   "at": [
+    8.5,
+    4.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o046",
+   "asset": "ph_tree_conifer",
+   "at": [
+    10.5,
+    4.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o047",
+   "asset": "ph_tree_conifer",
+   "at": [
+    11.5,
+    5.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o048",
+   "asset": "ph_tree_conifer",
+   "at": [
+    1.5,
+    24.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o049",
+   "asset": "ph_tree_conifer",
+   "at": [
+    4.5,
+    23.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o050",
+   "asset": "ph_tree_conifer",
+   "at": [
+    0.5,
+    25.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o051",
+   "asset": "ph_tree_conifer",
+   "at": [
+    5.5,
+    25.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o052",
+   "asset": "ph_tree_conifer",
+   "at": [
+    1.5,
+    30.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o053",
+   "asset": "ph_tree_conifer",
+   "at": [
+    4.5,
+    30.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o054",
+   "asset": "ph_tree_conifer",
+   "at": [
+    0.5,
+    32.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o055",
+   "asset": "ph_tree_conifer",
+   "at": [
+    5.5,
+    33.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o056",
+   "asset": "ph_tree_conifer",
+   "at": [
+    2.5,
+    34.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o057",
+   "asset": "ph_tree_conifer",
+   "at": [
+    5.5,
+    35.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o058",
+   "asset": "ph_tree_conifer",
+   "at": [
+    44.5,
+    1.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o059",
+   "asset": "ph_tree_conifer",
+   "at": [
+    47.5,
+    0.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o060",
+   "asset": "ph_tree_conifer",
+   "at": [
+    44.5,
+    3.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o061",
+   "asset": "ph_tree_conifer",
+   "at": [
+    47.5,
+    3.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o062",
+   "asset": "ph_tree_conifer",
+   "at": [
+    44.5,
+    4.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o063",
+   "asset": "ph_tree_conifer",
+   "at": [
+    47.5,
+    5.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o064",
+   "asset": "ph_tree_conifer",
+   "at": [
+    44.5,
+    6.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o065",
+   "asset": "ph_tree_conifer",
+   "at": [
+    47.5,
+    6.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o066",
+   "asset": "ph_tree_conifer",
+   "at": [
+    45.5,
+    8.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o067",
+   "asset": "ph_tree_conifer",
+   "at": [
+    47.5,
+    9.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o068",
+   "asset": "ph_tree_conifer",
+   "at": [
+    45.5,
+    16.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o069",
+   "asset": "ph_tree_conifer",
+   "at": [
+    47.5,
+    15.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o070",
+   "asset": "ph_tree_conifer",
+   "at": [
+    44.5,
+    18.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o071",
+   "asset": "ph_tree_conifer",
+   "at": [
+    46.5,
+    17.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o072",
+   "asset": "ph_tree_conifer",
+   "at": [
+    45.5,
+    20.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o073",
+   "asset": "ph_tree_conifer",
+   "at": [
+    46.5,
+    19.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o074",
+   "asset": "ph_tree_conifer",
+   "at": [
+    44.5,
+    22.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o075",
+   "asset": "ph_tree_conifer",
+   "at": [
+    47.5,
+    21.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o076",
+   "asset": "ph_tree_conifer",
+   "at": [
+    44.5,
+    23.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o077",
+   "asset": "ph_tree_conifer",
+   "at": [
+    46.5,
+    23.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o078",
+   "asset": "ph_tree_conifer",
+   "at": [
+    44.5,
+    25.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o079",
+   "asset": "ph_tree_conifer",
+   "at": [
+    46.5,
+    26.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o080",
+   "asset": "ph_tree_conifer",
+   "at": [
+    45.5,
+    28.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o081",
+   "asset": "ph_tree_conifer",
+   "at": [
+    46.5,
+    27.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o082",
+   "asset": "ph_tree_conifer",
+   "at": [
+    45.5,
+    30.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o083",
+   "asset": "ph_tree_conifer",
+   "at": [
+    46.5,
+    29.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o084",
+   "asset": "ph_tree_conifer",
+   "at": [
+    45.5,
+    32.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o085",
+   "asset": "ph_tree_conifer",
+   "at": [
+    47.5,
+    31.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o086",
+   "asset": "ph_tree_conifer",
+   "at": [
+    45.5,
+    34.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o087",
+   "asset": "ph_tree_conifer",
+   "at": [
+    46.5,
+    34.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o088",
+   "asset": "ph_tree_conifer",
+   "at": [
+    44.5,
+    35.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o089",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    18.5,
+    2.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o090",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    22.5,
+    1.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o091",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    27.5,
+    1.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o092",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    32.5,
+    1.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o093",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    36.5,
+    4.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o094",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    42.5,
+    2.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o095",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    26.5,
+    7.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o096",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    32.5,
+    5.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o097",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    44.5,
+    6.5
+   ],
+   "facing": "E"
+  }
+ ],
+ "collision": {
+  "extra_blocked": [],
+  "extra_open": []
+ },
+ "points": [
+  {
+   "id": "kannon_lattice",
+   "at": [
+    33,
+    14
+   ],
+   "kind": "item",
+   "label": "観音堂の格子"
+  },
+  {
+   "id": "foundation",
+   "at": [
+    23,
+    16
+   ],
+   "kind": "item",
+   "label": "本堂の礎石"
+  },
+  {
+   "id": "muen_grave",
+   "at": [
+    10,
+    24
+   ],
+   "kind": "item",
+   "label": "無縁墓"
+  },
+  {
+   "id": "history_board",
+   "at": [
+    9,
+    10
+   ],
+   "kind": "board",
+   "label": "寺の由来書き"
+  },
+  {
+   "id": "basin",
+   "at": [
+    15,
+    11
+   ],
+   "kind": "item",
+   "label": "手水鉢"
+  },
+  {
+   "id": "ginkgo",
+   "at": [
+    30,
+    25
+   ],
+   "kind": "item",
+   "label": "イチョウの幹"
+  }
+ ],
+ "exits": [
+  {
+   "dir": "W",
+   "at": [
+    0,
+    20
+   ],
+   "to": "F05",
+   "spawn": [
+    1,
+    20
+   ],
+   "label": "寺町の路地→商店街"
+  },
+  {
+   "dir": "N",
+   "at": [
+    12,
+    0
+   ],
+   "to": "F06",
+   "spawn": [
+    12,
+    1
+   ],
+   "label": "路地→市民センター前"
+  },
+  {
+   "dir": "S",
+   "at": [
+    22,
+    35
+   ],
+   "to": "F11",
+   "spawn": [
+    22,
+    34
+   ],
+   "label": "墓域脇の坂→小学校"
+  },
+  {
+   "dir": "E",
+   "at": [
+    47,
+    12
+   ],
+   "to": "F08",
+   "spawn": [
+    46,
+    12
+   ],
+   "label": "本堂跡の裏手の石段。天神社への唯一の道"
+  }
+ ],
+ "areas": []
+}

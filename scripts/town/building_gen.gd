@@ -26,6 +26,22 @@ func add_tri(origin: Vector3, u: Vector3, v: Vector3, normal: Vector3, mat: Mate
 	faces.append({"origin": origin, "u": u, "v": v, "normal": normal, "mat": mat, "name": name_, "ao": true, "skip_ground": false, "tri": true})
 
 
+## 4 隅の高さが違う四角形（地形の坂）。pts は NW, NE, SE, SW（上から見て時計回り = 法線が上）。AO は平行四辺形で近似
+func add_quad4(pts: Array, mat: Material, name_: String, ao := true, normal_override := Vector3.ZERO) -> void:
+	var p: Array = pts.duplicate()
+	var o: Vector3 = p[0]
+	var u: Vector3 = p[1] - p[0]
+	var v: Vector3 = p[3] - p[0]
+	var n := v.cross(u).normalized()
+	if normal_override != Vector3.ZERO:
+		if n.dot(normal_override) < 0.0:
+			p = [pts[0], pts[3], pts[2], pts[1]]   # 巻き方向を反転
+			u = p[1] - p[0]
+			v = p[3] - p[0]
+		n = normal_override
+	faces.append({"origin": o, "u": u, "v": v, "normal": n, "mat": mat, "name": name_, "ao": ao, "skip_ground": true, "tri": false, "pts": p, "flat_normal": normal_override != Vector3.ZERO})
+
+
 ## 直方体（4 壁 + 天面）。center は底面中心。
 func add_box(center: Vector3, size: Vector3, wall: Material, top: Material, name_: String, occlude := true, with_top := true) -> void:
 	var hx := size.x * 0.5
@@ -143,7 +159,7 @@ func finalize(baker: AoBaker, cache: Dictionary = {}) -> void:
 						acc += img.get_pixel(x, y).r
 				print("AO %-16s mean=%.2f (%dx%d)" % [f["name"], acc / float(img.get_width() * img.get_height()), img.get_width(), img.get_height()])
 			mat = AoBaker.apply_to(mat as StandardMaterial3D, baker.to_texture(img))
-		mi.mesh = _tri_mesh(f) if f["tri"] else _quad_mesh(f)
+		mi.mesh = _quad4_mesh(f) if f.has("pts") else (_tri_mesh(f) if f["tri"] else _quad_mesh(f))
 		mi.material_override = mat
 		root.add_child(mi)
 
@@ -184,4 +200,27 @@ static func _tri_mesh(f: Dictionary) -> ArrayMesh:
 		st.set_uv2(uv2[i])
 		st.add_vertex(pts[i])
 	st.add_index(0); st.add_index(1); st.add_index(2)
+	return st.commit()
+
+
+static func _quad4_mesh(f: Dictionary) -> ArrayMesh:
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var pts: Array = f["pts"]
+	var o: Vector3 = pts[0]
+	var uv2 := [Vector2(0, 0), Vector2(1, 0), Vector2(1, 1), Vector2(0, 1)]
+	# 法線は 2 つの三角形で別々に（坂の折れを滑らかにしすぎない）
+	var n0: Vector3 = ((pts[3] - pts[0]) as Vector3).cross(pts[1] - pts[0]).normalized()
+	var n1: Vector3 = ((pts[3] - pts[2]) as Vector3).cross(pts[1] - pts[2]).normalized()
+	if f.get("flat_normal", false):
+		n0 = f["normal"]
+		n1 = f["normal"]
+	for i in 4:
+		var p: Vector3 = pts[i]
+		st.set_normal(n0 if i < 2 else n1)
+		st.set_uv(Vector2(p.x - o.x, p.z - o.z))   # 地面と同じ m 単位（タイルの境で連続）
+		st.set_uv2(uv2[i])
+		st.add_vertex(p)
+	st.add_index(0); st.add_index(1); st.add_index(2)
+	st.add_index(0); st.add_index(2); st.add_index(3)
 	return st.commit()

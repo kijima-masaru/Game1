@@ -3,7 +3,7 @@ extends RefCounted
 ## data/fields/<id>.json から 3D の街を組む（docs/FIELD_FORMAT.md 第 9 節）。
 ## 地面 → 道 → 区画（建物生成器）→ 塀 → 配置物と光源 → field_yaw で全体を回す。AO は res://cache/fields/<id>/ にキャッシュ。
 
-const TEX_VERSION := 4            # テクスチャ生成の版。上げるとキャッシュを焼き直す
+const TEX_VERSION := 5            # テクスチャ生成の版。上げるとキャッシュを焼き直す（5: 地形、フェーズ 14 T-2b）
 const T := FieldData.TILE
 
 var fd: FieldData
@@ -17,6 +17,8 @@ var lights: Array[OmniLight3D] = []
 var lot_faces := {}                # lot id -> Array[MeshInstance3D]
 var lot_aabbs := {}                # lot id -> AABB（ローカル）
 var lot_quads := {}                # lot id -> Array[{o,u,v,tri}]（隠れ判定に使う実際の面）
+var terrain_quads: Array = []      # 地形の垂直面（3 階調以上）。隠れの診断に使い、建物と同じフェードの対象（名前 tstepNN）
+var _riser_n := 0
 var bake_seconds := 0.0
 var cache_hit := false
 
@@ -61,7 +63,8 @@ func build(field: FieldData, parent: Node3D, flags: Dictionary, cam_yaw_deg: flo
 func _cache_key() -> String:
 	var txt := FileAccess.get_file_as_string("res://data/fields/%s.json" % fd.d["id"].to_lower())
 	var mask := FileAccess.get_md5(ProjectSettings.globalize_path(fd.mask_path))
-	return "%s:%s:%d:%s:%d" % [str(txt.hash()), mask, TEX_VERSION, str(FileAccess.get_file_as_string("res://data/assets/objects.json").hash()), int(fd.d.get("field_yaw", 0))]
+	var hgt := FileAccess.get_md5(ProjectSettings.globalize_path(fd.height_path)) if fd.has_height else "flat"
+	return "%s:%s:%s:%d:%s:%d" % [str(txt.hash()), mask, hgt, TEX_VERSION, str(FileAccess.get_file_as_string("res://data/assets/objects.json").hash()), int(fd.d.get("field_yaw", 0))]
 
 
 # ============================================================================
@@ -74,6 +77,16 @@ func _build_materials(tex_mode: String) -> void:
 	mats["grass"] = PT.material(PT.grass())
 	mats["water"] = PT.material(PT.noise(32, Color(0.16, 0.22, 0.34), 0.03))
 	mats["tile"] = PT.material(PT.stone_path(32, 61))
+	mats["paddy"] = PT.material(PT.paddy())
+	mats["stone_step"] = PT.material(PT.stone_step())
+	mats["dirt"] = PT.material(PT.earth(32, 93))   # 農道・畦道（土の色。lot_ground は緑がかって草と区別がつかない）
+	mats["concrete_slab"] = PT.material(PT.concrete())
+	mats["retaining_wall"] = PT.material(PT.retaining_wall())
+	mats["stone_wall"] = PT.material(PT.stone_wall())
+	mats["rock"] = PT.material(PT.rock())
+	mats["earth"] = PT.material(PT.earth())
+	mats["moss"] = PT.material(PT.grass(32, 75))
+	mats["sand"] = PT.material(PT.gravel(32, 77))
 	mats["asphalt"] = PT.material(PT.asphalt_gravel())
 	mats["stone_path"] = PT.material(PT.stone_path())
 	mats["old_street"] = PT.material(PT.old_street())
@@ -132,6 +145,9 @@ func _rect_face(r: Array, mat: Material, name_: String, lift: float, ao := true)
 
 
 func _build_ground() -> void:
+	if fd.has_height:
+		_build_terrain()
+		return
 	var g: Dictionary = fd.d.get("ground", {})
 	var margin := 16   # 画面端に虚無が出ないよう広め（面は 5 枚、描画コストは無視できる）
 	var gm: Material = mats[g.get("default", "lot_ground")]
@@ -171,7 +187,27 @@ func _lot_box(l: Dictionary) -> Dictionary:
 	var d := float(r[3]) * T
 	var cx := (float(r[0]) + float(r[2]) * 0.5) * T
 	var cz := (float(r[1]) + float(r[3]) * 0.5) * T
-	return {"center": Vector3(cx, 0, cz), "w": w, "d": d}
+	var hb := _rect_heights(r)
+	return {"center": Vector3(cx, hb["max"], cz), "w": w, "d": d, "min": hb["min"], "max": hb["max"]}
+
+
+## 矩形の中の地面の高さの最小・最大 (m)。区画は最大に合わせ、下は基礎で埋める（8d）
+func _rect_heights(r: Array) -> Dictionary:
+	var lo := 1e9
+	var hi := -1e9
+	for y in range(int(r[1]), int(r[1]) + int(r[3])):
+		for x in range(int(r[0]), int(r[0]) + int(r[2])):
+			var h := fd.h_m(x, y)
+			lo = minf(lo, h)
+			hi = maxf(hi, h)
+	if lo > hi:
+		return {"min": 0.0, "max": 0.0}
+	return {"min": lo, "max": hi}
+
+
+func _terrain_wall_mat(x: int, y: int) -> Material:
+	var r := fd.trect(x, y)
+	return mats[r.get("wall", fd.terrain_wall)]
 
 
 ## 正面の壁の座標系（origin = 正面の左下、u = 幅方向、v = 上、normal = 外向き）
@@ -181,13 +217,13 @@ func _front_frame(l: Dictionary, box: Dictionary, h: float) -> Dictionary:
 	var hd: float = box["d"] * 0.5
 	match l.get("front", "S"):
 		"S":
-			return {"o": Vector3(c.x - hw, 0, c.z + hd), "u": Vector3(box["w"], 0, 0), "v": Vector3(0, h, 0), "n": Vector3.BACK, "len": box["w"]}
+			return {"o": Vector3(c.x - hw, c.y, c.z + hd), "u": Vector3(box["w"], 0, 0), "v": Vector3(0, h, 0), "n": Vector3.BACK, "len": box["w"]}
 		"N":
-			return {"o": Vector3(c.x + hw, 0, c.z - hd), "u": Vector3(-box["w"], 0, 0), "v": Vector3(0, h, 0), "n": Vector3.FORWARD, "len": box["w"]}
+			return {"o": Vector3(c.x + hw, c.y, c.z - hd), "u": Vector3(-box["w"], 0, 0), "v": Vector3(0, h, 0), "n": Vector3.FORWARD, "len": box["w"]}
 		"E":
-			return {"o": Vector3(c.x + hw, 0, c.z + hd), "u": Vector3(0, 0, -box["d"]), "v": Vector3(0, h, 0), "n": Vector3.RIGHT, "len": box["d"]}
+			return {"o": Vector3(c.x + hw, c.y, c.z + hd), "u": Vector3(0, 0, -box["d"]), "v": Vector3(0, h, 0), "n": Vector3.RIGHT, "len": box["d"]}
 		_:
-			return {"o": Vector3(c.x - hw, 0, c.z - hd), "u": Vector3(0, 0, box["d"]), "v": Vector3(0, h, 0), "n": Vector3.LEFT, "len": box["d"]}
+			return {"o": Vector3(c.x - hw, c.y, c.z - hd), "u": Vector3(0, 0, box["d"]), "v": Vector3(0, h, 0), "n": Vector3.LEFT, "len": box["d"]}
 
 
 func _roof(l: Dictionary, box: Dictionary, h: float, roof_mat: Material, wall_mat: Material, overhang: float, rise: float) -> void:
@@ -197,15 +233,15 @@ func _roof(l: Dictionary, box: Dictionary, h: float, roof_mat: Material, wall_ma
 	var end_overhang := overhang
 	if l.get("contiguous", false) and (fd.layout.has_neighbor(l, -1) or fd.layout.has_neighbor(l, 1)):
 		end_overhang = 0.0
-	if l.get("roof", "gable") == "flat" or l.get("kind", "") in ["store", "apartment", "civic"]:
-		gen.add_face(Vector3(c.x - box["w"] * 0.5, h, c.z - box["d"] * 0.5), Vector3(box["w"], 0, 0), Vector3(0, 0, box["d"]), Vector3.UP, roof_mat, l["id"] + "_top", true, true)
+	if l.get("roof", "gable") == "flat" or l.get("kind", "") in ["store", "apartment", "civic", "school", "gym", "shelter"]:
+		gen.add_face(Vector3(c.x - box["w"] * 0.5, c.y + h, c.z - box["d"] * 0.5), Vector3(box["w"], 0, 0), Vector3(0, 0, box["d"]), Vector3.UP, roof_mat, l["id"] + "_top", true, true)
 		return
 	if l.get("roof", "gable") == "none":
 		return
 	if along_z:
-		gen.add_gable_roof_z(Vector3(c.x, h, c.z), box["w"], box["d"] + 2.0 * end_overhang, rise, roof_mat, wall_mat, l["id"], overhang)
+		gen.add_gable_roof_z(Vector3(c.x, c.y + h, c.z), box["w"], box["d"] + 2.0 * end_overhang, rise, roof_mat, wall_mat, l["id"], overhang)
 	else:
-		gen.add_gable_roof(Vector3(c.x, h, c.z), box["w"] + 2.0 * end_overhang, box["d"], rise, roof_mat, wall_mat, l["id"], overhang)
+		gen.add_gable_roof(Vector3(c.x, c.y + h, c.z), box["w"] + 2.0 * end_overhang, box["d"], rise, roof_mat, wall_mat, l["id"], overhang)
 
 
 func _build_lot(l: Dictionary) -> void:
@@ -220,6 +256,10 @@ func _build_lot(l: Dictionary) -> void:
 	var contiguous: bool = l.get("contiguous", false)
 	var wall := _wall_mat(l.get("wall", "mortar"), variant)
 	var roof: StandardMaterial3D = mats["kawara"][variant % 3]
+	# 地形: 区画の中で高さが揃わなければ最大に合わせ、下を基礎で埋める（8d）
+	if float(box["max"]) - float(box["min"]) > 0.01:
+		var fc: Vector3 = box["center"]
+		gen.add_box(Vector3(fc.x, box["min"], fc.z), Vector3(box["w"], float(box["max"]) - float(box["min"]), box["d"]), mats[fd.terrain_wall], mats[fd.terrain_wall], l["id"] + "_found", true, false)
 	if kind in ["shop_shutter", "shop_wood", "house"] and variant % 4 == 3 and mats.has("corrugated"):
 		roof = mats["corrugated"] if not (mats["corrugated"] is Array) else mats["corrugated"][0]
 	if kind in FieldLayout.FENCE_KINDS:
@@ -249,7 +289,7 @@ func _build_lot(l: Dictionary) -> void:
 			"fence_wall":
 				sz.y = 1.8
 				gen.add_box(c, sz, mats["plaster"][0], mats["plaster"][0], l["id"], true, false)
-				gen.add_box(Vector3(c.x, 1.8, c.z), Vector3(sz.x + 0.2, 0.25, sz.z + 0.2), roof, roof, l["id"] + "_cap", false)
+				gen.add_box(Vector3(c.x, c.y + 1.8, c.z), Vector3(sz.x + 0.2, 0.25, sz.z + 0.2), roof, roof, l["id"] + "_cap", false)
 		return
 	match kind:
 		"temple_gate":
@@ -258,15 +298,31 @@ func _build_lot(l: Dictionary) -> void:
 			var c: Vector3 = box["center"]
 			for s in [-1.0, 1.0]:
 				var pc: Vector3 = c + along * (float(s) * (float(fr["len"]) * 0.5 - 0.35))
-				gen.add_box(Vector3(pc.x, 0, pc.z), Vector3(0.4, 3.6, 0.4), mats["wood"], mats["wood"], "%s_p%d" % [l["id"], 0 if s < 0 else 1], false)
+				gen.add_box(Vector3(pc.x, c.y, pc.z), Vector3(0.4, 3.6, 0.4), mats["wood"], mats["wood"], "%s_p%d" % [l["id"], 0 if s < 0 else 1], false)
 			# 屋根は柱の上。棟は正面と平行（= 通り抜け方向と直交）
 			if l.get("front", "S") in ["E", "W"]:
-				gen.add_gable_roof_z(Vector3(c.x, 3.6, c.z), maxf(box["w"], 1.0), box["d"], 1.0, roof, mats["wood"], l["id"], 0.5)
+				gen.add_gable_roof_z(Vector3(c.x, c.y + 3.6, c.z), maxf(box["w"], 1.0), box["d"], 1.0, roof, mats["wood"], l["id"], 0.5)
 			else:
-				gen.add_gable_roof(Vector3(c.x, 3.6, c.z), box["w"], maxf(box["d"], 1.0), 1.0, roof, mats["wood"], l["id"], 0.5)
+				gen.add_gable_roof(Vector3(c.x, c.y + 3.6, c.z), box["w"], maxf(box["d"], 1.0), 1.0, roof, mats["wood"], l["id"], 0.5)
+			return
+		"shelter":
+			# バス停の待合（F03）: 背面の壁 1 枚 + 柱 + 平らな屋根。正面は開いている
+			var fr := _front_frame(l, box, 2.6)
+			var c: Vector3 = box["center"]
+			var along: Vector3 = (fr["u"] as Vector3).normalized()
+			var nrm: Vector3 = fr["n"]
+			var back: Vector3 = c - nrm * (box["d"] * 0.5 - 0.15) if l.get("front", "S") in ["S", "N"] else c - nrm * (box["w"] * 0.5 - 0.15)
+			var bw: float = fr["len"]
+			gen.add_box(Vector3(back.x, c.y, back.z), Vector3(bw, 2.6, 0.2) if l.get("front", "S") in ["S", "N"] else Vector3(0.2, 2.6, bw), mats["concrete"][0], mats["concrete"][0], l["id"] + "_back", true, false)
+			for s in [-1.0, 1.0]:
+				var pc: Vector3 = c + along * (float(s) * (bw * 0.5 - 0.2)) + nrm * ((box["d"] if l.get("front", "S") in ["S", "N"] else box["w"]) * 0.5 - 0.2)
+				gen.add_box(Vector3(pc.x, c.y, pc.z), Vector3(0.2, 2.6, 0.2), mats["frame"], mats["frame"], "%s_p%d" % [l["id"], 0 if s < 0 else 1], false)
+			gen.add_face(Vector3(c.x - box["w"] * 0.5, c.y + 2.6, c.z - box["d"] * 0.5), Vector3(box["w"], 0, 0), Vector3(0, 0, box["d"]), Vector3.UP, mats["concrete"][0], l["id"] + "_top", true, true)
+			gen.add_face(Vector3(c.x - box["w"] * 0.5, c.y + 2.55, c.z + box["d"] * 0.5), Vector3(box["w"], 0, 0), Vector3(0, 0, -box["d"]), Vector3.DOWN, mats["dark"], l["id"] + "_soffit", false, true)
+			gen.add_plate(fr["o"], fr["u"], fr["v"], fr["n"], 0.2, 0.9, 1.4, 0.9, mats["sign_white"], l["id"] + "_timetable")
 			return
 	# --- 壁のある建物 ---
-	var with_top: bool = l.get("roof", "gable") == "flat" or kind in ["store", "apartment", "civic"]
+	var with_top: bool = l.get("roof", "gable") == "flat" or kind in ["store", "apartment", "civic", "school", "gym"]
 	gen.add_box(box["center"], Vector3(box["w"], h, box["d"]), wall, wall, l["id"], true, with_top)
 	_roof(l, box, h, roof, wall, overhang, rise)
 	var fr := _front_frame(l, box, h)
@@ -349,6 +405,21 @@ func _build_lot(l: Dictionary) -> void:
 					k += 1
 				if fl > 0:
 					gen.add_plate(o, u, v, n, 0.2, y0 - 0.9, L - 0.4, 0.9, mats["concrete"][0], "%s_balc%d" % [l["id"], fl], 0.35)
+		"school":
+			# 校舎（F11）: RC 3 階、各階に連続窓、1 階に昇降口
+			gen.add_plate(o, u, v, n, L * 0.5 - 1.5, 0.05, 3.0, 2.4, mats["glass_bright"], l["id"] + "_entrance")
+			for fl in floors:
+				var y0 := 1.0 + fl * 3.0
+				var x := 0.5
+				var k := 0
+				while x + 2.0 <= L - 0.5:
+					gen.add_window(o, u, v, n, x, y0, 2.0, 1.3, mats["glass"], mats["frame"], "%s_w%d_%d" % [l["id"], fl, k])
+					x += 2.6
+					k += 1
+		"gym":
+			# 体育館（F11）: 高い壁に横長の高窓、正面に扉
+			gen.add_plate(o, u, v, n, L * 0.5 - 1.0, 0.05, 2.0, 2.4, mats["dark"], l["id"] + "_door")
+			gen.add_window(o, u, v, n, 0.6, h - 2.2, L - 1.2, 1.2, mats["glass"], mats["frame"], l["id"] + "_hiwin")
 		"civic":
 			# 市民センター・交番（F06）: RC 2 階、正面に庇付きの入口と横長の窓
 			gen.add_plate(o, u, v, n, L * 0.5 - 1.2, 0.05, 2.4, 2.4, mats["glass_bright"], l["id"] + "_entrance")
@@ -361,8 +432,8 @@ func _collect_lot_faces() -> void:
 	for f in gen.faces:
 		var n: String = f["name"]
 		var id := ""
-		if n.begins_with("barrier"):
-			id = n.split("_")[0]   # barrierNN（塀・生垣・金網）もフェードの対象
+		if n.begins_with("barrier") or n.begins_with("tstep") or _terrain_top(n):
+			id = n.split("_")[0]   # barrierNN（塀・生垣・金網）、tstepNNN（地形の段差）、0.45 m より高い地形の面もフェードの対象
 		else:
 			for l in fd.lots:
 				var lid: String = l["id"]
@@ -371,6 +442,13 @@ func _collect_lot_faces() -> void:
 					break
 		if id == "":
 			continue
+		if _terrain_top(n):
+			var top_y: float = maxf(maxf((f["origin"] as Vector3).y, ((f["origin"] as Vector3) + (f["u"] as Vector3)).y), ((f["origin"] as Vector3) + (f["v"] as Vector3)).y)
+			if f.has("pts"):
+				for pp in f["pts"]:
+					top_y = maxf(top_y, (pp as Vector3).y)
+			if top_y < 0.45:
+				continue
 		if not lot_quads.has(id):
 			lot_quads[id] = []
 		lot_quads[id].append({"o": f["origin"], "u": f["u"], "v": f["v"], "tri": f["tri"]})
@@ -378,7 +456,10 @@ func _collect_lot_faces() -> void:
 		if not (mi is MeshInstance3D):
 			continue
 		var n: String = mi.name
-		if n.begins_with("barrier"):
+		if n.begins_with("barrier") or n.begins_with("tstep") or _terrain_top(n):
+			var bb0: AABB = mi.transform * mi.get_aabb()
+			if not n.begins_with("barrier") and not n.begins_with("tstep") and bb0.end.y < 0.45:
+				continue   # 低い地形の面は主人公を隠せない
 			var bid: String = n.split("_")[0]
 			var bb: AABB = mi.transform * mi.get_aabb()
 			if not lot_faces.has(bid):
@@ -403,6 +484,11 @@ func _collect_lot_faces() -> void:
 				break
 
 
+## 地形の上面・坂・裾・踏面（タイルごとに独立した名前）。F16 の岩壁の上面のように、高い地形の面が主人公を隠すのでフェードの対象にする
+static func _terrain_top(n: String) -> bool:
+	return n.begins_with("tflat") or n.begins_with("tslope") or n.begins_with("tskirt") or n.begins_with("ttread")
+
+
 ## barriers: 空き地（open）の上に明示した塀・生垣・金網（P-2a の近景）。矩形の細い方の軸に沿って薄い箱を立てる
 func _build_barriers() -> void:
 	var n := 0
@@ -414,21 +500,24 @@ func _build_barriers() -> void:
 		var along_x := int(r[2]) >= int(r[3])
 		var length := float(r[2] if along_x else r[3]) * T
 		var thick := 0.3
+		var by: float = _rect_heights(r)["max"]   # 地形の上に立てる
 		if kind == "overpass":
-			# 歩道橋: 高さ 4.5 m の床板と両端の柱。下は通れる
-			gen.add_box(Vector3(cx, 4.5, cz), Vector3(length, 0.3, 2.0) if along_x else Vector3(2.0, 0.3, length), mats["concrete"][0], mats["concrete"][0], "barrier%02d" % n, false)
-			gen.add_box(Vector3(cx, 5.1, cz), Vector3(length, 1.0, 0.1) if along_x else Vector3(0.1, 1.0, length), mats["frame"], mats["frame"], "barrier%02d_rail" % n, false)
-			var ends := [Vector3(cx - length * 0.5 + 0.4, 0, cz), Vector3(cx + length * 0.5 - 0.4, 0, cz)] if along_x else [Vector3(cx, 0, cz - length * 0.5 + 0.4), Vector3(cx, 0, cz + length * 0.5 - 0.4)]
+			# 歩道橋・高架: height_m（既定 4.5 m）の床板と両端の柱。下は通れる
+			var oh := float(b.get("height_m", 4.5))
+			var ow := float(b.get("width_m", 2.0))
+			gen.add_box(Vector3(cx, by + oh, cz), Vector3(length, 0.3, ow) if along_x else Vector3(ow, 0.3, length), mats["concrete"][0], mats["concrete"][0], "barrier%02d" % n, false)
+			gen.add_box(Vector3(cx, by + oh + 0.6, cz), Vector3(length, 1.0, 0.1) if along_x else Vector3(0.1, 1.0, length), mats["frame"], mats["frame"], "barrier%02d_rail" % n, false)
+			var ends := [Vector3(cx - length * 0.5 + 0.4, by, cz), Vector3(cx + length * 0.5 - 0.4, by, cz)] if along_x else [Vector3(cx, by, cz - length * 0.5 + 0.4), Vector3(cx, by, cz + length * 0.5 - 0.4)]
 			for e in ends:
-				gen.add_box(e, Vector3(0.6, 4.5, 0.6), mats["concrete"][0], mats["concrete"][0], "barrier%02d_pier" % n, false)
+				gen.add_box(e, Vector3(0.6, oh, 0.6), mats["concrete"][0], mats["concrete"][0], "barrier%02d_pier" % n, false)
 			n += 1
 			continue
-		var h: float = {"hedge": 1.0, "fence_block": 1.2, "fence_wall": 1.8, "wire_fence": 1.5, "guardrail": 0.8}.get(kind, 1.0)
-		var mat: Material = {"hedge": mats["hedge"], "fence_block": mats["block_fence"], "fence_wall": mats["plaster"][0], "wire_fence": mats["wire"], "guardrail": mats["frame"]}.get(kind, mats["hedge"])
+		var h: float = {"hedge": 1.0, "fence_block": 1.2, "fence_wall": 1.8, "wire_fence": 1.5, "guardrail": 0.8, "sound_wall": 3.5, "stone_fence": 1.0}.get(kind, 1.0)
+		var mat: Material = {"hedge": mats["hedge"], "fence_block": mats["block_fence"], "fence_wall": mats["plaster"][0], "wire_fence": mats["wire"], "guardrail": mats["frame"], "sound_wall": mats["concrete_slab"], "stone_fence": mats["stone_wall"]}.get(kind, mats["hedge"])
 		var sz := Vector3(length, h, thick) if along_x else Vector3(thick, h, length)
 		if kind == "hedge":
 			sz = Vector3(length, h, 0.6) if along_x else Vector3(0.6, h, length)
-		gen.add_box(Vector3(cx, 0, cz), sz, mat, mat, "barrier%02d" % n, true)
+		gen.add_box(Vector3(cx, by, cz), sz, mat, mat, "barrier%02d" % n, true)
 		n += 1
 
 
@@ -464,7 +553,7 @@ func _build_prop(p: Dictionary) -> void:
 		return
 	var pivot := Node3D.new()
 	pivot.name = "Prop_" + p["id"]
-	pivot.position = Vector3(float(p["at"][0]) * T, 0.02, float(p["at"][1]) * T)
+	pivot.position = Vector3(float(p["at"][0]) * T, fd.ground_y(float(p["at"][0]) * T, float(p["at"][1]) * T) + 0.02, float(p["at"][1]) * T)
 	root.add_child(pivot)
 	var sp := Sprite3D.new()
 	sp.texture = ImageTexture.create_from_image(img)
@@ -514,3 +603,308 @@ func update_billboards(cam: Camera3D, texel_per_m: float) -> void:
 func set_lights(on: bool, dusk: bool = false) -> void:
 	for l in lights:
 		l.visible = (dusk if l.has_meta("dusk") else on)
+
+
+# ============================================================================
+# 地形（フェーズ 14 T-2b、docs/FIELD_FORMAT.md 第 8 節）
+# ============================================================================
+## 高さ画像があるときの地面。平らなタイルは (材質, 高さ) の行の連続区間を 1 面に、坂・階段はタイルごと、段差の境に垂直の面
+func _build_terrain() -> void:
+	var g: Dictionary = fd.d.get("ground", {})
+	var gm: Material = mats[g.get("default", "lot_ground")]
+	var tex := {FieldLayout.CLASS_WALK: mats[g.get("walk", "old_street")], FieldLayout.CLASS_NARROW: mats[g.get("narrow", "alley")], FieldLayout.CLASS_OPEN: mats[g.get("open", "gravel")], FieldLayout.CLASS_BLOCKED: gm}
+	var w := fd.size.x
+	var h := fd.size.y
+	var tm: Array = []
+	tm.resize(w * h)
+	for y in h:
+		for x in w:
+			tm[y * w + x] = tex[fd.cls(x, y)]
+	for p in g.get("patches", []):
+		var r: Array = p["rect"]
+		for y in range(int(r[1]), int(r[1]) + int(r[3])):
+			for x in range(int(r[0]), int(r[0]) + int(r[2])):
+				if x >= 0 and y >= 0 and x < w and y < h:
+					tm[y * w + x] = mats[p["tex"]]
+	for r in fd.trects:
+		if r.has("tex") and r.get("kind", "") != "stairs":
+			var rc: Array = r["rect"]
+			for y in range(int(rc[1]), int(rc[1]) + int(rc[3])):
+				for x in range(int(rc[0]), int(rc[0]) + int(rc[2])):
+					if x >= 0 and y >= 0 and x < w and y < h:
+						tm[y * w + x] = mats[r["tex"]]
+	# 平らなタイル
+	var n := 0
+	for y in h:
+		var x := 0
+		while x < w:
+			if fd.is_smooth(x, y):
+				x += 1
+				continue
+			var hh := fd.h_m(x, y)
+			var m: Material = tm[y * w + x]
+			var x1 := x
+			while x1 < w and not fd.is_smooth(x1, y) and fd.h_m(x1, y) == hh and tm[y * w + x1] == m:
+				x1 += 1
+			_rect_face([x, y, x1 - x, 1], m, "tflat%04d" % n, hh + 0.01, true)
+			n += 1
+			x = x1
+	# 坂・階段
+	for y in h:
+		for x in w:
+			if not fd.is_smooth(x, y):
+				continue
+			var r := fd.trect(x, y)
+			if r.get("kind", "") == "stairs":
+				_build_stairs_tile(x, y, r)
+			else:
+				_build_slope_tile(x, y, tm[y * w + x])
+	_build_risers()
+	var bi := 0
+	for r in fd.trects:
+		if r.get("kind", "") == "bridge":
+			_build_bridge(r, bi)
+			bi += 1
+	# 外周: 縁のタイルの高さで帯を延ばし、帯どうしの段差は面で塞ぐ
+	var margin := 16
+	for x in w:
+		_rect_face([x, -margin, 1, margin], gm, "margin_n_%d" % x, fd.h_m(x, 0), false)
+		_rect_face([x, h, 1, margin], gm, "margin_s_%d" % x, fd.h_m(x, h - 1), false)
+		if x + 1 < w:
+			_margin_step(Vector3(float(x + 1) * T, 0, -margin * T), Vector3(0, 0, margin * T), fd.h_m(x, 0), fd.h_m(x + 1, 0), gm, "margin_ns_%d" % x)
+			_margin_step(Vector3(float(x + 1) * T, 0, h * T), Vector3(0, 0, margin * T), fd.h_m(x, h - 1), fd.h_m(x + 1, h - 1), gm, "margin_ss_%d" % x)
+	for y in h:
+		_rect_face([-margin, y, margin, 1], gm, "margin_w_%d" % y, fd.h_m(0, y), false)
+		_rect_face([w, y, margin, 1], gm, "margin_e_%d" % y, fd.h_m(w - 1, y), false)
+		if y + 1 < h:
+			_margin_step(Vector3(-margin * T, 0, float(y + 1) * T), Vector3(margin * T, 0, 0), fd.h_m(0, y), fd.h_m(0, y + 1), gm, "margin_ws_%d" % y)
+			_margin_step(Vector3(w * T, 0, float(y + 1) * T), Vector3(margin * T, 0, 0), fd.h_m(w - 1, y), fd.h_m(w - 1, y + 1), gm, "margin_es_%d" % y)
+	_rect_face([-margin, -margin, margin, margin], gm, "margin_nw", fd.h_m(0, 0), false)
+	_rect_face([w, -margin, margin, margin], gm, "margin_ne", fd.h_m(w - 1, 0), false)
+	_rect_face([-margin, h, margin, margin], gm, "margin_sw", fd.h_m(0, h - 1), false)
+	_rect_face([w, h, margin, margin], gm, "margin_se", fd.h_m(w - 1, h - 1), false)
+
+
+## 外周の帯どうしの段差（両面）
+func _margin_step(o: Vector3, along: Vector3, ha: float, hb: float, mat: Material, name_: String) -> void:
+	if absf(ha - hb) < 0.01:
+		return
+	var lo := minf(ha, hb)
+	var hi := maxf(ha, hb)
+	var base := Vector3(o.x, lo, o.z)
+	gen.add_face(base, along, Vector3(0, hi - lo, 0), Vector3.UP, mat, name_, false, true)
+	gen.add_face(base + along, -along, Vector3(0, hi - lo, 0), Vector3.UP, mat, name_ + "b", false, true)
+
+
+func _build_slope_tile(x: int, y: int, mat: Material) -> void:
+	var c: Array = fd.tile_corners(x, y)
+	var x0 := float(x) * T
+	var z0 := float(y) * T
+	var pts := [Vector3(x0, float(c[0]) + 0.01, z0), Vector3(x0 + T, float(c[1]) + 0.01, z0), Vector3(x0 + T, float(c[2]) + 0.01, z0 + T), Vector3(x0, float(c[3]) + 0.01, z0 + T)]
+	gen.add_quad4(pts, mat, "tslope%03d%03d" % [x, y], true)
+	_skirts(x, y, c)
+
+
+## 坂・階段の縁が隣の平らなタイルと合わないとき、その縁に垂直の面（裾）を立てる。c は 4 隅 [NW, NE, SE, SW]
+func _skirts(x: int, y: int, c: Array) -> void:
+	var x0 := float(x) * T
+	var z0 := float(y) * T
+	# [隣のタイル, 縁の 2 点 (A, B), 隣の側へ向く法線]
+	var edges := [
+		[Vector2i(x, y - 1), Vector3(x0, c[0], z0), Vector3(x0 + T, c[1], z0), Vector3.FORWARD],
+		[Vector2i(x, y + 1), Vector3(x0, c[3], z0 + T), Vector3(x0 + T, c[2], z0 + T), Vector3.BACK],
+		[Vector2i(x - 1, y), Vector3(x0, c[0], z0), Vector3(x0, c[3], z0 + T), Vector3.LEFT],
+		[Vector2i(x + 1, y), Vector3(x0 + T, c[1], z0), Vector3(x0 + T, c[2], z0 + T), Vector3.RIGHT],
+	]
+	var k := 0
+	for e in edges:
+		var nb: Vector2i = e[0]
+		if nb.x < 0 or nb.y < 0 or nb.x >= fd.size.x or nb.y >= fd.size.y:
+			continue
+		if fd.is_smooth(nb.x, nb.y) or fd.tkind(nb.x, nb.y) == "bridge":
+			continue
+		var hn := fd.h_m(nb.x, nb.y)
+		var a: Vector3 = e[1]
+		var b: Vector3 = e[2]
+		if absf(a.y - hn) < 0.02 and absf(b.y - hn) < 0.02:
+			continue
+		var nrm: Vector3 = e[3]
+		var lower := hn < minf(a.y, b.y)   # 隣が低ければ面は隣の側を向く、高ければ自分の側を向く
+		var pts := [a, b, Vector3(b.x, hn, b.z), Vector3(a.x, hn, a.z)]
+		var mat := _terrain_wall_mat(x, y) if lower else _terrain_wall_mat(nb.x, nb.y)
+		gen.add_quad4(pts, mat, "tskirt%03d%03d%d" % [x, y, k], true, nrm if lower else -nrm)
+		k += 1
+
+
+## 階段のタイル: 入口側の縁 e0 から出口側の縁 e1 まで、蹴上げ 0.15 m の段を (e1 − e0) / 0.15 段刻む。踏面は 1.143 / 段数
+func _build_stairs_tile(x: int, y: int, r: Dictionary) -> void:
+	var c: Array = fd.tile_corners(x, y)
+	var axis: String = r["axis"]
+	var dir: int = r["dir"]
+	var x0 := float(x) * T
+	var z0 := float(y) * T
+	var e0: float
+	var e1: float
+	if axis == "x":
+		var ew := (float(c[0]) + float(c[3])) * 0.5
+		var ee := (float(c[1]) + float(c[2])) * 0.5
+		e0 = ew if dir > 0 else ee
+		e1 = ee if dir > 0 else ew
+	else:
+		var en := (float(c[0]) + float(c[1])) * 0.5
+		var es := (float(c[3]) + float(c[2])) * 0.5
+		e0 = en if dir > 0 else es
+		e1 = es if dir > 0 else en
+	var tread: Material = mats[r.get("tex", "stone_step")]
+	var riser: Material = mats[r.get("wall", "stone_wall")]
+	_skirts(x, y, c)
+	var n := int(round((e1 - e0) / FieldData.H_UNIT))
+	if n <= 0:
+		_rect_face([x, y, 1, 1], tread, "ttread%03d%03d99" % [x, y], (e0 + e1) * 0.5 + 0.01, true)
+		return
+	var tl := T / float(n)
+	for k in n:
+		var hk := e0 + (float(k) + 0.5) * FieldData.H_UNIT
+		var s0 := float(k) * tl
+		var lo := hk - FieldData.H_UNIT
+		if axis == "x":
+			var ax := x0 + (s0 if dir > 0 else T - s0 - tl)
+			gen.add_face(Vector3(ax, hk + 0.01, z0), Vector3(tl, 0, 0), Vector3(0, 0, T), Vector3.UP, tread, "ttread%03d%03d%02d" % [x, y, k], true, true)
+			var rx := x0 + (s0 if dir > 0 else T - s0)
+			if dir > 0:
+				gen.add_face(Vector3(rx, lo, z0), Vector3(0, 0, T), Vector3(0, FieldData.H_UNIT, 0), Vector3.LEFT, riser, "triser_%d_%d_%d" % [x, y, k], false, true)
+			else:
+				gen.add_face(Vector3(rx, lo, z0 + T), Vector3(0, 0, -T), Vector3(0, FieldData.H_UNIT, 0), Vector3.RIGHT, riser, "triser_%d_%d_%d" % [x, y, k], false, true)
+		else:
+			var az := z0 + (s0 if dir > 0 else T - s0 - tl)
+			gen.add_face(Vector3(x0, hk + 0.01, az), Vector3(T, 0, 0), Vector3(0, 0, tl), Vector3.UP, tread, "ttread%03d%03d%02d" % [x, y, k], true, true)
+			var rz := z0 + (s0 if dir > 0 else T - s0)
+			if dir > 0:
+				gen.add_face(Vector3(x0 + T, lo, rz), Vector3(-T, 0, 0), Vector3(0, FieldData.H_UNIT, 0), Vector3.FORWARD, riser, "triser_%d_%d_%d" % [x, y, k], false, true)
+			else:
+				gen.add_face(Vector3(x0, lo, rz), Vector3(T, 0, 0), Vector3(0, FieldData.H_UNIT, 0), Vector3.BACK, riser, "triser_%d_%d_%d" % [x, y, k], false, true)
+
+
+## 平らなタイルどうしの段差に垂直の面（擁壁・石垣・縁石）。同じ高さの差・材質の連続区間を 1 面にまとめる
+func _build_risers() -> void:
+	var w := fd.size.x
+	var h := fd.size.y
+	var done := {}
+	# 東西に隣り合う (x, y)-(x+1, y)。y 方向にまとめる
+	for x in w - 1:
+		for y in h:
+			if done.has(Vector2i(x, y)):
+				continue
+			var a := fd.h_units(x, y)
+			var b := fd.h_units(x + 1, y)
+			if a == b or fd.is_smooth(x, y) or fd.is_smooth(x + 1, y) or fd.tkind(x, y) == "bridge" or fd.tkind(x + 1, y) == "bridge":
+				continue
+			var hx := x if a > b else x + 1
+			var mat := _terrain_wall_mat(hx, y)
+			var y1 := y
+			while y1 + 1 < h and fd.h_units(x, y1 + 1) == a and fd.h_units(x + 1, y1 + 1) == b and not fd.is_smooth(x, y1 + 1) and not fd.is_smooth(x + 1, y1 + 1) and _terrain_wall_mat(hx, y1 + 1) == mat:
+				y1 += 1
+			for yy in range(y, y1 + 1):
+				done[Vector2i(x, yy)] = true
+			var lo := float(mini(a, b)) * FieldData.H_UNIT
+			var hi := float(maxi(a, b)) * FieldData.H_UNIT
+			var bx := float(x + 1) * T
+			var z0 := float(y) * T
+			var len := float(y1 - y + 1) * T
+			var o: Vector3
+			var u: Vector3
+			var nrm: Vector3
+			if a > b:
+				o = Vector3(bx, lo, z0 + len)
+				u = Vector3(0, 0, -len)
+				nrm = Vector3.RIGHT
+			else:
+				o = Vector3(bx, lo, z0)
+				u = Vector3(0, 0, len)
+				nrm = Vector3.LEFT
+			_riser(o, u, Vector3(0, hi - lo, 0), nrm, mat, "tstep_x_%d_%d" % [x, y], maxi(a, b) - mini(a, b))
+	done = {}
+	for y in h - 1:
+		for x in w:
+			if done.has(Vector2i(x, y)):
+				continue
+			var a := fd.h_units(x, y)
+			var b := fd.h_units(x, y + 1)
+			if a == b or fd.is_smooth(x, y) or fd.is_smooth(x, y + 1) or fd.tkind(x, y) == "bridge" or fd.tkind(x, y + 1) == "bridge":
+				continue
+			var hy := y if a > b else y + 1
+			var mat := _terrain_wall_mat(x, hy)
+			var x1 := x
+			while x1 + 1 < w and fd.h_units(x1 + 1, y) == a and fd.h_units(x1 + 1, y + 1) == b and not fd.is_smooth(x1 + 1, y) and not fd.is_smooth(x1 + 1, y + 1) and _terrain_wall_mat(x1 + 1, hy) == mat:
+				x1 += 1
+			for xx in range(x, x1 + 1):
+				done[Vector2i(xx, y)] = true
+			var lo := float(mini(a, b)) * FieldData.H_UNIT
+			var hi := float(maxi(a, b)) * FieldData.H_UNIT
+			var bz := float(y + 1) * T
+			var x0 := float(x) * T
+			var len := float(x1 - x + 1) * T
+			var o: Vector3
+			var u: Vector3
+			var nrm: Vector3
+			if a > b:
+				o = Vector3(x0, lo, bz)
+				u = Vector3(len, 0, 0)
+				nrm = Vector3.BACK
+			else:
+				o = Vector3(x0 + len, lo, bz)
+				u = Vector3(-len, 0, 0)
+				nrm = Vector3.FORWARD
+			_riser(o, u, Vector3(0, hi - lo, 0), nrm, mat, "tstep_y_%d_%d" % [x, y], maxi(a, b) - mini(a, b))
+
+
+func _riser(o: Vector3, u: Vector3, v: Vector3, nrm: Vector3, mat: Material, name_: String, units: int) -> void:
+	if units >= 3:
+		name_ = "tstep%03d" % _riser_n   # フェードの対象（_collect_lot_faces が tstep で始まる名前を拾う）
+		_riser_n += 1
+	gen.add_face(o, u, v, nrm, mat, name_, true, true)
+	if units >= 3:
+		# 3 階調以上は AO の遮蔽物と隠れの診断に入れる
+		var p0 := o
+		var p1 := o + u + v
+		var lo := Vector3(minf(p0.x, p1.x) - 0.05, minf(p0.y, p1.y), minf(p0.z, p1.z) - 0.05)
+		var hi := Vector3(maxf(p0.x, p1.x) + 0.05, maxf(p0.y, p1.y), maxf(p0.z, p1.z) + 0.05)
+		gen.aabbs.append(AABB(lo, hi - lo))
+		terrain_quads.append({"o": o, "u": u, "v": v, "tri": false})
+
+
+## 橋: 床板の厚み（側面）と欄干、橋脚。床板の上面は平らなタイルとして敷いてある。下の地面（川）まで壁で埋めない
+func _build_bridge(r: Dictionary, i: int) -> void:
+	var rc: Array = r["rect"]
+	var along_x := int(rc[2]) >= int(rc[3])
+	var deck: float = _rect_heights(rc)["max"]
+	var dm: Material = mats[r.get("deck", "concrete_slab")]
+	var x0 := float(rc[0]) * T
+	var z0 := float(rc[1]) * T
+	var bw := float(rc[2]) * T
+	var bd := float(rc[3]) * T
+	var cx := x0 + bw * 0.5
+	var cz := z0 + bd * 0.5
+	gen.add_box(Vector3(cx, deck - 0.4, cz), Vector3(bw, 0.4, bd), dm, dm, "tbridge%d_slab" % i, false, false)
+	var rail_h := 1.0
+	if along_x:
+		gen.add_box(Vector3(cx, deck, z0 + 0.08), Vector3(bw, rail_h, 0.12), mats["frame"], mats["frame"], "tbridge%d_rail0" % i, false)
+		gen.add_box(Vector3(cx, deck, z0 + bd - 0.08), Vector3(bw, rail_h, 0.12), mats["frame"], mats["frame"], "tbridge%d_rail1" % i, false)
+	else:
+		gen.add_box(Vector3(x0 + 0.08, deck, cz), Vector3(0.12, rail_h, bd), mats["frame"], mats["frame"], "tbridge%d_rail0" % i, false)
+		gen.add_box(Vector3(x0 + bw - 0.08, deck, cz), Vector3(0.12, rail_h, bd), mats["frame"], mats["frame"], "tbridge%d_rail1" % i, false)
+	# 橋脚: 長辺に沿って 6 タイルごと。下端は長辺の外側のタイルの最低の高さ
+	var bottom := 1e9
+	for y in range(int(rc[1]) - 1, int(rc[1]) + int(rc[3]) + 1):
+		for x in range(int(rc[0]) - 1, int(rc[0]) + int(rc[2]) + 1):
+			bottom = minf(bottom, fd.h_m(x, y))
+	bottom = float(r.get("bottom", bottom / FieldData.H_UNIT)) * FieldData.H_UNIT
+	var span := int(rc[2] if along_x else rc[3])
+	var k := 0
+	var s := 3
+	while s < span:
+		var px := x0 + (float(s) * T if along_x else bw * 0.5)
+		var pz := z0 + (bd * 0.5 if along_x else float(s) * T)
+		gen.add_box(Vector3(px, bottom, pz), Vector3(0.8, maxf(deck - 0.4 - bottom, 0.1), bd * 0.8) if along_x else Vector3(bw * 0.8, maxf(deck - 0.4 - bottom, 0.1), 0.8), mats["concrete_slab"], mats["concrete_slab"], "tbridge%d_pier%d" % [i, k], false, false)
+		k += 1
+		s += 6

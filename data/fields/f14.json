@@ -1,0 +1,2298 @@
+{
+ "format": 2,
+ "id": "F14",
+ "name": "朝和の里",
+ "size": [
+  56,
+  36
+ ],
+ "elevation": 2,
+ "biome": "paddy_shrine",
+ "scene": "res://scenes/fields/f14_asawa.tscn",
+ "field_yaw": 50,
+ "sun_az": {
+  "evening": 145
+ },
+ "note": "歩ける範囲は F14_walkable.png（唯一の真実）。座標は refs/field/F14.png と docs/field/F14_spec.md（調べ物・出入口はそのまま）。道は 6 タイル以上に広げた。 tools/gen_fields_*.py が生成（フェーズ 12〜14）。水田は空き地（歩けない）、畦道は narrow。林道の落石はプレースホルダの岩。",
+ "walkable": "res://data/fields/F14_walkable.png",
+ "ground": {
+  "walk": "dirt",
+  "narrow": "dirt",
+  "open": "paddy",
+  "default": "grass",
+  "patches": [
+   {
+    "id": "p000",
+    "rect": [
+     44,
+     0,
+     4,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p001",
+    "rect": [
+     44,
+     1,
+     4,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p002",
+    "rect": [
+     1,
+     2,
+     20,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p003",
+    "rect": [
+     21,
+     2,
+     2,
+     1
+    ],
+    "tex": "gravel"
+   },
+   {
+    "id": "p004",
+    "rect": [
+     31,
+     2,
+     2,
+     1
+    ],
+    "tex": "gravel"
+   },
+   {
+    "id": "p005",
+    "rect": [
+     33,
+     2,
+     11,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p006",
+    "rect": [
+     44,
+     2,
+     4,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p007",
+    "rect": [
+     48,
+     2,
+     5,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p008",
+    "rect": [
+     1,
+     3,
+     20,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p009",
+    "rect": [
+     21,
+     3,
+     2,
+     1
+    ],
+    "tex": "gravel"
+   },
+   {
+    "id": "p010",
+    "rect": [
+     31,
+     3,
+     2,
+     1
+    ],
+    "tex": "gravel"
+   },
+   {
+    "id": "p011",
+    "rect": [
+     33,
+     3,
+     11,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p012",
+    "rect": [
+     44,
+     3,
+     4,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p013",
+    "rect": [
+     48,
+     3,
+     5,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p014",
+    "rect": [
+     1,
+     4,
+     20,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p015",
+    "rect": [
+     21,
+     4,
+     12,
+     1
+    ],
+    "tex": "gravel"
+   },
+   {
+    "id": "p016",
+    "rect": [
+     33,
+     4,
+     11,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p017",
+    "rect": [
+     44,
+     4,
+     4,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p018",
+    "rect": [
+     48,
+     4,
+     5,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p019",
+    "rect": [
+     1,
+     5,
+     20,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p020",
+    "rect": [
+     21,
+     5,
+     12,
+     1
+    ],
+    "tex": "gravel"
+   },
+   {
+    "id": "p021",
+    "rect": [
+     33,
+     5,
+     11,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p022",
+    "rect": [
+     44,
+     5,
+     4,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p023",
+    "rect": [
+     48,
+     5,
+     5,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p024",
+    "rect": [
+     1,
+     6,
+     20,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p025",
+    "rect": [
+     21,
+     6,
+     12,
+     1
+    ],
+    "tex": "gravel"
+   },
+   {
+    "id": "p026",
+    "rect": [
+     33,
+     6,
+     11,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p027",
+    "rect": [
+     44,
+     6,
+     4,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p028",
+    "rect": [
+     48,
+     6,
+     5,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p029",
+    "rect": [
+     1,
+     7,
+     20,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p030",
+    "rect": [
+     21,
+     7,
+     12,
+     1
+    ],
+    "tex": "gravel"
+   },
+   {
+    "id": "p031",
+    "rect": [
+     33,
+     7,
+     11,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p032",
+    "rect": [
+     44,
+     7,
+     4,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p033",
+    "rect": [
+     48,
+     7,
+     5,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p034",
+    "rect": [
+     1,
+     8,
+     23,
+     1
+    ],
+    "tex": "water"
+   },
+   {
+    "id": "p035",
+    "rect": [
+     24,
+     8,
+     4,
+     1
+    ],
+    "tex": "concrete_slab"
+   },
+   {
+    "id": "p036",
+    "rect": [
+     28,
+     8,
+     16,
+     1
+    ],
+    "tex": "water"
+   },
+   {
+    "id": "p037",
+    "rect": [
+     44,
+     8,
+     4,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p038",
+    "rect": [
+     48,
+     8,
+     5,
+     1
+    ],
+    "tex": "water"
+   },
+   {
+    "id": "p039",
+    "rect": [
+     38,
+     10,
+     15,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p040",
+    "rect": [
+     1,
+     11,
+     11,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p041",
+    "rect": [
+     14,
+     11,
+     10,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p042",
+    "rect": [
+     26,
+     11,
+     10,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p043",
+    "rect": [
+     38,
+     11,
+     15,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p044",
+    "rect": [
+     1,
+     12,
+     11,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p045",
+    "rect": [
+     14,
+     12,
+     10,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p046",
+    "rect": [
+     26,
+     12,
+     10,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p047",
+    "rect": [
+     38,
+     12,
+     15,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p048",
+    "rect": [
+     1,
+     13,
+     11,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p049",
+    "rect": [
+     14,
+     13,
+     10,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p050",
+    "rect": [
+     26,
+     13,
+     10,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p051",
+    "rect": [
+     38,
+     13,
+     15,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p052",
+    "rect": [
+     1,
+     14,
+     11,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p053",
+    "rect": [
+     14,
+     14,
+     10,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p054",
+    "rect": [
+     26,
+     14,
+     10,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p055",
+    "rect": [
+     38,
+     14,
+     15,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p056",
+    "rect": [
+     1,
+     15,
+     11,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p057",
+    "rect": [
+     14,
+     15,
+     10,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p058",
+    "rect": [
+     26,
+     15,
+     10,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p059",
+    "rect": [
+     38,
+     15,
+     15,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p060",
+    "rect": [
+     38,
+     16,
+     15,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p061",
+    "rect": [
+     38,
+     17,
+     15,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p062",
+    "rect": [
+     38,
+     18,
+     15,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p063",
+    "rect": [
+     38,
+     19,
+     15,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p064",
+    "rect": [
+     38,
+     20,
+     15,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p065",
+    "rect": [
+     38,
+     21,
+     15,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p066",
+    "rect": [
+     1,
+     22,
+     3,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p067",
+    "rect": [
+     14,
+     22,
+     10,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p068",
+    "rect": [
+     26,
+     22,
+     10,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p069",
+    "rect": [
+     38,
+     22,
+     15,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p070",
+    "rect": [
+     1,
+     23,
+     3,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p071",
+    "rect": [
+     14,
+     23,
+     10,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p072",
+    "rect": [
+     26,
+     23,
+     10,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p073",
+    "rect": [
+     38,
+     23,
+     15,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p074",
+    "rect": [
+     1,
+     24,
+     3,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p075",
+    "rect": [
+     14,
+     24,
+     10,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p076",
+    "rect": [
+     26,
+     24,
+     10,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p077",
+    "rect": [
+     38,
+     24,
+     15,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p078",
+    "rect": [
+     1,
+     25,
+     2,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p079",
+    "rect": [
+     3,
+     25,
+     10,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p080",
+    "rect": [
+     14,
+     25,
+     10,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p081",
+    "rect": [
+     26,
+     25,
+     10,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p082",
+    "rect": [
+     38,
+     25,
+     15,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p083",
+    "rect": [
+     1,
+     26,
+     2,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p084",
+    "rect": [
+     3,
+     26,
+     10,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p085",
+    "rect": [
+     14,
+     26,
+     10,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p086",
+    "rect": [
+     26,
+     26,
+     10,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p087",
+    "rect": [
+     38,
+     26,
+     15,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p088",
+    "rect": [
+     38,
+     27,
+     15,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p089",
+    "rect": [
+     1,
+     29,
+     16,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p090",
+    "rect": [
+     23,
+     29,
+     30,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p091",
+    "rect": [
+     1,
+     30,
+     16,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p092",
+    "rect": [
+     23,
+     30,
+     30,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p093",
+    "rect": [
+     1,
+     31,
+     16,
+     1
+    ],
+    "tex": "paddy"
+   },
+   {
+    "id": "p094",
+    "rect": [
+     23,
+     31,
+     30,
+     1
+    ],
+    "tex": "paddy"
+   }
+  ]
+ },
+ "edge_fill": [
+  {
+   "rect": [
+    20,
+    1,
+    13,
+    8
+   ],
+   "kind": "fence_wall"
+  },
+  {
+   "rect": [
+    0,
+    0,
+    56,
+    36
+   ],
+   "kind": "none"
+  }
+ ],
+ "buildings": [
+  {
+   "id": "shikinaisha",
+   "kind": "temple_hall",
+   "width": 8,
+   "floors": 1,
+   "wall": "plaster",
+   "near": [
+    27,
+    4
+   ],
+   "depth": 2,
+   "height_m": 3.8,
+   "note": "式内社（小さな社の列）"
+  },
+  {
+   "id": "torii",
+   "kind": "temple_gate",
+   "width": 3,
+   "floors": 1,
+   "wall": "wood",
+   "at": [
+    27,
+    7
+   ],
+   "depth": 1,
+   "front": "S",
+   "note": "鳥居"
+  },
+  {
+   "id": "shige_house",
+   "kind": "house",
+   "width": 7,
+   "floors": 2,
+   "wall": "namako",
+   "near": [
+    8,
+    25
+   ],
+   "depth": 4,
+   "note": "朝和家（茅葺きの旧家）"
+  }
+ ],
+ "barriers": [],
+ "props": [
+  {
+   "id": "shrine_board",
+   "asset": "obj_bulletin_board",
+   "at": [
+    21.5,
+    3.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "visitor_book",
+   "asset": "obj_offering_box",
+   "at": [
+    26.5,
+    5.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o002",
+   "asset": "obj_stone_lantern",
+   "at": [
+    22.5,
+    6.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o003",
+   "asset": "obj_stone_lantern",
+   "at": [
+    31.5,
+    6.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o004",
+   "asset": "obj_komainu",
+   "at": [
+    25.5,
+    7.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o005",
+   "asset": "obj_komainu",
+   "at": [
+    29.5,
+    7.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "sluice",
+   "asset": "obj_block_wall",
+   "at": [
+    30.5,
+    8.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o007",
+   "asset": "ph_stone_pillar",
+   "at": [
+    42.5,
+    12.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o008",
+   "asset": "ph_stone_pillar",
+   "at": [
+    43.5,
+    11.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o009",
+   "asset": "ph_stone_pillar",
+   "at": [
+    44.5,
+    12.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o010",
+   "asset": "ph_stone_pillar",
+   "at": [
+    43.5,
+    13.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o011",
+   "asset": "ph_stone_pillar",
+   "at": [
+    47.5,
+    15.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o012",
+   "asset": "ph_stone_pillar",
+   "at": [
+    48.5,
+    16.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o013",
+   "asset": "ph_stone_pillar",
+   "at": [
+    49.5,
+    15.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o014",
+   "asset": "ph_stone_pillar",
+   "at": [
+    43.5,
+    22.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o015",
+   "asset": "ph_stone_pillar",
+   "at": [
+    44.5,
+    23.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o016",
+   "asset": "ph_stone_pillar",
+   "at": [
+    45.5,
+    22.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "tower_bell",
+   "asset": "ph_fire_tower",
+   "at": [
+    13.5,
+    28.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "rock_sign",
+   "asset": "obj_signboard_pole",
+   "at": [
+    42.5,
+    9.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "offering",
+   "asset": "obj_stone_marker",
+   "at": [
+    30.5,
+    26.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o020",
+   "asset": "obj_mailbox",
+   "at": [
+    6.5,
+    25.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "rock1",
+   "asset": "ph_rock",
+   "at": [
+    44.5,
+    5.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "rock2",
+   "asset": "ph_rock",
+   "at": [
+    46.5,
+    6.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "rock3",
+   "asset": "ph_rock",
+   "at": [
+    45.5,
+    7.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o024",
+   "asset": "obj_utility_pole",
+   "at": [
+    2.5,
+    15.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o025",
+   "asset": "obj_utility_pole",
+   "at": [
+    14.5,
+    15.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o026",
+   "asset": "obj_utility_pole",
+   "at": [
+    26.5,
+    15.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o027",
+   "asset": "obj_utility_pole",
+   "at": [
+    38.5,
+    15.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o028",
+   "asset": "obj_utility_pole",
+   "at": [
+    50.5,
+    15.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o029",
+   "asset": "ph_tree_conifer",
+   "at": [
+    0.5,
+    32.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o030",
+   "asset": "ph_tree_conifer",
+   "at": [
+    3.5,
+    33.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o031",
+   "asset": "ph_tree_conifer",
+   "at": [
+    5.5,
+    32.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o032",
+   "asset": "ph_tree_conifer",
+   "at": [
+    7.5,
+    33.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o033",
+   "asset": "ph_tree_conifer",
+   "at": [
+    9.5,
+    33.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o034",
+   "asset": "ph_tree_conifer",
+   "at": [
+    11.5,
+    32.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o035",
+   "asset": "ph_tree_conifer",
+   "at": [
+    13.5,
+    32.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o036",
+   "asset": "ph_tree_conifer",
+   "at": [
+    15.5,
+    33.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o037",
+   "asset": "ph_tree_conifer",
+   "at": [
+    24.5,
+    33.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o038",
+   "asset": "ph_tree_conifer",
+   "at": [
+    26.5,
+    32.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o039",
+   "asset": "ph_tree_conifer",
+   "at": [
+    29.5,
+    32.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o040",
+   "asset": "ph_tree_conifer",
+   "at": [
+    31.5,
+    33.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o041",
+   "asset": "ph_tree_conifer",
+   "at": [
+    33.5,
+    32.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o042",
+   "asset": "ph_tree_conifer",
+   "at": [
+    34.5,
+    33.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o043",
+   "asset": "ph_tree_conifer",
+   "at": [
+    36.5,
+    32.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o044",
+   "asset": "ph_tree_conifer",
+   "at": [
+    39.5,
+    32.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o045",
+   "asset": "ph_tree_conifer",
+   "at": [
+    41.5,
+    33.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o046",
+   "asset": "ph_tree_conifer",
+   "at": [
+    42.5,
+    33.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o047",
+   "asset": "ph_tree_conifer",
+   "at": [
+    45.5,
+    33.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o048",
+   "asset": "ph_tree_conifer",
+   "at": [
+    46.5,
+    32.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o049",
+   "asset": "ph_tree_conifer",
+   "at": [
+    48.5,
+    33.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o050",
+   "asset": "ph_tree_conifer",
+   "at": [
+    51.5,
+    32.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o051",
+   "asset": "ph_tree_conifer",
+   "at": [
+    52.5,
+    32.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o052",
+   "asset": "ph_tree_conifer",
+   "at": [
+    55.5,
+    32.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o053",
+   "asset": "ph_tree_conifer",
+   "at": [
+    0.5,
+    35.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o054",
+   "asset": "ph_tree_conifer",
+   "at": [
+    3.5,
+    34.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o055",
+   "asset": "ph_tree_conifer",
+   "at": [
+    5.5,
+    35.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o056",
+   "asset": "ph_tree_conifer",
+   "at": [
+    7.5,
+    35.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o057",
+   "asset": "ph_tree_conifer",
+   "at": [
+    9.5,
+    35.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o058",
+   "asset": "ph_tree_conifer",
+   "at": [
+    11.5,
+    34.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o059",
+   "asset": "ph_tree_conifer",
+   "at": [
+    13.5,
+    35.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o060",
+   "asset": "ph_tree_conifer",
+   "at": [
+    15.5,
+    34.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o061",
+   "asset": "ph_tree_conifer",
+   "at": [
+    23.5,
+    34.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o062",
+   "asset": "ph_tree_conifer",
+   "at": [
+    25.5,
+    35.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o063",
+   "asset": "ph_tree_conifer",
+   "at": [
+    26.5,
+    35.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o064",
+   "asset": "ph_tree_conifer",
+   "at": [
+    29.5,
+    35.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o065",
+   "asset": "ph_tree_conifer",
+   "at": [
+    31.5,
+    35.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o066",
+   "asset": "ph_tree_conifer",
+   "at": [
+    33.5,
+    34.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o067",
+   "asset": "ph_tree_conifer",
+   "at": [
+    34.5,
+    35.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o068",
+   "asset": "ph_tree_conifer",
+   "at": [
+    37.5,
+    34.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o069",
+   "asset": "ph_tree_conifer",
+   "at": [
+    39.5,
+    34.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o070",
+   "asset": "ph_tree_conifer",
+   "at": [
+    40.5,
+    34.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o071",
+   "asset": "ph_tree_conifer",
+   "at": [
+    43.5,
+    34.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o072",
+   "asset": "ph_tree_conifer",
+   "at": [
+    44.5,
+    35.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o073",
+   "asset": "ph_tree_conifer",
+   "at": [
+    47.5,
+    35.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o074",
+   "asset": "ph_tree_conifer",
+   "at": [
+    48.5,
+    34.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o075",
+   "asset": "ph_tree_conifer",
+   "at": [
+    50.5,
+    34.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o076",
+   "asset": "ph_tree_conifer",
+   "at": [
+    52.5,
+    34.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o077",
+   "asset": "ph_tree_conifer",
+   "at": [
+    55.5,
+    35.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o078",
+   "asset": "ph_tree_conifer",
+   "at": [
+    53.5,
+    0.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o079",
+   "asset": "ph_tree_conifer",
+   "at": [
+    55.5,
+    0.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o080",
+   "asset": "ph_tree_conifer",
+   "at": [
+    53.5,
+    2.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o081",
+   "asset": "ph_tree_conifer",
+   "at": [
+    55.5,
+    2.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o082",
+   "asset": "ph_tree_conifer",
+   "at": [
+    54.5,
+    4.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o083",
+   "asset": "ph_tree_conifer",
+   "at": [
+    55.5,
+    5.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o084",
+   "asset": "ph_tree_conifer",
+   "at": [
+    54.5,
+    7.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o085",
+   "asset": "ph_tree_conifer",
+   "at": [
+    54.5,
+    9.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o086",
+   "asset": "ph_tree_conifer",
+   "at": [
+    55.5,
+    8.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o087",
+   "asset": "ph_tree_conifer",
+   "at": [
+    54.5,
+    11.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o088",
+   "asset": "ph_tree_conifer",
+   "at": [
+    55.5,
+    11.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o089",
+   "asset": "ph_tree_conifer",
+   "at": [
+    54.5,
+    12.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o090",
+   "asset": "ph_tree_conifer",
+   "at": [
+    54.5,
+    14.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o091",
+   "asset": "ph_tree_conifer",
+   "at": [
+    54.5,
+    17.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o092",
+   "asset": "ph_tree_conifer",
+   "at": [
+    53.5,
+    19.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o093",
+   "asset": "ph_tree_conifer",
+   "at": [
+    55.5,
+    18.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o094",
+   "asset": "ph_tree_conifer",
+   "at": [
+    53.5,
+    20.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o095",
+   "asset": "ph_tree_conifer",
+   "at": [
+    55.5,
+    21.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o096",
+   "asset": "ph_tree_conifer",
+   "at": [
+    54.5,
+    22.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o097",
+   "asset": "ph_tree_conifer",
+   "at": [
+    55.5,
+    22.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o098",
+   "asset": "ph_tree_conifer",
+   "at": [
+    54.5,
+    24.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o099",
+   "asset": "ph_tree_conifer",
+   "at": [
+    55.5,
+    25.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o100",
+   "asset": "ph_tree_conifer",
+   "at": [
+    54.5,
+    27.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o101",
+   "asset": "ph_tree_conifer",
+   "at": [
+    55.5,
+    26.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o102",
+   "asset": "ph_tree_conifer",
+   "at": [
+    54.5,
+    28.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o103",
+   "asset": "ph_tree_conifer",
+   "at": [
+    55.5,
+    29.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o104",
+   "asset": "ph_tree_conifer",
+   "at": [
+    54.5,
+    30.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o105",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    11.5,
+    1.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o106",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    15.5,
+    0.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o107",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    35.5,
+    1.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o108",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    37.5,
+    1.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o109",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    40.5,
+    0.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o110",
+   "asset": "ph_tree_conifer",
+   "at": [
+    48.5,
+    0.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o111",
+   "asset": "ph_tree_conifer",
+   "at": [
+    51.5,
+    1.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o112",
+   "asset": "ph_tree_conifer",
+   "at": [
+    52.5,
+    0.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o113",
+   "asset": "ph_tree_conifer",
+   "at": [
+    53.5,
+    3.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o114",
+   "asset": "ph_tree_conifer",
+   "at": [
+    53.5,
+    4.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o115",
+   "asset": "ph_tree_conifer",
+   "at": [
+    53.5,
+    6.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o116",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    43.5,
+    10.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o117",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    48.5,
+    10.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o118",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    54.5,
+    11.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o119",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    41.5,
+    18.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o120",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    48.5,
+    18.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o121",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    54.5,
+    17.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o122",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    42.5,
+    24.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o123",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    44.5,
+    24.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o124",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    53.5,
+    24.5
+   ],
+   "facing": "E"
+  }
+ ],
+ "collision": {
+  "extra_blocked": [],
+  "extra_open": []
+ },
+ "points": [
+  {
+   "id": "shrine_board",
+   "at": [
+    21,
+    3
+   ],
+   "kind": "board",
+   "label": "式内社の由緒書き"
+  },
+  {
+   "id": "visitor_book",
+   "at": [
+    26,
+    6
+   ],
+   "kind": "item",
+   "label": "奉納帳"
+  },
+  {
+   "id": "kofun",
+   "at": [
+    43,
+    13
+   ],
+   "kind": "item",
+   "label": "古墳の石室入口"
+  },
+  {
+   "id": "sluice",
+   "at": [
+    30,
+    8
+   ],
+   "kind": "item",
+   "label": "水路の水門"
+  },
+  {
+   "id": "tower_bell",
+   "at": [
+    13,
+    28
+   ],
+   "kind": "item",
+   "label": "火の見櫓"
+  },
+  {
+   "id": "rock_sign",
+   "at": [
+    42,
+    8
+   ],
+   "kind": "board",
+   "label": "落石の看板"
+  },
+  {
+   "id": "offering",
+   "at": [
+    30,
+    26
+   ],
+   "kind": "item",
+   "label": "畦の供え物"
+  },
+  {
+   "id": "shige_door",
+   "at": [
+    7,
+    25
+   ],
+   "kind": "door",
+   "label": "朝和家"
+  },
+  {
+   "id": "shige_npc",
+   "at": [
+    8,
+    26
+   ],
+   "kind": "npc",
+   "label": "シゲ",
+   "when": "shige_present"
+  }
+ ],
+ "exits": [
+  {
+   "dir": "W",
+   "at": [
+    0,
+    18
+   ],
+   "to": "F11",
+   "spawn": [
+    1,
+    18
+   ],
+   "label": "通用口→小学校"
+  },
+  {
+   "dir": "S",
+   "at": [
+    19,
+    35
+   ],
+   "to": "F10",
+   "spawn": [
+    19,
+    34
+   ],
+   "label": "農道→運動広場"
+  },
+  {
+   "dir": "N",
+   "at": [
+    44,
+    0
+   ],
+   "to": "F16",
+   "spawn": [
+    44,
+    1
+   ],
+   "label": "薬師谷への林道。序盤は落石で封鎖",
+   "when": "flag_yakushi_open"
+  }
+ ],
+ "areas": []
+}

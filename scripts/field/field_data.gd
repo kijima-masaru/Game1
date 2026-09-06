@@ -6,9 +6,14 @@ extends RefCounted
 ## 座標はタイル（左上原点、右 +x、下 +y）。ワールドは x → +X、y → +Z。
 
 const TILE := 1.143
-const LOT_KINDS := ["shop_shutter", "shop_wood", "dagashi", "house", "temple_hall", "temple_gate", "fence_wall", "fence_block", "hedge", "bldg_rc", "store", "apartment", "civic"]
-const BARRIER_KINDS := ["hedge", "fence_block", "fence_wall", "wire_fence", "guardrail", "overpass"]
-const GROUND_TEX := ["lot_ground", "gravel", "asphalt", "stone_path", "old_street", "alley", "sidewalk", "grass", "water", "tile"]
+const LOT_KINDS := ["shop_shutter", "shop_wood", "dagashi", "house", "temple_hall", "temple_gate", "fence_wall", "fence_block", "hedge", "bldg_rc", "store", "apartment", "civic", "school", "gym", "shelter"]
+const BARRIER_KINDS := ["hedge", "fence_block", "fence_wall", "wire_fence", "guardrail", "overpass", "sound_wall", "stone_fence"]
+const GROUND_TEX := ["lot_ground", "gravel", "asphalt", "stone_path", "old_street", "alley", "sidewalk", "grass", "water", "tile", "paddy", "stone_step", "dirt", "concrete_slab", "rock", "earth", "moss", "sand"]
+# ---- 高さ（フェーズ 14 T-2、docs/FIELD_FORMAT.md 第 8 節）----
+const H_UNIT := 0.15                 # 1 階調 = 0.15 m（石段 1 段の蹴上げ）
+const CLIMB_MAX := 1                 # 登れる段差の上限（階調）。2 階調（0.30 m）以上は擁壁・崖
+const TERRAIN_KINDS := ["slope", "stairs", "bridge", "wall"]
+const WALL_TEX := ["retaining_wall", "stone_wall", "rock", "earth", "concrete_slab"]
 const PASSABLE_LOTS := ["temple_gate"]
 const MIN_STREET_WIDTH := 6
 
@@ -22,6 +27,14 @@ var layout: FieldLayout
 var mask_path := ""
 var errors: Array[String] = []
 var warnings: Array[String] = []
+var heights: PackedByteArray = []    # 階調（0..255）。ファイルが無ければ全面 0
+var height_path := ""
+var has_height := false
+var trects: Array = []               # terrain.rects（kind / rect / wall / tex に axis / dir / steps を足したもの）
+var tidx: PackedByteArray = []       # タイル → trects の添字 + 1（0 = 無し）
+var corners: PackedFloat32Array = [] # タイルの 4 隅の高さ (m)（NW, NE, SE, SW）。坂・階段の補間用
+var terrain_wall := "retaining_wall"
+var terrain_stats := {}
 
 
 static func load_json(path: String) -> Dictionary:
@@ -45,9 +58,13 @@ func load(field_path: String, assets_path: String = "res://data/assets/objects.j
 	size = Vector2i(int(d["size"][0]), int(d["size"][1]))
 	if not _load_mask(field_path):
 		return false
+	if not _load_height(field_path):
+		return false
+	_index_terrain()
 	_validate_static()
+	_validate_terrain()
 	relayout(flags)
-	_validate_connectivity()
+	_validate_connectivity(flags)
 	return errors.is_empty()
 
 
@@ -248,7 +265,7 @@ func is_passable_world(p: Vector3) -> bool:
 
 
 ## 出入口と調べ物が最初の出入口から歩いて届くか（塗りつぶし）。調べ物は周囲 2 タイル以内の通行可タイルで代用。
-func _validate_connectivity() -> void:
+func _validate_connectivity(flags: Dictionary = {}) -> void:
 	var exits: Array = d.get("exits", [])
 	if exits.is_empty():
 		warnings.append("出入口が無い")
@@ -260,10 +277,14 @@ func _validate_connectivity() -> void:
 	var reach := _flood(start)
 	for e in exits:
 		var t := Vector2i(int(e["at"][0]), int(e["at"][1]))
+		if not when_ok(e.get("when"), flags) and e != exits[0]:
+			continue   # 条件付きの出入口（落石で封鎖など）は、フラグが無ければ到達を求めない
 		if not reach.has(t):
 			errors.append("出入口 %s (%d,%d) に到達できない" % [e.get("dir", "?"), t.x, t.y])
 	for p in d.get("points", []):
 		var t := Vector2i(int(p["at"][0]), int(p["at"][1]))
+		if not when_ok(p.get("when"), flags):
+			continue   # 状況で出現する調べ物・人物は、フラグが無ければ到達を求めない
 		var ok := false
 		for dy in range(-2, 3):
 			for dx in range(-2, 3):
@@ -272,6 +293,18 @@ func _validate_connectivity() -> void:
 					ok = true
 		if not ok:
 			errors.append("調べ物 %s (%d,%d) の周囲 2 タイルに到達できる歩行可能タイルが無い" % [p.get("id", "?"), t.x, t.y])
+	if has_height:
+		var cut := 0
+		var first := ""
+		for y in size.y:
+			for x in size.x:
+				if is_passable(x, y) and not reach.has(Vector2i(x, y)):
+					cut += 1
+					if first == "":
+						first = "(%d,%d)" % [x, y]
+		terrain_stats["cut_off"] = cut
+		if cut > 0:
+			warnings.append("段差で分断: 歩けるのに最初の出入口から届かないタイル %d（最初 %s）。坂か階段を明示する" % [cut, first])
 
 
 func _flood(start: Vector2i) -> Dictionary:
@@ -281,7 +314,7 @@ func _flood(start: Vector2i) -> Dictionary:
 		var c: Vector2i = q.pop_back()
 		for o in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
 			var n: Vector2i = c + o
-			if seen.has(n) or not is_passable(n.x, n.y):
+			if seen.has(n) or not can_step(c, n):
 				continue
 			seen[n] = true
 			q.append(n)
@@ -300,7 +333,7 @@ func find_path(from: Vector2i, to: Vector2i) -> Array[Vector2i]:
 			break
 		for o in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
 			var n: Vector2i = c + o
-			if prev.has(n) or not is_passable(n.x, n.y):
+			if prev.has(n) or not can_step(c, n):
 				continue
 			prev[n] = c
 			q.append(n)
@@ -352,3 +385,300 @@ func passable_image() -> Image:
 				if x >= 0 and y >= 0 and x < size.x and y < size.y:
 					img.set_pixel(x, y, col)
 	return img
+
+
+# ---- 高さ（フェーズ 14 T-2）--------------------------------------------------------------
+## `<ID>_height.png`（任意）。1 px = 1 タイル、厳密なグレー（R = G = B、A 255）、1 階調 = 0.15 m、0 = 基準面。無ければ全面 0
+func _load_height(field_path: String) -> bool:
+	heights = PackedByteArray()
+	heights.resize(size.x * size.y)
+	heights.fill(0)
+	height_path = d["height"] if d.has("height") else field_path.get_base_dir() + "/%s_height.png" % d["id"]
+	var gp := ProjectSettings.globalize_path(height_path)
+	if not FileAccess.file_exists(gp):
+		has_height = false
+		return true
+	var img := Image.load_from_file(gp)
+	if img == null:
+		errors.append("高さ画像が読めない: %s" % height_path)
+		return false
+	if img.get_width() != size.x or img.get_height() != size.y:
+		errors.append("高さ画像の大きさ %dx%d が size %s と違う" % [img.get_width(), img.get_height(), str(size)])
+		return false
+	var bad: Array[String] = []
+	for y in size.y:
+		for x in size.x:
+			var c := img.get_pixel(x, y)
+			var r := int(round(c.r * 255.0))
+			var g := int(round(c.g * 255.0))
+			var b := int(round(c.b * 255.0))
+			var a := int(round(c.a * 255.0))
+			if r != g or g != b or a != 255:
+				if bad.size() < 10:
+					bad.append("(%d,%d)=%s" % [x, y, c.to_html(true)])
+			heights[y * size.x + x] = r
+	if not bad.is_empty():
+		errors.append("高さ画像に灰色（R = G = B、A 255）以外の画素がある: %s%s" % [", ".join(bad), " …" if bad.size() >= 10 else ""])
+		return false
+	has_height = true
+	return true
+
+
+## 階調（範囲外は縁のタイルに丸める。外周の帯が縁の高さに続く）
+func h_units(x: int, y: int) -> int:
+	if heights.is_empty():
+		return 0
+	return heights[clampi(y, 0, size.y - 1) * size.x + clampi(x, 0, size.x - 1)]
+
+
+func h_m(x: int, y: int) -> float:
+	return float(h_units(x, y)) * H_UNIT
+
+
+func trect(x: int, y: int) -> Dictionary:
+	if tidx.is_empty() or x < 0 or y < 0 or x >= size.x or y >= size.y:
+		return {}
+	var i := tidx[y * size.x + x]
+	return trects[i - 1] if i > 0 else {}
+
+
+func tkind(x: int, y: int) -> String:
+	return String(trect(x, y).get("kind", ""))
+
+
+## 坂・階段（面が連続し、差に関わらず渡れる）
+func is_smooth(x: int, y: int) -> bool:
+	var k := tkind(x, y)
+	return k == "slope" or k == "stairs"
+
+
+## 隣のタイル b へ渡れるか（8b）: 通行可で、差が CLIMB_MAX 以下、またはどちらかが坂・階段
+func can_step(a: Vector2i, b: Vector2i) -> bool:
+	if not is_passable(b.x, b.y):
+		return false
+	if not has_height:
+		return true
+	if absi(h_units(a.x, a.y) - h_units(b.x, b.y)) <= CLIMB_MAX:
+		return true
+	return is_smooth(a.x, a.y) or is_smooth(b.x, b.y)
+
+
+## タイルの 4 隅の高さ (m)。[NW, NE, SE, SW]
+func tile_corners(x: int, y: int) -> Array:
+	var i := (y * size.x + x) * 4
+	return [corners[i], corners[i + 1], corners[i + 2], corners[i + 3]]
+
+
+## ワールド（フィールドのローカル、m）の地面の高さ。坂・階段は 4 隅を双線形補間、それ以外はタイルの高さ
+func ground_y(px: float, pz: float) -> float:
+	if not has_height:
+		return 0.0
+	var tx := clampi(int(floor(px / TILE)), 0, size.x - 1)
+	var ty := clampi(int(floor(pz / TILE)), 0, size.y - 1)
+	if not is_smooth(tx, ty):
+		return h_m(tx, ty)
+	var fx := clampf(px / TILE - float(tx), 0.0, 1.0)
+	var fz := clampf(pz / TILE - float(ty), 0.0, 1.0)
+	var i := (ty * size.x + tx) * 4
+	var top := lerpf(corners[i], corners[i + 1], fx)
+	var bot := lerpf(corners[i + 3], corners[i + 2], fx)
+	return lerpf(top, bot, fz)
+
+
+## terrain.rects を索引にし、坂・階段の軸と向き、4 隅の高さを求める
+func _index_terrain() -> void:
+	var t: Dictionary = d.get("terrain", {})
+	terrain_wall = String(t.get("wall", "retaining_wall"))
+	trects = []
+	tidx = PackedByteArray()
+	tidx.resize(size.x * size.y)
+	tidx.fill(0)
+	var n := 0
+	# 優先順位: 階段 > 坂 > 橋 > 壁（壁の矩形は面のテクスチャだけなので、坂・階段を覆っても奪わない）
+	var ordered: Array = []
+	for kind in ["stairs", "slope", "bridge", "wall"]:
+		for r0 in t.get("rects", []):
+			if String((r0 as Dictionary).get("kind", "")) == kind:
+				ordered.append(r0)
+	for r0 in t.get("rects", []):
+		if not (String((r0 as Dictionary).get("kind", "")) in TERRAIN_KINDS):
+			ordered.append(r0)
+	for r0 in ordered:
+		var r: Dictionary = (r0 as Dictionary).duplicate()
+		n += 1
+		var rc: Array = r.get("rect", [0, 0, 0, 0])
+		var sx := 0
+		var sy := 0
+		var lo := 255
+		var hi := 0
+		for y in range(int(rc[1]), int(rc[1]) + int(rc[3])):
+			for x in range(int(rc[0]), int(rc[0]) + int(rc[2])):
+				if x < 0 or y < 0 or x >= size.x or y >= size.y:
+					continue
+				if tidx[y * size.x + x] == 0:
+					tidx[y * size.x + x] = n
+				lo = mini(lo, h_units(x, y))
+				hi = maxi(hi, h_units(x, y))
+				if x + 1 < int(rc[0]) + int(rc[2]):
+					sx += h_units(x + 1, y) - h_units(x, y)
+				if y + 1 < int(rc[1]) + int(rc[3]):
+					sy += h_units(x, y + 1) - h_units(x, y)
+		r["axis"] = "x" if absi(sx) >= absi(sy) else "y"
+		r["dir"] = 1 if (sx if r["axis"] == "x" else sy) >= 0 else -1
+		r["steps"] = hi - lo
+		trects.append(r)
+	corners = PackedFloat32Array()
+	corners.resize(size.x * size.y * 4)
+	for y in size.y:
+		for x in size.x:
+			var i := (y * size.x + x) * 4
+			if not is_smooth(x, y):
+				var hh := h_m(x, y)
+				corners[i] = hh
+				corners[i + 1] = hh
+				corners[i + 2] = hh
+				corners[i + 3] = hh
+				continue
+			var my := tidx[y * size.x + x]
+			var r := trect(x, y)
+			if r.get("kind", "") == "stairs":
+				# 階段: 縁の高さは進行方向の隣だけで決める（脇のタイルに引きずられない）。幅方向は一定
+				var ax: String = r["axis"]
+				var e_lo: float
+				var e_hi: float
+				if ax == "y":
+					e_lo = _inline_edge(x, y, x, y - 1, my)
+					e_hi = _inline_edge(x, y, x, y + 1, my)
+					corners[i] = e_lo
+					corners[i + 1] = e_lo
+					corners[i + 2] = e_hi
+					corners[i + 3] = e_hi
+				else:
+					e_lo = _inline_edge(x, y, x - 1, y, my)
+					e_hi = _inline_edge(x, y, x + 1, y, my)
+					corners[i] = e_lo
+					corners[i + 3] = e_lo
+					corners[i + 1] = e_hi
+					corners[i + 2] = e_hi
+				continue
+			corners[i] = _corner_h(x, y, my)
+			corners[i + 1] = _corner_h(x + 1, y, my)
+			corners[i + 2] = _corner_h(x + 1, y + 1, my)
+			corners[i + 3] = _corner_h(x, y + 1, my)
+
+
+## 階段のタイル (x, y) と進行方向の隣 (nx, ny) の間の縁の高さ。隣が同じ階段なら中心の平均、外なら隣（平ら）の高さ、場外なら自分の高さ
+func _inline_edge(x: int, y: int, nx: int, ny: int, my_idx: int) -> float:
+	if nx < 0 or ny < 0 or nx >= size.x or ny >= size.y:
+		return h_m(x, y)
+	if tidx[ny * size.x + nx] == my_idx:
+		return (h_m(x, y) + h_m(nx, ny)) * 0.5
+	if is_smooth(nx, ny):
+		return (h_m(x, y) + h_m(nx, ny)) * 0.5
+	return h_m(nx, ny)
+
+
+## 隅 (cx, cy)（タイル (cx, cy) の左上）の高さ。周りの 4 タイルのうち平らなもの（坂・階段でない、または場外）があればその平均、無ければ 4 つの平均
+func _corner_h(cx: int, cy: int, _my_idx: int) -> float:
+	var out_sum := 0.0
+	var out_n := 0
+	var all_sum := 0.0
+	for t in [Vector2i(cx - 1, cy - 1), Vector2i(cx, cy - 1), Vector2i(cx - 1, cy), Vector2i(cx, cy)]:
+		var tx := clampi(t.x, 0, size.x - 1)
+		var ty := clampi(t.y, 0, size.y - 1)
+		var hh := h_m(tx, ty)
+		var outside: bool = (t.x != tx or t.y != ty) or not is_smooth(tx, ty)   # 坂・階段どうしは続き、平らなタイルが縁を決める
+		all_sum += hh
+		if outside:
+			out_sum += hh
+			out_n += 1
+	return out_sum / float(out_n) if out_n > 0 else all_sum * 0.25
+
+
+func _validate_terrain() -> void:
+	terrain_stats = {"height": has_height, "rects": trects.size(), "stairs": [], "blocked_edges": 0, "steep_tiles": 0}
+	var t: Dictionary = d.get("terrain", {})
+	if t.has("wall") and not (t["wall"] in WALL_TEX):
+		errors.append("terrain.wall が未定義のテクスチャ %s" % t["wall"])
+	if not trects.is_empty() and not has_height:
+		warnings.append("terrain があるのに高さ画像が無い")
+	var k := 0
+	for r in trects:
+		k += 1
+		var rc: Array = r.get("rect", [0, 0, 0, 0])
+		var kind := String(r.get("kind", ""))
+		if not (kind in TERRAIN_KINDS):
+			errors.append("terrain rect %d: 未定義の kind %s" % [k, kind])
+		if rc[0] < 0 or rc[1] < 0 or rc[0] + rc[2] > size.x or rc[1] + rc[3] > size.y:
+			errors.append("terrain rect %d %s が範囲外" % [k, str(rc)])
+		if r.has("wall") and not (r["wall"] in WALL_TEX):
+			errors.append("terrain rect %d: 未定義の wall %s" % [k, r["wall"]])
+		if r.has("tex") and not (r["tex"] in GROUND_TEX):
+			errors.append("terrain rect %d: 未定義の tex %s" % [k, r["tex"]])
+		if r.has("deck") and not (r["deck"] in GROUND_TEX):
+			errors.append("terrain rect %d: 未定義の deck %s" % [k, r["deck"]])
+		if kind == "stairs":
+			# 一方向に単調（各列で差の符号が dir と同じ）
+			var mono := true
+			var ax: String = r["axis"]
+			var dr: int = r["dir"]
+			for y in range(int(rc[1]), int(rc[1]) + int(rc[3])):
+				for x in range(int(rc[0]), int(rc[0]) + int(rc[2])):
+					var nx := x + (1 if ax == "x" else 0)
+					var ny := y + (1 if ax == "y" else 0)
+					if nx < int(rc[0]) + int(rc[2]) and ny < int(rc[1]) + int(rc[3]):
+						if (h_units(nx, ny) - h_units(x, y)) * dr < 0:
+							mono = false
+			if not mono:
+				warnings.append("階段 %d %s が一方向に単調でない" % [k, str(rc)])
+			var lo_c := 1e9
+			var hi_c := -1e9
+			for y in range(int(rc[1]), int(rc[1]) + int(rc[3])):
+				for x in range(int(rc[0]), int(rc[0]) + int(rc[2])):
+					if x < 0 or y < 0 or x >= size.x or y >= size.y:
+						continue
+					for cv in tile_corners(x, y):
+						lo_c = minf(lo_c, float(cv))
+						hi_c = maxf(hi_c, float(cv))
+			var steps := int(round((hi_c - lo_c) / H_UNIT)) if hi_c >= lo_c else 0
+			terrain_stats["stairs"].append({"rect": rc, "steps": steps, "axis": ax, "dir": dr, "rise_m": float(steps) * H_UNIT})
+		if kind == "slope":
+			for y in range(int(rc[1]), int(rc[1]) + int(rc[3])):
+				for x in range(int(rc[0]), int(rc[0]) + int(rc[2])):
+					var sx := x + 1 < int(rc[0]) + int(rc[2]) and absi(h_units(x + 1, y) - h_units(x, y)) > 8
+					var sy := y + 1 < int(rc[1]) + int(rc[3]) and absi(h_units(x, y + 1) - h_units(x, y)) > 8
+					if sx or sy:
+						terrain_stats["steep_tiles"] = int(terrain_stats["steep_tiles"]) + 1
+	if int(terrain_stats["steep_tiles"]) > 0:
+		warnings.append("坂の傾きが 8 階調 / タイル（46°）を超えるタイル %d（助言）" % int(terrain_stats["steep_tiles"]))
+	# 登れない段差の縁（両側とも歩けるタイル）
+	var n_edges := 0
+	for y in size.y:
+		for x in size.x:
+			if not is_walk_class(x, y):
+				continue
+			for o in [Vector2i(1, 0), Vector2i(0, 1)]:
+				var q: Vector2i = Vector2i(x, y) + o
+				if is_walk_class(q.x, q.y) and absi(h_units(x, y) - h_units(q.x, q.y)) > CLIMB_MAX and not is_smooth(x, y) and not is_smooth(q.x, q.y):
+					n_edges += 1
+	terrain_stats["blocked_edges"] = n_edges
+
+
+## 始点から（段差の規則で）歩いて最も遠いタイル（自動歩行の終点。出入口が 1 つのフィールド用）
+func farthest_from(start: Vector2i) -> Vector2i:
+	var dist := {start: 0}
+	var q: Array[Vector2i] = [start]
+	var qi := 0
+	var best := start
+	while qi < q.size():
+		var c: Vector2i = q[qi]
+		qi += 1
+		if dist[c] > dist[best]:
+			best = c
+		for o in [Vector2i(1, 0), Vector2i(-1, 0), Vector2i(0, 1), Vector2i(0, -1)]:
+			var n: Vector2i = c + o
+			if dist.has(n) or not can_step(c, n):
+				continue
+			dist[n] = int(dist[c]) + 1
+			q.append(n)
+	return best

@@ -1,0 +1,1562 @@
+{
+ "format": 2,
+ "id": "F10",
+ "name": "磐戸運動広場・河川敷",
+ "size": [
+  48,
+  32
+ ],
+ "elevation": 1,
+ "biome": "riverside_ground",
+ "scene": "res://scenes/fields/f10_ground.tscn",
+ "field_yaw": 50,
+ "sun_az": {
+  "evening": 145
+ },
+ "note": "歩ける範囲は F10_walkable.png（唯一の真実）。座標は refs/field/F10.png と docs/field/F10_spec.md（調べ物・出入口はそのまま）。道は 6 タイル以上に広げた。 高さは F10_height.png（1 階調 = 0.15 m）。 tools/gen_fields_*.py が生成（フェーズ 12〜14）。堤防は 3.0 m（資料に高さの記載なし）。法面は坂、上り下りの道は坂の中の歩けるタイル。",
+ "walkable": "res://data/fields/F10_walkable.png",
+ "height": "res://data/fields/F10_height.png",
+ "terrain": {
+  "wall": "concrete_slab",
+  "rects": [
+   {
+    "kind": "slope",
+    "rect": [
+     0,
+     23,
+     48,
+     3
+    ]
+   },
+   {
+    "kind": "slope",
+    "rect": [
+     0,
+     28,
+     48,
+     3
+    ]
+   }
+  ]
+ },
+ "ground": {
+  "walk": "grass",
+  "narrow": "alley",
+  "open": "grass",
+  "default": "grass",
+  "patches": [
+   {
+    "id": "p000",
+    "rect": [
+     0,
+     0,
+     48,
+     1
+    ],
+    "tex": "asphalt"
+   },
+   {
+    "id": "p001",
+    "rect": [
+     0,
+     1,
+     48,
+     1
+    ],
+    "tex": "asphalt"
+   },
+   {
+    "id": "p002",
+    "rect": [
+     0,
+     2,
+     47,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p003",
+    "rect": [
+     0,
+     3,
+     47,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p004",
+    "rect": [
+     0,
+     4,
+     47,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p005",
+    "rect": [
+     0,
+     5,
+     24,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p006",
+    "rect": [
+     24,
+     5,
+     1,
+     1
+    ],
+    "tex": "sidewalk"
+   },
+   {
+    "id": "p007",
+    "rect": [
+     25,
+     5,
+     22,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p008",
+    "rect": [
+     0,
+     6,
+     24,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p009",
+    "rect": [
+     24,
+     6,
+     1,
+     1
+    ],
+    "tex": "sidewalk"
+   },
+   {
+    "id": "p010",
+    "rect": [
+     25,
+     6,
+     22,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p011",
+    "rect": [
+     0,
+     7,
+     7,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p012",
+    "rect": [
+     7,
+     7,
+     17,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p013",
+    "rect": [
+     24,
+     7,
+     1,
+     1
+    ],
+    "tex": "sidewalk"
+   },
+   {
+    "id": "p014",
+    "rect": [
+     25,
+     7,
+     17,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p015",
+    "rect": [
+     42,
+     7,
+     5,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p016",
+    "rect": [
+     0,
+     8,
+     7,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p017",
+    "rect": [
+     7,
+     8,
+     17,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p018",
+    "rect": [
+     24,
+     8,
+     1,
+     1
+    ],
+    "tex": "sidewalk"
+   },
+   {
+    "id": "p019",
+    "rect": [
+     25,
+     8,
+     17,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p020",
+    "rect": [
+     46,
+     8,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p021",
+    "rect": [
+     0,
+     9,
+     7,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p022",
+    "rect": [
+     7,
+     9,
+     17,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p023",
+    "rect": [
+     24,
+     9,
+     1,
+     1
+    ],
+    "tex": "sidewalk"
+   },
+   {
+    "id": "p024",
+    "rect": [
+     25,
+     9,
+     17,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p025",
+    "rect": [
+     46,
+     9,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p026",
+    "rect": [
+     0,
+     10,
+     7,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p027",
+    "rect": [
+     7,
+     10,
+     17,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p028",
+    "rect": [
+     24,
+     10,
+     1,
+     1
+    ],
+    "tex": "sidewalk"
+   },
+   {
+    "id": "p029",
+    "rect": [
+     25,
+     10,
+     17,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p030",
+    "rect": [
+     46,
+     10,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p031",
+    "rect": [
+     0,
+     11,
+     7,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p032",
+    "rect": [
+     7,
+     11,
+     17,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p033",
+    "rect": [
+     24,
+     11,
+     1,
+     1
+    ],
+    "tex": "sidewalk"
+   },
+   {
+    "id": "p034",
+    "rect": [
+     25,
+     11,
+     17,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p035",
+    "rect": [
+     42,
+     11,
+     5,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p036",
+    "rect": [
+     0,
+     12,
+     7,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p037",
+    "rect": [
+     7,
+     12,
+     17,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p038",
+    "rect": [
+     24,
+     12,
+     1,
+     1
+    ],
+    "tex": "sidewalk"
+   },
+   {
+    "id": "p039",
+    "rect": [
+     25,
+     12,
+     17,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p040",
+    "rect": [
+     42,
+     12,
+     5,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p041",
+    "rect": [
+     0,
+     13,
+     7,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p042",
+    "rect": [
+     7,
+     13,
+     17,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p043",
+    "rect": [
+     24,
+     13,
+     1,
+     1
+    ],
+    "tex": "sidewalk"
+   },
+   {
+    "id": "p044",
+    "rect": [
+     25,
+     13,
+     17,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p045",
+    "rect": [
+     42,
+     13,
+     5,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p046",
+    "rect": [
+     0,
+     14,
+     7,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p047",
+    "rect": [
+     7,
+     14,
+     17,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p048",
+    "rect": [
+     24,
+     14,
+     1,
+     1
+    ],
+    "tex": "sidewalk"
+   },
+   {
+    "id": "p049",
+    "rect": [
+     25,
+     14,
+     17,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p050",
+    "rect": [
+     42,
+     14,
+     5,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p051",
+    "rect": [
+     0,
+     15,
+     7,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p052",
+    "rect": [
+     7,
+     15,
+     17,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p053",
+    "rect": [
+     24,
+     15,
+     1,
+     1
+    ],
+    "tex": "sidewalk"
+   },
+   {
+    "id": "p054",
+    "rect": [
+     25,
+     15,
+     17,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p055",
+    "rect": [
+     42,
+     15,
+     5,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p056",
+    "rect": [
+     0,
+     16,
+     7,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p057",
+    "rect": [
+     7,
+     16,
+     17,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p058",
+    "rect": [
+     24,
+     16,
+     1,
+     1
+    ],
+    "tex": "sidewalk"
+   },
+   {
+    "id": "p059",
+    "rect": [
+     25,
+     16,
+     17,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p060",
+    "rect": [
+     42,
+     16,
+     5,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p061",
+    "rect": [
+     0,
+     17,
+     7,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p062",
+    "rect": [
+     7,
+     17,
+     17,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p063",
+    "rect": [
+     24,
+     17,
+     1,
+     1
+    ],
+    "tex": "sidewalk"
+   },
+   {
+    "id": "p064",
+    "rect": [
+     25,
+     17,
+     17,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p065",
+    "rect": [
+     42,
+     17,
+     5,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p066",
+    "rect": [
+     0,
+     18,
+     7,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p067",
+    "rect": [
+     7,
+     18,
+     17,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p068",
+    "rect": [
+     24,
+     18,
+     1,
+     1
+    ],
+    "tex": "sidewalk"
+   },
+   {
+    "id": "p069",
+    "rect": [
+     25,
+     18,
+     17,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p070",
+    "rect": [
+     42,
+     18,
+     5,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p071",
+    "rect": [
+     0,
+     19,
+     7,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p072",
+    "rect": [
+     7,
+     19,
+     17,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p073",
+    "rect": [
+     24,
+     19,
+     1,
+     1
+    ],
+    "tex": "sidewalk"
+   },
+   {
+    "id": "p074",
+    "rect": [
+     25,
+     19,
+     17,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p075",
+    "rect": [
+     42,
+     19,
+     5,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p076",
+    "rect": [
+     0,
+     20,
+     7,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p077",
+    "rect": [
+     7,
+     20,
+     17,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p078",
+    "rect": [
+     24,
+     20,
+     1,
+     1
+    ],
+    "tex": "sidewalk"
+   },
+   {
+    "id": "p079",
+    "rect": [
+     25,
+     20,
+     17,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p080",
+    "rect": [
+     42,
+     20,
+     5,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p081",
+    "rect": [
+     0,
+     21,
+     7,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p082",
+    "rect": [
+     7,
+     21,
+     17,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p083",
+    "rect": [
+     24,
+     21,
+     1,
+     1
+    ],
+    "tex": "sidewalk"
+   },
+   {
+    "id": "p084",
+    "rect": [
+     25,
+     21,
+     17,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p085",
+    "rect": [
+     42,
+     21,
+     5,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p086",
+    "rect": [
+     0,
+     22,
+     7,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p087",
+    "rect": [
+     7,
+     22,
+     17,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p088",
+    "rect": [
+     24,
+     22,
+     1,
+     1
+    ],
+    "tex": "sidewalk"
+   },
+   {
+    "id": "p089",
+    "rect": [
+     25,
+     22,
+     17,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p090",
+    "rect": [
+     42,
+     22,
+     5,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p091",
+    "rect": [
+     0,
+     23,
+     48,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p092",
+    "rect": [
+     0,
+     24,
+     48,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p093",
+    "rect": [
+     0,
+     25,
+     48,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p094",
+    "rect": [
+     0,
+     26,
+     48,
+     1
+    ],
+    "tex": "asphalt"
+   },
+   {
+    "id": "p095",
+    "rect": [
+     0,
+     27,
+     48,
+     1
+    ],
+    "tex": "asphalt"
+   },
+   {
+    "id": "p096",
+    "rect": [
+     0,
+     28,
+     10,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p097",
+    "rect": [
+     10,
+     28,
+     6,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p098",
+    "rect": [
+     16,
+     28,
+     32,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p099",
+    "rect": [
+     0,
+     29,
+     10,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p100",
+    "rect": [
+     10,
+     29,
+     6,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p101",
+    "rect": [
+     16,
+     29,
+     32,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p102",
+    "rect": [
+     0,
+     30,
+     10,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p103",
+    "rect": [
+     10,
+     30,
+     6,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p104",
+    "rect": [
+     16,
+     30,
+     32,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p105",
+    "rect": [
+     10,
+     31,
+     6,
+     1
+    ],
+    "tex": "dirt"
+   }
+  ]
+ },
+ "edge_fill": [
+  {
+   "rect": [
+    0,
+    0,
+    48,
+    32
+   ],
+   "kind": "none"
+  }
+ ],
+ "buildings": [
+  {
+   "id": "shed",
+   "kind": "house",
+   "width": 4,
+   "floors": 1,
+   "wall": "concrete",
+   "near": [
+    44,
+    11
+   ],
+   "depth": 3,
+   "roof": "flat",
+   "height_m": 2.8,
+   "note": "用具倉庫"
+  }
+ ],
+ "barriers": [],
+ "props": [
+  {
+   "id": "o000",
+   "asset": "ph_backnet",
+   "at": [
+    7.5,
+    8.0
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o001",
+   "asset": "ph_backnet",
+   "at": [
+    7.5,
+    10.0
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o002",
+   "asset": "ph_backnet",
+   "at": [
+    7.5,
+    12.0
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o003",
+   "asset": "ph_backnet",
+   "at": [
+    9.0,
+    6.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o004",
+   "asset": "ph_backnet",
+   "at": [
+    11.0,
+    6.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o005",
+   "asset": "ph_light_tower",
+   "at": [
+    5.5,
+    4.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o006",
+   "asset": "ph_light_tower",
+   "at": [
+    5.5,
+    22.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o007",
+   "asset": "ph_light_tower",
+   "at": [
+    43.5,
+    4.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o008",
+   "asset": "ph_light_tower",
+   "at": [
+    43.5,
+    22.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o009",
+   "asset": "obj_bench",
+   "at": [
+    11.5,
+    23.0
+   ],
+   "facing": "N"
+  },
+  {
+   "id": "o010",
+   "asset": "obj_bench",
+   "at": [
+    13.5,
+    23.0
+   ],
+   "facing": "N"
+  },
+  {
+   "id": "o011",
+   "asset": "obj_bench",
+   "at": [
+    16.5,
+    23.0
+   ],
+   "facing": "N"
+  },
+  {
+   "id": "o012",
+   "asset": "obj_bench",
+   "at": [
+    18.5,
+    23.0
+   ],
+   "facing": "N"
+  },
+  {
+   "id": "panel",
+   "asset": "obj_water_tank",
+   "at": [
+    5.5,
+    23.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "line_stake",
+   "asset": "obj_stone_marker",
+   "at": [
+    24.5,
+    5.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "marker",
+   "asset": "obj_stone_marker",
+   "at": [
+    30.5,
+    26.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o016",
+   "asset": "obj_guardrail",
+   "at": [
+    2.5,
+    26.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o017",
+   "asset": "obj_guardrail",
+   "at": [
+    8.5,
+    26.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o018",
+   "asset": "obj_guardrail",
+   "at": [
+    20.5,
+    26.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o019",
+   "asset": "obj_guardrail",
+   "at": [
+    32.5,
+    26.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o020",
+   "asset": "obj_guardrail",
+   "at": [
+    44.5,
+    26.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o021",
+   "asset": "ph_tree_conifer",
+   "at": [
+    18.5,
+    31.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o022",
+   "asset": "ph_tree_conifer",
+   "at": [
+    25.5,
+    31.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o023",
+   "asset": "ph_tree_conifer",
+   "at": [
+    28.5,
+    31.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o024",
+   "asset": "ph_tree_conifer",
+   "at": [
+    30.5,
+    31.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o025",
+   "asset": "ph_tree_conifer",
+   "at": [
+    34.5,
+    31.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o026",
+   "asset": "ph_tree_conifer",
+   "at": [
+    37.5,
+    31.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o027",
+   "asset": "ph_tree_conifer",
+   "at": [
+    42.5,
+    31.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o028",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    3.5,
+    5.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o029",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    14.5,
+    2.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o030",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    18.5,
+    9.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o031",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    24.5,
+    4.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o032",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    38.5,
+    5.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o033",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    46.5,
+    5.5
+   ],
+   "facing": "E"
+  }
+ ],
+ "collision": {
+  "extra_blocked": [],
+  "extra_open": []
+ },
+ "points": [
+  {
+   "id": "shed",
+   "at": [
+    44,
+    10
+   ],
+   "kind": "door",
+   "label": "用具倉庫"
+  },
+  {
+   "id": "dugout",
+   "at": [
+    11,
+    22
+   ],
+   "kind": "item",
+   "label": "ダッグアウト"
+  },
+  {
+   "id": "panel",
+   "at": [
+    5,
+    23
+   ],
+   "kind": "item",
+   "label": "照明塔の配電盤"
+  },
+  {
+   "id": "line_stake",
+   "at": [
+    24,
+    5
+   ],
+   "kind": "item",
+   "label": "白線の起点"
+  },
+  {
+   "id": "marker",
+   "at": [
+    30,
+    26
+   ],
+   "kind": "item",
+   "label": "堤防の距離標"
+  },
+  {
+   "id": "backnet",
+   "at": [
+    8,
+    6
+   ],
+   "kind": "item",
+   "label": "バックネット"
+  }
+ ],
+ "exits": [
+  {
+   "dir": "W",
+   "at": [
+    0,
+    14
+   ],
+   "to": "F13",
+   "spawn": [
+    1,
+    14
+   ],
+   "label": "堤防道路→ニュータウン"
+  },
+  {
+   "dir": "N",
+   "at": [
+    10,
+    0
+   ],
+   "to": "F11",
+   "spawn": [
+    10,
+    1
+   ],
+   "label": "小学校の裏門"
+  },
+  {
+   "dir": "N",
+   "at": [
+    40,
+    0
+   ],
+   "to": "F14",
+   "spawn": [
+    40,
+    1
+   ],
+   "label": "農道→朝和の里"
+  },
+  {
+   "dir": "S",
+   "at": [
+    12,
+    31
+   ],
+   "to": "F15",
+   "spawn": [
+    12,
+    30
+   ],
+   "label": "堤防を下って河畔"
+  }
+ ],
+ "areas": []
+}
