@@ -27,3 +27,6 @@ Thumbs.db
 
 # lookdev の個別ショット（tools/lookdev_shots.py で再生成できる。シートだけ残す）
 /docs/lookdev/shots/
+
+# Python ツールのキャッシュ
+__pycache__/
