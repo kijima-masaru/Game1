@@ -291,3 +291,134 @@ static func emissive_material(color: Color, energy: float = 1.0) -> StandardMate
 	m.emission_energy_multiplier = energy
 	m.cull_mode = BaseMaterial3D.CULL_DISABLED
 	return m
+
+# ============================================================================
+# フェーズ 8（F05）で追加
+# ============================================================================
+## 旧街道の舗装。狭い道の古いアスファルト。片側に側溝の蓋（縦の帯 4 texel）。歩車の区別は無い。
+static func old_street(size: int = 64, seed: int = 51) -> Image:
+	_seed(seed)
+	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
+	var base := Color(0.40, 0.38, 0.43)
+	var pal := [base, base.darkened(0.15), base.darkened(0.30), base.lightened(0.10), base.lightened(0.22), Color(0.31, 0.29, 0.33)]
+	var w := [42, 22, 10, 14, 5, 7]
+	for y in size:
+		for x in size:
+			img.set_pixel(x, y, _pick(pal, w))
+	# 補修跡（明るめ）と細いひび 2 本
+	var px := _rng.randi_range(4, size - 20)
+	var py := _rng.randi_range(4, size - 20)
+	for y in range(py, py + 10):
+		for x in range(px, px + 16):
+			img.set_pixel(x, y, img.get_pixel(x, y).lightened(0.10))
+	_crack(img, Vector2i(_rng.randi_range(0, size - 1), 0), 24, Color(0.24, 0.22, 0.27))
+	_crack(img, Vector2i(_rng.randi_range(0, size - 1), 0), 16, Color(0.26, 0.24, 0.28))
+	return img
+
+
+## 側溝の蓋（コンクリート、6 texel 周期の横筋）。道の端に帯として貼る。
+static func gutter(size: int = 24, seed: int = 53) -> Image:
+	_seed(seed)
+	var base := Color(0.50, 0.49, 0.50)
+	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
+	for y in size:
+		for x in size:
+			var c := base
+			if y % 6 == 0:
+				c = base.darkened(0.35)
+			elif y % 6 == 1:
+				c = base.lightened(0.10)
+			if _rng.randf() < 0.08:
+				c = c.darkened(0.08)
+			img.set_pixel(x, y, c)
+	return img
+
+
+## 敷地の土間・簡易コンクリート（建物の前後の地面）。低彩度の灰褐色。
+static func lot_ground(size: int = 32, seed: int = 55) -> Image:
+	_seed(seed)
+	var base := Color(0.46, 0.43, 0.42)
+	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
+	var pal := [base, base.darkened(0.10), base.lightened(0.08), base.darkened(0.22)]
+	for y in size:
+		for x in size:
+			img.set_pixel(x, y, _pick(pal, [50, 25, 18, 7]))
+	return img
+
+
+## 寺の境内の砂利（明るい灰、粒）。
+static func gravel(size: int = 32, seed: int = 57) -> Image:
+	_seed(seed)
+	var base := Color(0.60, 0.58, 0.57)
+	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
+	var pal := [base, base.darkened(0.12), base.lightened(0.10), base.darkened(0.25), base.lightened(0.18)]
+	for y in size:
+		for x in size:
+			img.set_pixel(x, y, _pick(pal, [40, 25, 18, 9, 8]))
+	return img
+
+
+## 参道の石畳（32 texel = 1.14 m に 2×2 枚。目地 1 texel）。
+static func stone_path(size: int = 32, seed: int = 59) -> Image:
+	_seed(seed)
+	var base := Color(0.52, 0.52, 0.54)
+	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
+	for y in size:
+		for x in size:
+			var c := base.darkened(_rng.randf() * 0.10)
+			if x % 16 == 0 or y % 16 == 0:
+				c = base.darkened(0.4)
+			img.set_pixel(x, y, c)
+	return img
+
+
+## 白い漆喰壁（寺・土蔵）。アルベド 0.60。うっすら汚れ。
+static func plaster(size: int = 32, albedo: float = 0.60, seed: int = 61) -> Image:
+	_seed(seed)
+	var base := _at_lum(Color(0.86, 0.85, 0.80), albedo)
+	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
+	var pal := [base, base.darkened(0.04), base.lightened(0.03), base.darkened(0.10)]
+	for y in size:
+		for x in size:
+			img.set_pixel(x, y, _pick(pal, [64, 20, 12, 4]))
+	for y in range(size - 5, size):
+		for x in size:
+			if _rng.randf() < 0.35:
+				img.set_pixel(x, y, img.get_pixel(x, y).darkened(0.12))
+	return img
+
+
+## なまこ壁（黒い平瓦を斜めに貼り、白い漆喰の目地を盛る）。1 枚 16 texel、目地 2 texel。周期 16。
+static func namako(size: int = 32, seed: int = 63) -> Image:
+	_seed(seed)
+	var tile := Color(0.14, 0.15, 0.18)
+	var joint := Color(0.86, 0.85, 0.80)
+	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
+	for y in size:
+		for x in size:
+			# 45° の格子: (x + y) と (x - y) が 16 の倍数の近くなら目地
+			var a := posmod(x + y, 16)
+			var b := posmod(x - y + 64, 16)
+			var c := tile
+			if a < 2 or b < 2:
+				c = joint
+			elif a == 2 or b == 2:
+				c = tile.lightened(0.15)
+			if _rng.randf() < 0.03:
+				c = c.darkened(0.1)
+			img.set_pixel(x, y, c)
+	return img
+
+
+## 駄菓子屋の窓明かり（黄色。emission 板に使う）。格子の影を落とす。
+static func warm_window(size: int = 16, seed: int = 65) -> Image:
+	_seed(seed)
+	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
+	var lit := Color(1.0, 0.82, 0.45)
+	for y in size:
+		for x in size:
+			var c := lit
+			if x % 8 == 0 or y % 8 == 0:
+				c = Color(0.35, 0.28, 0.15)
+			img.set_pixel(x, y, c)
+	return img

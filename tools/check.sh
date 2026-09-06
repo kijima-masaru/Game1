@@ -34,4 +34,7 @@ echo "== スモークテスト"
 echo "== 脚本の総当たりテスト（上限 5000 通り。全数は max_leaves 無しで約 80 秒）"
 "$GODOT" --headless --path . --script res://tests/story_exhaustive.gd -- max_leaves=5000
 
+echo "== フィールドデータの検証（data/fields/*.json）"
+"$GODOT" --headless --path . --script res://tests/field_validate.gd
+
 echo "== すべて成功"
