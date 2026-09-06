@@ -106,6 +106,7 @@ var fog_on := false           # Fog は黒を浮かせる。参考画像に霞�
 var ssao_on := false
 var ssil_on := false
 var pixel_scale := 2            # 1 = 1280x720 そのまま、2 = 640x360 を 2 倍、3 = 426x240 を 3 倍
+var render_size := Vector2i(0, 0) # render=WxH で描画解像度を直接指定（0 = pixel_scale から）。フェーズ 10 O-2 の 480x270 用
 var soft_level := 0             # 0 硬い / 1 少し / 2 やわらかい
 var shadow_res := 4096
 var omni_shadows := true
@@ -236,6 +237,10 @@ func _parse_args() -> void:
 				ssil_on = _b(v)
 			"pixel":
 				pixel_scale = clampi(int(v), 1, 4)
+			"render":
+				var wh := v.split("x")
+				if wh.size() == 2:
+					render_size = Vector2i(int(wh[0]), int(wh[1]))
 			"soft":
 				soft_level = clampi(int(v), 0, 2)
 			"shadowres":
@@ -1059,7 +1064,12 @@ func _apply_all() -> void:
 
 func _apply_pixel_scale() -> void:
 	var win := get_window()
-	if pixel_scale <= 1:
+	if render_size.x > 0:
+		win.content_scale_mode = Window.CONTENT_SCALE_MODE_VIEWPORT
+		win.content_scale_aspect = Window.CONTENT_SCALE_ASPECT_KEEP
+		win.content_scale_size = render_size
+		win.content_scale_stretch = Window.CONTENT_SCALE_STRETCH_INTEGER
+	elif pixel_scale <= 1:
 		win.content_scale_mode = Window.CONTENT_SCALE_MODE_DISABLED
 		win.content_scale_size = Vector2i(BASE_W, BASE_H)
 		win.content_scale_stretch = Window.CONTENT_SCALE_STRETCH_FRACTIONAL
@@ -1079,7 +1089,11 @@ func _apply_pixel_scale() -> void:
 
 
 func _render_height() -> int:
-	return BASE_H / maxi(pixel_scale, 1)
+	return render_size.y if render_size.y > 0 else BASE_H / maxi(pixel_scale, 1)
+
+
+func _render_width() -> int:
+	return render_size.x if render_size.x > 0 else BASE_W / maxi(pixel_scale, 1)
 
 
 func _apply_time() -> void:
@@ -1130,7 +1144,7 @@ func _apply_time() -> void:
 
 func _apply_camera() -> void:
 	# 基準面 = 画面中央の地面（カメラの注視点）。そこで 1 m が base_texel_per_meter px になる。
-	var view_h_m := float(DESIGN_H) * pixel_size          # 基準面での画面の縦幅 (m)
+	var view_h_m := float(DESIGN_H if render_size.y == 0 else render_size.y) * pixel_size   # 基準面での画面の縦幅 (m)。28 texel/m は変えない
 	if ortho:
 		cam.projection = Camera3D.PROJECTION_ORTHOGONAL
 		cam.size = view_h_m
@@ -1281,7 +1295,7 @@ func _build_c1_ground() -> void:
 
 func _build_c1_boards() -> void:
 	# 画面の縦 8% / 50% / 92%（横は中央）から地面への交点に、高さ 1 m・幅 0.25 m の板を立てる
-	var rw := float(BASE_W / maxi(pixel_scale, 1))
+	var rw := float(_render_width())
 	var rh := float(_render_height())
 	for frac in [0.08, 0.5, 0.92]:
 		var sp := Vector2(rw * 0.5, rh * frac)

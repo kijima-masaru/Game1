@@ -652,6 +652,416 @@
     18.5
    ],
    "facing": "W"
+  },
+  {
+   "id": "w00",
+   "asset": "obj_potted_plant",
+   "at": [
+    5.5,
+    1.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "w01",
+   "asset": "obj_air_conditioner_outdoor",
+   "at": [
+    5.5,
+    3.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "w02",
+   "asset": "obj_bicycle_rack",
+   "at": [
+    5.5,
+    5.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "w03",
+   "asset": "obj_planter_box",
+   "at": [
+    5.5,
+    7.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "w04",
+   "asset": "obj_signboard_shutter",
+   "at": [
+    5.5,
+    9.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "w05",
+   "asset": "obj_water_tank",
+   "at": [
+    5.5,
+    11.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "w06",
+   "asset": "obj_potted_plant",
+   "at": [
+    5.5,
+    20.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "w07",
+   "asset": "obj_traffic_cone",
+   "at": [
+    5.5,
+    22.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "w08",
+   "asset": "obj_air_conditioner_outdoor",
+   "at": [
+    5.5,
+    24.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "w09",
+   "asset": "obj_planter_box",
+   "at": [
+    5.5,
+    26.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "w10",
+   "asset": "obj_road_closure_sign",
+   "at": [
+    5.5,
+    28.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "w11",
+   "asset": "obj_potted_plant",
+   "at": [
+    5.5,
+    33.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "w12",
+   "asset": "obj_bicycle_rack",
+   "at": [
+    5.5,
+    35.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "w13",
+   "asset": "obj_laundry_pole",
+   "at": [
+    5.5,
+    37.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "w14",
+   "asset": "obj_air_conditioner_outdoor",
+   "at": [
+    5.5,
+    38.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "e00",
+   "asset": "obj_potted_plant",
+   "at": [
+    11.5,
+    1.5
+   ],
+   "facing": "W"
+  },
+  {
+   "id": "e01",
+   "asset": "obj_signboard_shutter",
+   "at": [
+    11.5,
+    3.5
+   ],
+   "facing": "W"
+  },
+  {
+   "id": "e02",
+   "asset": "obj_planter_box",
+   "at": [
+    11.5,
+    5.5
+   ],
+   "facing": "W"
+  },
+  {
+   "id": "e03",
+   "asset": "obj_flag_pole",
+   "at": [
+    11.5,
+    8.0
+   ],
+   "facing": "W"
+  },
+  {
+   "id": "e04",
+   "asset": "obj_air_conditioner_outdoor",
+   "at": [
+    11.5,
+    11.5
+   ],
+   "facing": "W"
+  },
+  {
+   "id": "e05",
+   "asset": "obj_traffic_cone",
+   "at": [
+    11.5,
+    13.5
+   ],
+   "facing": "W"
+  },
+  {
+   "id": "e06",
+   "asset": "obj_mailbox",
+   "at": [
+    11.5,
+    15.5
+   ],
+   "facing": "W"
+  },
+  {
+   "id": "e07",
+   "asset": "obj_signboard_pole",
+   "at": [
+    11.5,
+    19.5
+   ],
+   "facing": "W"
+  },
+  {
+   "id": "e08",
+   "asset": "obj_flag_pole",
+   "at": [
+    11.5,
+    27.5
+   ],
+   "facing": "W"
+  },
+  {
+   "id": "e09",
+   "asset": "obj_potted_plant",
+   "at": [
+    11.5,
+    29.5
+   ],
+   "facing": "W"
+  },
+  {
+   "id": "e10",
+   "asset": "obj_bicycle_rack",
+   "at": [
+    11.5,
+    32.5
+   ],
+   "facing": "W"
+  },
+  {
+   "id": "e11",
+   "asset": "obj_planter_box",
+   "at": [
+    11.5,
+    34.5
+   ],
+   "facing": "W"
+  },
+  {
+   "id": "e12",
+   "asset": "obj_signboard_shutter",
+   "at": [
+    11.5,
+    36.5
+   ],
+   "facing": "W"
+  },
+  {
+   "id": "e13",
+   "asset": "obj_potted_plant",
+   "at": [
+    11.5,
+    38.5
+   ],
+   "facing": "W"
+  },
+  {
+   "id": "mirror_1",
+   "asset": "obj_road_mirror",
+   "at": [
+    6.5,
+    12.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "mirror_2",
+   "asset": "obj_road_mirror",
+   "at": [
+    11.5,
+    25.5
+   ],
+   "facing": "W"
+  },
+  {
+   "id": "cone_1",
+   "asset": "obj_traffic_cone",
+   "at": [
+    6.5,
+    4.5
+   ]
+  },
+  {
+   "id": "cone_2",
+   "asset": "obj_traffic_cone",
+   "at": [
+    6.5,
+    28.5
+   ]
+  },
+  {
+   "id": "a00",
+   "asset": "obj_air_conditioner_outdoor",
+   "at": [
+    13.5,
+    25.5
+   ],
+   "facing": "N"
+  },
+  {
+   "id": "a01",
+   "asset": "obj_potted_plant",
+   "at": [
+    16.5,
+    25.5
+   ],
+   "facing": "N"
+  },
+  {
+   "id": "a02",
+   "asset": "obj_water_tank",
+   "at": [
+    19.5,
+    25.5
+   ],
+   "facing": "N"
+  },
+  {
+   "id": "a03",
+   "asset": "obj_planter_box",
+   "at": [
+    22.5,
+    25.5
+   ],
+   "facing": "N"
+  },
+  {
+   "id": "a04",
+   "asset": "obj_bicycle_rack",
+   "at": [
+    26.5,
+    25.5
+   ],
+   "facing": "N"
+  },
+  {
+   "id": "a05",
+   "asset": "obj_laundry_pole",
+   "at": [
+    29.5,
+    25.5
+   ],
+   "facing": "N"
+  },
+  {
+   "id": "n00",
+   "asset": "obj_potted_plant",
+   "at": [
+    13.5,
+    21.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "n01",
+   "asset": "obj_signboard_shutter",
+   "at": [
+    16.5,
+    21.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "n02",
+   "asset": "obj_air_conditioner_outdoor",
+   "at": [
+    28.5,
+    21.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "n03",
+   "asset": "obj_potted_plant",
+   "at": [
+    30.5,
+    21.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "p_w1",
+   "asset": "obj_planter_box",
+   "at": [
+    2.5,
+    13.5
+   ]
+  },
+  {
+   "id": "p_w2",
+   "asset": "obj_potted_plant",
+   "at": [
+    0.5,
+    18.5
+   ]
+  },
+  {
+   "id": "p_w3",
+   "asset": "obj_air_conditioner_outdoor",
+   "at": [
+    4.5,
+    19.5
+   ],
+   "facing": "N"
   }
  ],
  "collision": {

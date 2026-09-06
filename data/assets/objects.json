@@ -1,37 +1,392 @@
 {
-  "format": 1,
-  "note": "PixelLab 62 点のうち使う分の既定値。height_m = 素材の描画高 px / 28。footprint はタイル。emissive は夕方・夜に置く点光源。",
-  "objects": {
-    "obj_vending_machine":   { "file": "assets/pixellab/objects/obj_vending_machine.png", "kind": "billboard", "height_m": 1.83, "footprint": [1, 1], "blocking": true,
-                               "emissive": { "color": [0.75, 0.92, 1.0], "energy": 1.4, "offset_m": [0, 1.2, 0.35], "range_m": 4.0 } },
-    "obj_street_light_led":  { "file": "assets/pixellab/objects/obj_street_light_led.png", "kind": "billboard", "height_m": 4.57, "footprint": [1, 1], "blocking": true,
-                               "emissive": { "color": [1.0, 0.95, 0.85], "energy": 4.0, "offset_m": [0, 4.2, 0], "range_m": 10.0 } },
-    "obj_street_light_mercury": { "file": "assets/pixellab/objects/obj_street_light_mercury.png", "kind": "billboard", "height_m": 4.57, "footprint": [1, 1], "blocking": true,
-                               "emissive": { "color": [0.85, 0.92, 1.0], "energy": 3.5, "offset_m": [0, 4.2, 0], "range_m": 9.0 } },
-    "obj_utility_pole":      { "file": "assets/pixellab/objects/obj_utility_pole.png", "kind": "billboard", "height_m": 4.57, "footprint": [1, 1], "blocking": true },
-    "obj_kei_car":           { "file": "assets/pixellab/objects/obj_kei_car.png", "kind": "billboard", "height_m": 2.29, "footprint": [2, 1], "blocking": true },
-    "obj_bench":             { "file": "assets/pixellab/objects/obj_bench.png", "kind": "billboard", "height_m": 2.29, "footprint": [2, 1], "blocking": true },
-    "obj_mailbox":           { "file": "assets/pixellab/objects/obj_mailbox.png", "kind": "billboard", "height_m": 2.29, "footprint": [1, 1], "blocking": true },
-    "obj_guardrail":         { "file": "assets/pixellab/objects/obj_guardrail.png", "kind": "billboard", "height_m": 2.29, "footprint": [2, 1], "blocking": true },
-    "obj_block_wall":        { "file": "assets/pixellab/objects/obj_block_wall.png", "kind": "billboard", "height_m": 2.29, "footprint": [2, 1], "blocking": true },
-    "obj_hedge":             { "file": "assets/pixellab/objects/obj_hedge.png", "kind": "billboard", "height_m": 2.29, "footprint": [1, 1], "blocking": true },
-    "obj_road_mirror":       { "file": "assets/pixellab/objects/obj_road_mirror.png", "kind": "billboard", "height_m": 2.29, "footprint": [1, 1], "blocking": true },
-    "obj_traffic_cone":      { "file": "assets/pixellab/objects/obj_traffic_cone.png", "kind": "billboard", "height_m": 1.14, "footprint": [1, 1], "blocking": true },
-    "obj_planter_box":       { "file": "assets/pixellab/objects/obj_planter_box.png", "kind": "billboard", "height_m": 2.29, "footprint": [1, 1], "blocking": true },
-    "obj_potted_plant":      { "file": "assets/pixellab/objects/obj_potted_plant.png", "kind": "billboard", "height_m": 1.14, "footprint": [1, 1], "blocking": true },
-    "obj_signboard_pole":    { "file": "assets/pixellab/objects/obj_signboard_pole.png", "kind": "billboard", "height_m": 2.29, "footprint": [1, 1], "blocking": true },
-    "obj_signboard_shutter": { "file": "assets/pixellab/objects/obj_signboard_shutter.png", "kind": "billboard", "height_m": 2.29, "footprint": [1, 1], "blocking": true },
-    "obj_public_phone":      { "file": "assets/pixellab/objects/obj_public_phone.png", "kind": "billboard", "height_m": 2.29, "footprint": [1, 1], "blocking": true,
-                               "emissive": { "color": [0.8, 1.0, 0.85], "energy": 0.8, "offset_m": [0, 1.4, 0.3], "range_m": 2.5 } },
-    "obj_bus_stop_pole":     { "file": "assets/pixellab/objects/obj_bus_stop_pole.png", "kind": "billboard", "height_m": 4.57, "footprint": [1, 1], "blocking": true },
-    "obj_bicycle_rack":      { "file": "assets/pixellab/objects/obj_bicycle_rack.png", "kind": "billboard", "height_m": 2.29, "footprint": [2, 1], "blocking": true },
-    "obj_stone_lantern":     { "file": "assets/pixellab/objects/obj_stone_lantern.png", "kind": "billboard", "height_m": 2.29, "footprint": [1, 1], "blocking": true },
-    "obj_temple_bell":       { "file": "assets/pixellab/objects/obj_temple_bell.png", "kind": "billboard", "height_m": 2.29, "footprint": [1, 1], "blocking": true },
-    "obj_offering_box":      { "file": "assets/pixellab/objects/obj_offering_box.png", "kind": "billboard", "height_m": 1.14, "footprint": [1, 1], "blocking": true },
-    "obj_bulletin_board":    { "file": "assets/pixellab/objects/obj_bulletin_board.png", "kind": "billboard", "height_m": 4.57, "footprint": [1, 1], "blocking": true },
-    "obj_water_basin":       { "file": "assets/pixellab/objects/obj_water_basin.png", "kind": "billboard", "height_m": 2.29, "footprint": [1, 1], "blocking": true },
-    "obj_laundry_pole":      { "file": "assets/pixellab/objects/obj_laundry_pole.png", "kind": "billboard", "height_m": 2.29, "footprint": [1, 1], "blocking": true },
-    "obj_stone_marker":      { "file": "assets/pixellab/objects/obj_stone_marker.png", "kind": "billboard", "height_m": 1.14, "footprint": [1, 1], "blocking": true },
-    "obj_komainu":           { "file": "assets/pixellab/objects/obj_komainu.png", "kind": "billboard", "height_m": 2.29, "footprint": [1, 1], "blocking": true }
+ "format": 1,
+ "note": "PixelLab 62 点のうち使う分の既定値。height_m = 素材の描画高 px / 28。footprint はタイル。emissive は夕方・夜に置く点光源。",
+ "objects": {
+  "obj_vending_machine": {
+   "file": "assets/pixellab/objects/obj_vending_machine.png",
+   "kind": "billboard",
+   "height_m": 1.83,
+   "footprint": [
+    1,
+    1
+   ],
+   "blocking": true,
+   "emissive": {
+    "color": [
+     0.75,
+     0.92,
+     1.0
+    ],
+    "energy": 1.4,
+    "offset_m": [
+     0,
+     1.2,
+     0.35
+    ],
+    "range_m": 4.0
+   }
+  },
+  "obj_street_light_led": {
+   "file": "assets/pixellab/objects/obj_street_light_led.png",
+   "kind": "billboard",
+   "height_m": 4.57,
+   "footprint": [
+    1,
+    1
+   ],
+   "blocking": true,
+   "emissive": {
+    "color": [
+     1.0,
+     0.95,
+     0.85
+    ],
+    "energy": 4.0,
+    "offset_m": [
+     0,
+     4.2,
+     0
+    ],
+    "range_m": 10.0
+   }
+  },
+  "obj_street_light_mercury": {
+   "file": "assets/pixellab/objects/obj_street_light_mercury.png",
+   "kind": "billboard",
+   "height_m": 4.57,
+   "footprint": [
+    1,
+    1
+   ],
+   "blocking": true,
+   "emissive": {
+    "color": [
+     0.85,
+     0.92,
+     1.0
+    ],
+    "energy": 3.5,
+    "offset_m": [
+     0,
+     4.2,
+     0
+    ],
+    "range_m": 9.0
+   }
+  },
+  "obj_utility_pole": {
+   "file": "assets/pixellab/objects/obj_utility_pole.png",
+   "kind": "billboard",
+   "height_m": 4.57,
+   "footprint": [
+    1,
+    1
+   ],
+   "blocking": true
+  },
+  "obj_kei_car": {
+   "file": "assets/pixellab/objects/obj_kei_car.png",
+   "kind": "billboard",
+   "height_m": 2.29,
+   "footprint": [
+    2,
+    1
+   ],
+   "blocking": true
+  },
+  "obj_bench": {
+   "file": "assets/pixellab/objects/obj_bench.png",
+   "kind": "billboard",
+   "height_m": 2.29,
+   "footprint": [
+    2,
+    1
+   ],
+   "blocking": true
+  },
+  "obj_mailbox": {
+   "file": "assets/pixellab/objects/obj_mailbox.png",
+   "kind": "billboard",
+   "height_m": 2.29,
+   "footprint": [
+    1,
+    1
+   ],
+   "blocking": true
+  },
+  "obj_guardrail": {
+   "file": "assets/pixellab/objects/obj_guardrail.png",
+   "kind": "billboard",
+   "height_m": 2.29,
+   "footprint": [
+    2,
+    1
+   ],
+   "blocking": true
+  },
+  "obj_block_wall": {
+   "file": "assets/pixellab/objects/obj_block_wall.png",
+   "kind": "billboard",
+   "height_m": 2.29,
+   "footprint": [
+    2,
+    1
+   ],
+   "blocking": true
+  },
+  "obj_hedge": {
+   "file": "assets/pixellab/objects/obj_hedge.png",
+   "kind": "billboard",
+   "height_m": 2.29,
+   "footprint": [
+    1,
+    1
+   ],
+   "blocking": true
+  },
+  "obj_road_mirror": {
+   "file": "assets/pixellab/objects/obj_road_mirror.png",
+   "kind": "billboard",
+   "height_m": 2.29,
+   "footprint": [
+    1,
+    1
+   ],
+   "blocking": true
+  },
+  "obj_traffic_cone": {
+   "file": "assets/pixellab/objects/obj_traffic_cone.png",
+   "kind": "billboard",
+   "height_m": 1.14,
+   "footprint": [
+    1,
+    1
+   ],
+   "blocking": true
+  },
+  "obj_planter_box": {
+   "file": "assets/pixellab/objects/obj_planter_box.png",
+   "kind": "billboard",
+   "height_m": 2.29,
+   "footprint": [
+    1,
+    1
+   ],
+   "blocking": true
+  },
+  "obj_potted_plant": {
+   "file": "assets/pixellab/objects/obj_potted_plant.png",
+   "kind": "billboard",
+   "height_m": 1.14,
+   "footprint": [
+    1,
+    1
+   ],
+   "blocking": true
+  },
+  "obj_signboard_pole": {
+   "file": "assets/pixellab/objects/obj_signboard_pole.png",
+   "kind": "billboard",
+   "height_m": 2.29,
+   "footprint": [
+    1,
+    1
+   ],
+   "blocking": true
+  },
+  "obj_signboard_shutter": {
+   "file": "assets/pixellab/objects/obj_signboard_shutter.png",
+   "kind": "billboard",
+   "height_m": 1.96,
+   "footprint": [
+    2,
+    1
+   ],
+   "blocking": true
+  },
+  "obj_public_phone": {
+   "file": "assets/pixellab/objects/obj_public_phone.png",
+   "kind": "billboard",
+   "height_m": 2.29,
+   "footprint": [
+    1,
+    1
+   ],
+   "blocking": true,
+   "emissive": {
+    "color": [
+     0.8,
+     1.0,
+     0.85
+    ],
+    "energy": 0.8,
+    "offset_m": [
+     0,
+     1.4,
+     0.3
+    ],
+    "range_m": 2.5
+   }
+  },
+  "obj_bus_stop_pole": {
+   "file": "assets/pixellab/objects/obj_bus_stop_pole.png",
+   "kind": "billboard",
+   "height_m": 4.57,
+   "footprint": [
+    1,
+    1
+   ],
+   "blocking": true
+  },
+  "obj_bicycle_rack": {
+   "file": "assets/pixellab/objects/obj_bicycle_rack.png",
+   "kind": "billboard",
+   "height_m": 2.29,
+   "footprint": [
+    2,
+    1
+   ],
+   "blocking": true
+  },
+  "obj_stone_lantern": {
+   "file": "assets/pixellab/objects/obj_stone_lantern.png",
+   "kind": "billboard",
+   "height_m": 2.29,
+   "footprint": [
+    1,
+    1
+   ],
+   "blocking": true
+  },
+  "obj_temple_bell": {
+   "file": "assets/pixellab/objects/obj_temple_bell.png",
+   "kind": "billboard",
+   "height_m": 2.29,
+   "footprint": [
+    1,
+    1
+   ],
+   "blocking": true
+  },
+  "obj_offering_box": {
+   "file": "assets/pixellab/objects/obj_offering_box.png",
+   "kind": "billboard",
+   "height_m": 1.14,
+   "footprint": [
+    1,
+    1
+   ],
+   "blocking": true
+  },
+  "obj_bulletin_board": {
+   "file": "assets/pixellab/objects/obj_bulletin_board.png",
+   "kind": "billboard",
+   "height_m": 4.57,
+   "footprint": [
+    1,
+    1
+   ],
+   "blocking": true
+  },
+  "obj_water_basin": {
+   "file": "assets/pixellab/objects/obj_water_basin.png",
+   "kind": "billboard",
+   "height_m": 2.29,
+   "footprint": [
+    1,
+    1
+   ],
+   "blocking": true
+  },
+  "obj_laundry_pole": {
+   "file": "assets/pixellab/objects/obj_laundry_pole.png",
+   "kind": "billboard",
+   "height_m": 2.29,
+   "footprint": [
+    1,
+    1
+   ],
+   "blocking": true
+  },
+  "obj_stone_marker": {
+   "file": "assets/pixellab/objects/obj_stone_marker.png",
+   "kind": "billboard",
+   "height_m": 1.14,
+   "footprint": [
+    1,
+    1
+   ],
+   "blocking": true
+  },
+  "obj_komainu": {
+   "file": "assets/pixellab/objects/obj_komainu.png",
+   "kind": "billboard",
+   "height_m": 2.29,
+   "footprint": [
+    1,
+    1
+   ],
+   "blocking": true
+  },
+  "obj_air_conditioner_outdoor": {
+   "file": "assets/pixellab/objects/obj_air_conditioner_outdoor.png",
+   "kind": "billboard",
+   "height_m": 1.79,
+   "footprint": [
+    2,
+    1
+   ],
+   "blocking": true
+  },
+  "obj_road_closure_sign": {
+   "file": "assets/pixellab/objects/obj_road_closure_sign.png",
+   "kind": "billboard",
+   "height_m": 1.32,
+   "footprint": [
+    2,
+    1
+   ],
+   "blocking": true
+  },
+  "obj_water_tank": {
+   "file": "assets/pixellab/objects/obj_water_tank.png",
+   "kind": "billboard",
+   "height_m": 2.04,
+   "footprint": [
+    1,
+    1
+   ],
+   "blocking": true
+  },
+  "obj_flag_pole": {
+   "file": "assets/pixellab/objects/obj_flag_pole.png",
+   "kind": "billboard",
+   "height_m": 4.11,
+   "footprint": [
+    1,
+    1
+   ],
+   "blocking": true
+  },
+  "obj_wire_fence": {
+   "file": "assets/pixellab/objects/obj_wire_fence.png",
+   "kind": "billboard",
+   "height_m": 1.32,
+   "footprint": [
+    2,
+    1
+   ],
+   "blocking": true
+  },
+  "obj_fire_extinguisher": {
+   "file": "assets/pixellab/objects/obj_fire_extinguisher.png",
+   "kind": "billboard",
+   "height_m": 1.0,
+   "footprint": [
+    1,
+    1
+   ],
+   "blocking": true
   }
+ }
 }
