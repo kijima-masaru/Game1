@@ -24,7 +24,7 @@ extends Node3D
 ##   fxaa=0|1  flat=0|1（世界テクスチャを単色にして影のエッジだけを見る）
 ##   walk=A|B|C|D walk_from=x,z walk_to=x,z seq=<dir> seq_frames=90（E-3b: テストスプライトを奥→手前に歩かせて連番撮影）
 ##   ao=0|1 ao_power=<f> ao_ray_len=<m> ao_rays=<n> ao_debug=0|1（街区スケールの AO ベイク。E-2）
-##   yaw=<deg>（カメラのヨー）  layout=v1|v2（建物配置）  sun_desat=<0-1>（太陽色の彩度を輝度一定で落とす）
+##   yaw=<deg>（カメラのヨー）  layout=v1|v2|empty（建物配置。empty は街区シーン用の土台）  sun_desat=<0-1>（太陽色の彩度を輝度一定で落とす）
 ##   skylight=0|1 skylight_energy=<f> skylight_angle=<deg> skylight_pitch=<deg> skylight_yaw=<deg>（疑似スカイライト）  sun_elev=<deg>  sun_az=<deg>  exposure=<f>
 ##   shot=<PNGの絶対パス>   指定フレーム後に撮影して終了
 ##   frames=<n>             撮影までに待つフレーム数（既定 40）
@@ -481,6 +481,8 @@ func _wall_base(preset: Color) -> Color:
 
 
 func _build_world() -> void:
+	if layout == "empty":
+		return   # 街区シーン（block.gd）が地面と建物を作る
 	# 地面（路面）。街路は X 軸方向、幅 7m。AO は建物の配置後に焼くので、ここでは材質だけ作る
 	var asphalt := _mat(_asphalt_image(64, Color(0.42, 0.39, 0.47), 0.06))
 
@@ -897,6 +899,8 @@ func _walk_snap_scale() -> float:
 
 
 func _build_sprites() -> void:
+	if layout == "empty":
+		return
 	if walk_mode != "":
 		_build_walk_sprite()
 	if extra_pole != Vector3.INF:

@@ -61,6 +61,15 @@ python tools/lookdev_walk.py           # スプライトのスケール変動（
 
 素材制作のルールは [docs/ART_SPEC.md](docs/ART_SPEC.md)。
 
+## 街路 1 ブロックの縦切り（本番の作り）
+
+```sh
+godot --path . res://scenes/block.tscn -- time=evening                       # 商店・民家・ビル + PixelLab オブジェクト
+godot --path . res://scenes/block.tscn -- time=noon tex=pixellab street_angle=90 occl=fade player=-4,2
+```
+
+所見は [docs/lookdev/PHASE6.md](docs/lookdev/PHASE6.md)。建物生成 `scripts/town/building_gen.gd`、テクスチャ `scripts/town/pixel_textures.gd`、AO `scripts/town/ao_baker.gd`。
+
 ## 縦切りプロトタイプ（8/1〜8/3）
 
 ```sh
@@ -101,6 +110,9 @@ data/story/proto.json 3 日分の脚本
 tests/story_exhaustive.gd 脚本の総当たりテスト
 docs/DESIGN_STATE.md 状態管理の設計
 docs/PROTO.md        プロトタイプの遊び方・テスト結果・脚本の作業量
+scenes/block.tscn    街路 1 ブロックの縦切り（scripts/block.gd）
+scripts/town/        建物生成・手続きテクスチャ・AO ベイク
+assets/pixellab/     PixelLab 素材の流用テスト用コピー
 docs/lookdev/        検証の所見と比較シート
 tools/setup_godot.sh Godot のインストール（Linux）
 tools/setup_godot.ps1 Godot のインストール（Windows）

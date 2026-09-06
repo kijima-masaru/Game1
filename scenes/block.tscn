@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://c1game1block0001"]
+
+[ext_resource type="Script" path="res://scripts/block.gd" id="1_block"]
+
+[node name="BlockSlice" type="Node3D"]
+script = ExtResource("1_block")

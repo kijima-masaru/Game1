@@ -1,0 +1,293 @@
+class_name PixelTextures
+extends RefCounted
+## 構造化した手続きドット絵テクスチャ（H-3 の案 (a′)）。ART_SPEC: 28 texel/m、繰り返し周期 6 texel 以上、
+## 壁のアルベド 0.50（リニア輝度）、路面は現行値基準。すべて決定的（seed 固定）。
+##
+## 1 タイルの大きさは m 単位で決める: TILE(32) texel = 32/28 = 1.143 m。材質側で uv1_scale = 1/1.143。
+## 「1 画素ごとにアルベドが散る」路面（砂利アスファルト）を主眼に、色は少数のパレットから選ぶ。
+
+const TILE := 32
+const TEXELS_PER_M := 28.0
+
+static var _rng := RandomNumberGenerator.new()
+
+
+static func _seed(s: int) -> void:
+	_rng.seed = s
+
+
+static func _lum(c: Color) -> float:
+	return 0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b
+
+
+## 色相を保って輝度（リニア）を target に揃える
+static func _at_lum(c: Color, target: float) -> Color:
+	var k := target / maxf(_lum(c), 0.001)
+	return Color(minf(c.r * k, 1.0), minf(c.g * k, 1.0), minf(c.b * k, 1.0))
+
+
+static func _pick(palette: Array, weights: Array) -> Color:
+	var total := 0.0
+	for w in weights:
+		total += float(w)
+	var r := _rng.randf() * total
+	for i in palette.size():
+		r -= float(weights[i])
+		if r <= 0.0:
+			return palette[i]
+	return palette[-1]
+
+
+# ============================================================================
+# 路面
+# ============================================================================
+## 砂利アスファルト。基本色の周りに 5 色のパレットで 1 画素ずつ散らす（暗い骨材と明るい骨材）。
+static func asphalt_gravel(size: int = 64, seed: int = 1) -> Image:
+	_seed(seed)
+	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
+	var base := Color(0.42, 0.39, 0.47)
+	var pal := [base, base.darkened(0.18), base.darkened(0.36), base.lightened(0.12), base.lightened(0.28), Color(0.30, 0.27, 0.32)]
+	var w := [40, 22, 10, 16, 6, 6]
+	for y in size:
+		for x in size:
+			img.set_pixel(x, y, _pick(pal, w))
+	# 補修跡（少し暗い矩形パッチ）と細いひび
+	for i in 2:
+		var px := _rng.randi_range(0, size - 12)
+		var py := _rng.randi_range(0, size - 12)
+		var pw := _rng.randi_range(8, 16)
+		var ph := _rng.randi_range(6, 12)
+		for y in range(py, mini(py + ph, size)):
+			for x in range(px, mini(px + pw, size)):
+				img.set_pixel(x, y, img.get_pixel(x, y).darkened(0.12))
+	_crack(img, Vector2i(_rng.randi_range(0, size - 1), 0), 18, Color(0.24, 0.22, 0.27))
+	return img
+
+
+static func _crack(img: Image, start: Vector2i, length: int, col: Color) -> void:
+	var p := start
+	var dir := Vector2i(_rng.randi_range(-1, 1), 1)
+	for i in length:
+		if p.x < 0 or p.y < 0 or p.x >= img.get_width() or p.y >= img.get_height():
+			break
+		img.set_pixel(p.x, p.y, col)
+		if _rng.randf() < 0.35:
+			dir.x = clampi(dir.x + _rng.randi_range(-1, 1), -1, 1)
+		p += Vector2i(dir.x, 1)
+
+
+## マンホール（デカール、TILE 内に円）。周囲は透明。
+static func manhole(size: int = 24) -> Image:
+	_seed(7)
+	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
+	img.fill(Color(0, 0, 0, 0))
+	var c := Vector2(size * 0.5 - 0.5, size * 0.5 - 0.5)
+	var r := size * 0.5 - 1.0
+	for y in size:
+		for x in size:
+			var d := Vector2(x, y).distance_to(c)
+			if d <= r:
+				var col := Color(0.36, 0.34, 0.33)
+				if d > r - 1.5:
+					col = Color(0.22, 0.21, 0.21)
+				elif int(x + y) % 4 == 0:
+					col = Color(0.31, 0.29, 0.28)
+				img.set_pixel(x, y, col)
+	return img
+
+
+## 歩道（コンクリート平板。継ぎ目は 16 texel 周期 = 0.57 m）
+static func sidewalk(size: int = 32, seed: int = 3) -> Image:
+	_seed(seed)
+	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
+	var base := Color(0.50, 0.47, 0.52)
+	var pal := [base, base.darkened(0.08), base.lightened(0.08), base.darkened(0.16)]
+	for y in size:
+		for x in size:
+			var c := _pick(pal, [50, 25, 20, 5])
+			if x % 16 == 0 or y % 16 == 0:
+				c = base.darkened(0.35)
+			img.set_pixel(x, y, c)
+	return img
+
+
+# ============================================================================
+# 壁（アルベド 0.50 基準。リニア輝度で揃える）
+# ============================================================================
+## モルタル（吹き付け）。粒 + うっすら汚れ
+static func mortar(size: int = 32, tint: Color = Color(0.80, 0.78, 0.74), albedo: float = 0.50, seed: int = 11) -> Image:
+	_seed(seed)
+	var base := _at_lum(tint, albedo)
+	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
+	var pal := [base, base.darkened(0.06), base.lightened(0.05), base.darkened(0.14)]
+	for y in size:
+		for x in size:
+			img.set_pixel(x, y, _pick(pal, [55, 25, 15, 5]))
+	# 下端に雨だれの汚れ
+	for y in range(size - 6, size):
+		for x in size:
+			if _rng.randf() < 0.3:
+				img.set_pixel(x, y, img.get_pixel(x, y).darkened(0.12))
+	return img
+
+
+## 下見板（横板張り）。板幅 8 texel = 0.29 m。周期 8（ART_SPEC の 6 以上）
+static func weatherboard(size: int = 32, tint: Color = Color(0.55, 0.58, 0.72), albedo: float = 0.50, seed: int = 13) -> Image:
+	_seed(seed)
+	var base := _at_lum(tint, albedo)
+	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
+	for y in size:
+		var row := y % 8
+		for x in size:
+			var c := base
+			if row == 0:
+				c = base.lightened(0.35)       # 板の上端（光が当たる縁）
+			elif row == 7:
+				c = base.darkened(0.45)        # 板の下の影
+			elif row == 6:
+				c = base.darkened(0.15)
+			if _rng.randf() < 0.08:
+				c = c.darkened(0.08)           # 木目の粒
+			img.set_pixel(x, y, c)
+	return img
+
+
+## コンクリート（打ち放し。型枠の目地 16 texel 周期、P コン穴）
+static func concrete(size: int = 32, albedo: float = 0.50, seed: int = 17) -> Image:
+	_seed(seed)
+	var base := _at_lum(Color(0.72, 0.72, 0.74), albedo)
+	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
+	var pal := [base, base.darkened(0.05), base.lightened(0.04), base.darkened(0.10)]
+	for y in size:
+		for x in size:
+			var c := _pick(pal, [60, 20, 15, 5])
+			if x % 16 == 0 or y % 16 == 0:
+				c = base.darkened(0.3)
+			if (x % 16 == 4 or x % 16 == 12) and (y % 16 == 4 or y % 16 == 12):
+				c = base.darkened(0.4)
+			img.set_pixel(x, y, c)
+	return img
+
+
+## ブロック塀（横 12 × 縦 6 texel のブロック、目地 1 texel）
+static func block_fence(size: int = 24, albedo: float = 0.45, seed: int = 19) -> Image:
+	_seed(seed)
+	var base := _at_lum(Color(0.70, 0.69, 0.66), albedo)
+	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
+	for y in size:
+		var row := y / 6
+		for x in size:
+			var xx := (x + (6 if row % 2 == 1 else 0)) % 12
+			var c := base
+			if y % 6 == 0 or xx == 0:
+				c = base.darkened(0.35)
+			elif _rng.randf() < 0.1:
+				c = base.darkened(0.06)
+			img.set_pixel(x, y, c)
+	return img
+
+
+## シャッター（横のスラット 6 texel 周期）
+static func shutter(size: int = 24, albedo: float = 0.40, seed: int = 23) -> Image:
+	_seed(seed)
+	var base := _at_lum(Color(0.62, 0.66, 0.70), albedo)
+	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
+	for y in size:
+		var row := y % 6
+		for x in size:
+			var c := base
+			if row == 0:
+				c = base.lightened(0.25)
+			elif row == 4:
+				c = base.darkened(0.25)
+			elif row == 5:
+				c = base.darkened(0.45)
+			img.set_pixel(x, y, c)
+	return img
+
+
+# ============================================================================
+# 屋根
+# ============================================================================
+## 瓦（桟瓦）。1 枚 8 × 8 texel（0.29 m）、横にずらして重ねる。周期 8
+static func kawara(size: int = 32, tint: Color = Color(0.36, 0.38, 0.46), albedo: float = 0.22, seed: int = 29) -> Image:
+	_seed(seed)
+	var base := _at_lum(tint, albedo)
+	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
+	for y in size:
+		var row := y / 8
+		var ry := y % 8
+		for x in size:
+			var xx := (x + (4 if row % 2 == 1 else 0)) % 8
+			var c := base
+			if ry == 0:
+				c = base.lightened(0.30)       # 瓦の上縁（受光）
+			elif ry == 7:
+				c = base.darkened(0.5)         # 重なりの影
+			elif ry == 6:
+				c = base.darkened(0.2)
+			if xx == 0 and ry > 0 and ry < 6:
+				c = base.darkened(0.3)         # 瓦の継ぎ目（桟）
+			if _rng.randf() < 0.05:
+				c = c.lightened(0.08)
+			img.set_pixel(x, y, c)
+	return img
+
+
+## トタン（波板）。山 6 texel 周期
+static func corrugated(size: int = 24, albedo: float = 0.30, seed: int = 31) -> Image:
+	_seed(seed)
+	var base := _at_lum(Color(0.55, 0.50, 0.42), albedo)
+	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
+	for y in size:
+		for x in size:
+			var col := x % 6
+			var c := base
+			if col == 0:
+				c = base.lightened(0.3)
+			elif col == 3:
+				c = base.darkened(0.3)
+			if _rng.randf() < 0.06:
+				c = c.darkened(0.2)           # 錆
+			img.set_pixel(x, y, c)
+	return img
+
+
+# ============================================================================
+# 単色（比較用）: 従来のノイズ
+# ============================================================================
+static func noise(size: int, base: Color, grain: float, seed: int = 1) -> Image:
+	_seed(seed)
+	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
+	for y in size:
+		for x in size:
+			var n := _rng.randf_range(-grain, grain)
+			img.set_pixel(x, y, Color(base.r + n, base.g + n, base.b + n * 1.1))
+	return img
+
+
+## 材質を作る（Nearest + ミップマップ、UV は m 単位: uv1_scale = 1 / タイルの m）
+static func material(img: Image, albedo_tex: bool = true) -> StandardMaterial3D:
+	var m := StandardMaterial3D.new()
+	var mip := img.duplicate() as Image
+	mip.generate_mipmaps()
+	m.albedo_texture = ImageTexture.create_from_image(mip)
+	m.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST_WITH_MIPMAPS
+	m.roughness = 0.95
+	m.metallic = 0.0
+	m.specular_mode = BaseMaterial3D.SPECULAR_DISABLED
+	m.cull_mode = BaseMaterial3D.CULL_DISABLED
+	var tile_m := float(img.get_width()) / TEXELS_PER_M
+	m.uv1_scale = Vector3(1.0 / tile_m, 1.0 / tile_m, 1.0)
+	return m
+
+
+## 白い線・光る要素用（ART_SPEC 第 4 節: emission 板）
+static func emissive_material(color: Color, energy: float = 1.0) -> StandardMaterial3D:
+	var m := StandardMaterial3D.new()
+	m.albedo_color = Color(0, 0, 0, 1)
+	m.emission_enabled = true
+	m.emission = color
+	m.emission_energy_multiplier = energy
+	m.cull_mode = BaseMaterial3D.CULL_DISABLED
+	return m
