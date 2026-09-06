@@ -19,7 +19,19 @@ godot --version
 スクリプトは公式リリースをダウンロードし、SHA-512 で検証してから
 `~/.local/godot/` に配置し、`~/.local/bin/godot` にコマンドを作ります。
 
-### Windows / macOS
+### Windows
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools\setup_godot.ps1
+```
+
+Linux 版と同じく公式リリースをダウンロードし、SHA-512 で検証してから
+`%USERPROFILE%\.local\godot\` に配置し、`%USERPROFILE%\.local\bin\` に `godot` コマンド
+（PowerShell / cmd 用の `godot.cmd` と Git Bash 用の `godot`）を作ります。
+`%USERPROFILE%\.local\bin` がユーザー環境変数 Path に無い場合は追加してください。
+コマンドはコンソール版 exe を呼ぶので、ターミナルに標準出力が流れます。
+
+### macOS
 
 [公式ダウンロードページ](https://godotengine.org/download) から
 **4.7.2 stable** を入手し、エディタでこのフォルダの `project.godot` を開いてください。
@@ -47,7 +59,8 @@ project.godot        プロジェクト設定
 scenes/main.tscn     メインシーン
 scripts/main.gd      メインシーンのスクリプト
 tests/smoke_test.gd  ヘッドレスのスモークテスト
-tools/setup_godot.sh Godot のインストール
+tools/setup_godot.sh Godot のインストール（Linux）
+tools/setup_godot.ps1 Godot のインストール（Windows）
 tools/check.sh       検証スクリプト
 .claude/             Claude Code on the web 用の起動フック（Godot を自動インストール）
 ```
