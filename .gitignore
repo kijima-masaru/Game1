@@ -24,6 +24,11 @@ Thumbs.db
 
 # 参考画像（リポジトリには含めない）
 /refs/
+# 明示: 現地撮影の参考写真置き場（/refs/ で既にカバーされるが、再配布防止のため明示しておく）
+/refs/photos/
+
+# Godot が生成するインポートメタデータ（既存分はコミット済みのまま残す。今後の新規分のみ無視）
+*.import
 
 # lookdev の個別ショット（tools/lookdev_shots.py で再生成できる。シートだけ残す）
 /docs/lookdev/shots/

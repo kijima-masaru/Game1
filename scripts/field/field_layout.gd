@@ -21,7 +21,13 @@ const WALL_1F := 2.3               # 平屋の軒高。棟は +0.7 で 3.0 m
 const FLOOR_M := 3.0
 const RISE_1F := 0.7
 const RISE_2F := 1.4               # 2 階建て: 軒 5.3 + 1.4 = 6.7 m
-const OVERHANG_M := 0.5
+## 軒の出（既定値）。REFERENCE_VOCAB.md 2-2: 文献の最頻値は600〜800mm。用途別の値は
+## OVERHANG_BY_KIND を参照（写真検証まではこの値。@export 相当として辞書で外出し）。
+const OVERHANG_M := 0.6
+const OVERHANG_BY_KIND := {
+	"shop_shutter": 0.6, "shop_wood": 0.6, "dagashi": 0.6,
+	"house": 0.75,
+}
 const DIRS := {"E": Vector2i(1, 0), "W": Vector2i(-1, 0), "S": Vector2i(0, 1), "N": Vector2i(0, -1)}
 const FENCE_KINDS := ["fence_block", "fence_wall", "hedge"]
 const PASSABLE_KINDS := ["temple_gate"]
@@ -271,7 +277,7 @@ static func _ray_rect_entry(o: Vector2, d: Vector2, x0: float, y0: float, x1: fl
 func _fit_height(l: Dictionary) -> void:
 	var kind: String = l.get("kind", "")
 	var flat: bool = l.get("roof", "gable") == "flat"
-	var overhang := OVERHANG_M
+	var overhang: float = OVERHANG_BY_KIND.get(kind, OVERHANG_M)
 	if kind == "temple_hall":
 		overhang = 1.4
 	var floors := int(l.get("floors", 1))
