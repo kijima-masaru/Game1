@@ -129,4 +129,4 @@ godot --headless --path . --script res://tools/bake_fields.gd -- all            
 ```
 
 引数: `field=` `field_yaw=` `sun_az=` `time=` `shot=` `regen=1` `flags=a,b` `player=x,y` `target=x,y` `walk_demo=1` `quit_after_demo=1`
-`areamask=1` `measure=1` `occl=fade|none`。操作: WASD/矢印（画面基準）、E 調べる、F1 デバッグ、F2 通行判定と区画、Esc。
+`areamask=1` `measure=1`（地面の範囲と視錐台内の配置物の数）`render=480x270`（描画解像度）`occl=fade|none`。操作: WASD/矢印（画面基準）、E 調べる、F1 デバッグ、F2 通行判定と区画、Esc。

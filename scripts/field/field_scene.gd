@@ -38,6 +38,7 @@ var _frame_times: Array[float] = []
 var _fade_frames := 0
 var _faded := {}
 var _fade_ids := {}
+var _measure_frame := 0
 
 
 func _ready() -> void:
@@ -241,7 +242,7 @@ func _build_ui() -> void:
 	minimap.cam = lookdev.cam
 	minimap.player = player
 	minimap.flags = flags
-	minimap.position = Vector2(640 - 128, 8)
+	minimap.position = Vector2(get_window().content_scale_size.x - 128, 8)
 	ui.add_child(minimap)
 
 
@@ -312,6 +313,14 @@ func _process(delta: float) -> void:
 	_update_hud()
 	if debug_panel.visible:
 		_update_debug()
+	# measure=1: カメラが主人公に追従した後（20 フレーム目）に、画面内の配置物の数を出す
+	_measure_frame += 1
+	if _measure_frame == 20 and OS.get_cmdline_user_args().has("measure=1"):
+		var n_props := 0
+		for pv in builder.billboards:
+			if pv != player and cam.is_position_in_frustum(pv.global_position + Vector3(0, 0.5, 0)):
+				n_props += 1
+		print("PROPS_IN_VIEW %d  render=%s  player=%s" % [n_props, str(get_viewport().get_visible_rect().size), str(_player_tile())])
 
 
 func _update_near() -> void:
