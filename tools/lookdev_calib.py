@@ -168,9 +168,69 @@ def sweep_tonemap(white: float, extra: list[str], tag: str) -> None:
     ls.sheet(f"calibration — tonemap (white={white:g}, {tag})", items, OUT / f"calib_{tag}_tonemap_w{white:g}.png", cols=3)
 
 
+# ---------------------------------------------------------------------------
+# D-1: 3 点（P_sun / P_open / P_core）での較正。固定した点で測る。
+# ---------------------------------------------------------------------------
+def probe_points(path_probes: list[dict], pts: list[tuple[float, float]]) -> list[dict]:
+    out = []
+    for x, z in pts:
+        m = [p for p in path_probes if abs(p["x"] - x) < 1e-3 and abs(p["z"] - z) < 1e-3]
+        if not m:
+            sys.exit(f"計測点 ({x},{z}) が画面内にありません")
+        out.append(m[0])
+    return out
+
+
+def run_points(name: str, args: list[str], pts: list[tuple[float, float]]) -> tuple[Path, list[dict]]:
+    probe_arg = "probe=" + ";".join(f"{x},{z}" for x, z in pts)
+    path, probes = run(name, [probe_arg, *args])
+    return path, probe_points(probes, pts)
+
+
+def lum_of(p: dict) -> float:
+    return lum_srgb(np.asarray(p["rgb"]) * 255.0)
+
+
+def lin_of(p: dict) -> float:
+    return lum_lin(np.asarray(p["rgb"]) * 255.0)
+
+
+def sweep_sky(pts: list[tuple[float, float]], amb_mults: list[float], sky_energies: list[float], sky_args: list[str], extra: list[str], tag: str) -> None:
+    """手順 1: スカイライト OFF で ambient を振り P_core/P_sun = 0.120 に。
+    手順 2: ambient 固定でスカイライト energy を振り P_open/P_sun = 0.26 に。手順 3: P_core の再確認。"""
+    rows1 = []
+    print("== 手順 1: skylight OFF, ambient_mul sweep (P_core/P_sun -> 0.120)")
+    for m in amb_mults:
+        path, pr = run_points(f"calib_{tag}_step1_amb{m:.2f}", [f"ambient_mul={m}", "skylight=0", *extra], pts)
+        s, o, c = (lum_of(x) for x in pr)
+        rows1.append({"mult": m, "P_sun": s, "P_open": o, "P_core": c, "core_ratio": c / s, "open_ratio": o / s, "core_ratio_lin": lin_of(pr[2]) / lin_of(pr[0])})
+        print(f"  amb x{m:.2f}  P_sun={s:6.1f} P_open={o:5.1f} P_core={c:5.1f}  core/sun={c / s:.3f} open/sun={o / s:.3f}  shadow flags sun/open/core = {pr[0]['shadow']}/{pr[1]['shadow']}/{pr[2]['shadow']}")
+    best1 = min(rows1, key=lambda r: abs(r["core_ratio"] - 0.120))
+    m_best = best1["mult"]
+    print(f"  -> ambient x{m_best:.2f} (core/sun {best1['core_ratio']:.3f})")
+
+    rows2 = []
+    print(f"== 手順 2: ambient x{m_best:.2f} 固定, skylight energy sweep (P_open/P_sun -> 0.26)")
+    items = []
+    for e in sky_energies:
+        path, pr = run_points(f"calib_{tag}_step2_sky{e:.2f}", [f"ambient_mul={m_best}", "skylight=1", f"skylight_energy={e}", *sky_args, *extra], pts)
+        s, o, c = (lum_of(x) for x in pr)
+        rows2.append({"energy": e, "P_sun": s, "P_open": o, "P_core": c, "core_ratio": c / s, "open_ratio": o / s,
+                      "sky_shadow_flags": [x["sky_shadow"] for x in pr]})
+        items.append((f"skylight e={e:.2f}  open/sun {o / s:.3f}  core/sun {c / s:.3f}", path))
+        print(f"  sky e={e:.2f}  P_sun={s:6.1f} P_open={o:5.1f} P_core={c:5.1f}  core/sun={c / s:.3f} open/sun={o / s:.3f}  sky_shadow sun/open/core = {[x['sky_shadow'] for x in pr]}")
+    best2 = min(rows2, key=lambda r: abs(r["open_ratio"] - 0.26))
+    print(f"  -> skylight energy {best2['energy']:.2f} (open/sun {best2['open_ratio']:.3f}, core/sun {best2['core_ratio']:.3f}; step1 core/sun was {best1['core_ratio']:.3f})")
+    (OUT / f"calib_{tag}_sky.json").write_text(json.dumps({"points": pts, "step1": rows1, "step2": rows2, "adopt": {"ambient_mul": m_best, "skylight_energy": best2["energy"]}}, ensure_ascii=False, indent=1), encoding="utf-8")
+    ls.sheet(f"D-1 pseudo skylight sweep ({tag})", items, OUT / f"calib_{tag}_sky.png", cols=3)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("sweep", choices=["ambient", "wall", "tonemap"])
+    ap.add_argument("sweep", choices=["ambient", "wall", "tonemap", "sky"])
+    ap.add_argument("--points", default="", help="sky: P_sun;P_open;P_core を x,z;x,z;x,z で")
+    ap.add_argument("--sky-energies", default="0.1,0.2,0.3,0.45,0.6")
+    ap.add_argument("--sky-args", default="", help="skylight_angle= / skylight_pitch= / skylight_yaw=")
     ap.add_argument("--mults", default="1.0,0.6,0.45,0.34,0.26,0.2")
     ap.add_argument("--albedos", default="0.18,0.35,0.50,0.65")
     ap.add_argument("--white", type=float, default=1.0)
@@ -178,6 +238,12 @@ def main() -> None:
     ap.add_argument("--extra", default="", help="追加の lookdev 引数（空白区切り）例: 'ambient_mul=0.3 white=4'")
     a = ap.parse_args()
     extra = a.extra.split()
+    if a.sweep == "sky":
+        pts = [tuple(float(v) for v in p.split(",")) for p in a.points.split(";")]
+        if len(pts) != 3:
+            sys.exit("--points に 3 点（P_sun;P_open;P_core）を指定してください")
+        sweep_sky(pts, [float(x) for x in a.mults.split(",")], [float(x) for x in a.sky_energies.split(",")], a.sky_args.split(), extra, a.tag)  # type: ignore[arg-type]
+        return
     if a.sweep == "ambient":
         sweep_ambient([float(x) for x in a.mults.split(",")], extra, a.tag)
     elif a.sweep == "wall":

@@ -1,0 +1,37 @@
+{
+ "fov": 18.0,
+ "frames": 60,
+ "pan_m": 2.0,
+ "crop": [
+  50,
+  90,
+  170,
+  210
+ ],
+ "results": {
+  "ortho_tex_a_nearest": {
+   "frames": 60,
+   "mad_full_mean": 4.021,
+   "mad_crop_mean": 4.297,
+   "mad_full_max": 4.256
+  },
+  "ortho_tex_b_mipmap": {
+   "frames": 60,
+   "mad_full_mean": 2.772,
+   "mad_crop_mean": 2.638,
+   "mad_full_max": 2.929
+  },
+  "ortho_tex_c_mipmap_snap": {
+   "frames": 60,
+   "mad_full_mean": 2.728,
+   "mad_crop_mean": 2.593,
+   "mad_full_max": 3.09
+  },
+  "ortho_tex_d_mipmap_snap_fxaa": {
+   "frames": 60,
+   "mad_full_mean": 2.638,
+   "mad_crop_mean": 2.788,
+   "mad_full_max": 2.953
+  }
+ }
+}

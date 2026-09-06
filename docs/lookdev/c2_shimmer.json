@@ -1,0 +1,61 @@
+{
+ "fov": 18.0,
+ "frames": 60,
+ "pan_m": 2.0,
+ "crop": [
+  50,
+  90,
+  170,
+  210
+ ],
+ "results": {
+  "tex_a_nearest": {
+   "frames": 60,
+   "mad_full_mean": 3.264,
+   "mad_crop_mean": 4.651,
+   "mad_full_max": 3.521
+  },
+  "tex_b_mipmap": {
+   "frames": 60,
+   "mad_full_mean": 2.243,
+   "mad_crop_mean": 2.774,
+   "mad_full_max": 2.385
+  },
+  "tex_c_mipmap_snap": {
+   "frames": 60,
+   "mad_full_mean": 2.199,
+   "mad_crop_mean": 2.715,
+   "mad_full_max": 2.506
+  },
+  "tex_d_mipmap_snap_fxaa": {
+   "frames": 60,
+   "mad_full_mean": 2.226,
+   "mad_crop_mean": 2.827,
+   "mad_full_max": 2.498
+  },
+  "flat_a_nearest": {
+   "frames": 60,
+   "mad_full_mean": 0.501,
+   "mad_crop_mean": 0.661,
+   "mad_full_max": 0.544
+  },
+  "flat_b_mipmap": {
+   "frames": 60,
+   "mad_full_mean": 0.501,
+   "mad_crop_mean": 0.661,
+   "mad_full_max": 0.544
+  },
+  "flat_c_mipmap_snap": {
+   "frames": 60,
+   "mad_full_mean": 0.497,
+   "mad_crop_mean": 0.661,
+   "mad_full_max": 0.576
+  },
+  "flat_d_mipmap_snap_fxaa": {
+   "frames": 60,
+   "mad_full_mean": 0.482,
+   "mad_crop_mean": 0.662,
+   "mad_full_max": 0.553
+  }
+ }
+}

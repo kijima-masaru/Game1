@@ -190,3 +190,8 @@ Claude-PixelLab の `projects/iwato/assets/objects/`（62 種 × 本体・`_n`�
 トーンマップ比較の検証（Reinhard が white=1.0 で恒等写像だった件）、影の明度比 0.120 への較正、
 日陰面積率・色相統計、壁アルベドの切り分けは [CALIBRATION.md](CALIBRATION.md) にまとめた。
 **本書の既定値の表は較正前の値である。現在の既定値は CALIBRATION.md の「現時点のベスト設定」を見ること。**
+
+## 続き: フェーズ 3
+
+ピクセル整合（低 FOV 透視・シマー・モアレ）、白線 L=218 の検証、レイアウト v2、太陽方位・脱彩度、
+疑似スカイライトの検証は [PHASE3.md](PHASE3.md)。**現在の既定値は PHASE3.md の表を見ること。**

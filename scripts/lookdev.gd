@@ -17,7 +17,13 @@ extends Node3D
 ##   white=<f>（tonemap_white。Reinhard は 1.0 だと恒等写像になる）  lamps=0|1（点光源と発光板の強制 on/off）
 ##   ambient_mul=<f>（環境光エネルギーの倍率。較正用）  ambient_desat=<f>（環境光の彩度を輝度一定で落とす。0〜1）  wall_albedo=<f>（壁の基準アルベド。未指定はプリセット色）
 ##   bands=0|1（壁の白い細帯ジオメトリ）  probe=x,z;x,z（路面上の計測点。撮影時に画素値を PROBE 行で出力）
-##   probe_grid=1（路面全体の候補点を格子で出力。較正ツールが日向・日陰の芯を選ぶ）  sun_elev=<deg>  sun_az=<deg>  exposure=<f>
+##   probe_grid=1（路面全体の候補点を格子で出力。較正ツールが日向・日陰の芯を選ぶ）
+##   fov=<deg>（縦 FOV。距離は基準面で base_texel_per_meter になるよう逆算）  texel=<f>（基準 texel 密度）
+##   c1=1（投影検証: 平地と画面上端/中央/下端の同一サイズ板）
+##   seq=<dir> seq_frames=60 pan=2.0（等速パンの連番撮影）  snap=0|1（カメラを texel 格子へスナップ）
+##   fxaa=0|1  flat=0|1（世界テクスチャを単色にして影のエッジだけを見る）
+##   yaw=<deg>（カメラのヨー）  layout=v1|v2（建物配置）  sun_desat=<0-1>（太陽色の彩度を輝度一定で落とす）
+##   skylight=0|1 skylight_energy=<f> skylight_angle=<deg> skylight_pitch=<deg> skylight_yaw=<deg>（疑似スカイライト）  sun_elev=<deg>  sun_az=<deg>  exposure=<f>
 ##   shot=<PNGの絶対パス>   指定フレーム後に撮影して終了
 ##   frames=<n>             撮影までに待つフレーム数（既定 40）
 ##
@@ -27,15 +33,18 @@ extends Node3D
 ##   L 点光源の影   V ビルボード方式   K スプライトの受光   M テクスチャフィルタ   H HUD
 ##   [ ] 太陽の高度   , . 太陽の方位   - = 露出   S 撮影(user://)   Esc 終了
 
-const TEXELS_PER_METER := 20.0                 # 世界の 1m あたりの texel 数（全素材で統一）
-const PIXEL_SIZE := 1.0 / TEXELS_PER_METER     # Sprite3D.pixel_size と同じ
+## 世界の 1m あたりの texel 数（全素材で統一。PixelLab 素材に合わせて 28）。
+## 基準面（画面中央の地面）でこの密度になるようカメラ距離を逆算する。
+@export var base_texel_per_meter := 28.0
+var pixel_size := 1.0 / 28.0                   # Sprite3D.pixel_size と同じ。_ready で base から再計算
 const BASE_W := 1280
 const BASE_H := 720
 const DESIGN_H := 360                          # 構図を決める基準の描画高さ（px）。pixel=2 で 1 texel = 1 px
-const CAM_DISTANCE := 18.0
+var cam_distance := 18.0                        # fov と base_texel_per_meter から _apply_camera で逆算
+const ORTHO_DISTANCE := 30.0
 const CAM_PITCH_DEG := -42.0
-const CAM_YAW_DEG := 34.0
-const CAM_TARGET := Vector3(2.0, 0.0, -3.0)   # 街路の少し向こう側を見る（近景の屋根を画面外へ）
+var cam_yaw_deg := 60.0                        # 街路（X 軸）を斜めに奥へ見通す。v1 レイアウトは 34
+var cam_target := Vector3(-5.0, 0.0, -1.0)     # 注視点（v2: 街路の少し奥）。v1 は (2, 0, -3)
 
 const TONEMAPS := {
 	"linear": Environment.TONE_MAPPER_LINEAR,
@@ -67,7 +76,7 @@ const TIMES := {
 		"exposure": 0.85, "lamps": false, "sky_energy": 1.0,
 	},
 	"evening": {
-		"sun_elev": 13.0, "sun_az": 205.0, "sun_color": Color(1.0, 0.84, 0.70), "sun_energy": 4.2,
+		"sun_elev": 13.0, "sun_az": 165.0, "sun_color": Color(0.905, 0.833, 0.815), "sun_energy": 4.2,   # (1.0,0.84,0.70) を輝度一定で彩度 0.3 倍（D-3: 明部彩度 0.29→0.19、参考 0.17）。   # 方位 165: v2 レイアウトで奥の路面に日が差し、見える壁面は全て日陰（フェーズ3 D-2/D-4）
 		"sky_top": Color(0.20, 0.18, 0.34), "sky_horizon": Color(0.85, 0.45, 0.30),
 		"ground_horizon": Color(0.30, 0.22, 0.26), "ground_bottom": Color(0.08, 0.07, 0.10),
 		"ambient": Color(0.327, 0.345, 0.429), "ambient_energy": 0.234,   # 輝度は (0.28,0.34,0.62) と同じ、彩度を 0.3 倍（影の彩度 0.80→0.54、参考 0.43）。0.18 x 1.30 で路面の影比 0.120
@@ -105,6 +114,26 @@ var hud_on := true
 var glow_intensity := 1.0
 var glow_threshold := 0.9
 var tonemap_white := 1.0
+var layout := "v2"              # v1: フェーズ1/2 の配置（手前に大きな箱）。v2: 両側に建物、街路が奥へ抜ける
+var sun_desat := 0.0            # 太陽色の彩度を輝度一定で落とす割合
+var skylight_on := false        # 疑似スカイライト（2 本目の DirectionalLight3D、影あり）
+var skylight_energy := 0.3
+var skylight_angle := 20.0      # light_angular_distance（半影の広がり）
+var skylight_pitch := -75.0
+var skylight_yaw := 180.0       # カメラ相対。180 = 奥側（向こう側の建物の裏）から
+var skylight: DirectionalLight3D
+var extra_dirlights := 0        # 影付き DirectionalLight3D の本数上限を実測するためのダミー
+var fov_deg := 18.0             # 縦 FOV（透視）。C-1 の実測で 18 を採用（上端/下端の見かけ倍率 1.33 倍、距離 40.6 m）
+var c1_mode := false            # C-1: 建物を消し、画面上端・中央・下端に同一サイズの板を置く
+var seq_dir := ""               # C-2: 連番 PNG の出力先。指定すると等速パンしながら撮影して終了
+var seq_frames := 60
+var pan_meters := 2.0
+var snap_on := false            # C-2: カメラ位置を 1 texel 格子にスナップ
+var fxaa_on := false
+var flat_on := false            # 世界テクスチャを単色に（影のエッジだけを見る）
+var _seq_i := 0
+var _cam_base_pos := Vector3.ZERO
+var c1_boards: Array[MeshInstance3D] = []
 var lamps_override := -1        # -1: プリセットに従う / 0,1: 強制
 var ambient_desat := 0.0        # 環境光の彩度を輝度を保って落とす割合（0 = そのまま、0.5 = 半分）
 var ambient_mul := 1.0          # 較正用。既定値 1.0 = プリセットの ambient_energy そのまま
@@ -141,13 +170,20 @@ var _rng := RandomNumberGenerator.new()
 func _ready() -> void:
 	_rng.seed = 12345
 	_parse_args()
-	_build_world()
-	_build_sprites()
+	pixel_size = 1.0 / base_texel_per_meter
+	if c1_mode:
+		_build_c1_ground()
+	else:
+		_build_world()
+		_build_sprites()
 	_build_lights()
 	_build_environment()
 	_build_camera()
 	_build_hud()
 	_apply_all()
+	if c1_mode:
+		_build_c1_boards()
+	_cam_base_pos = cam.position
 
 
 # ============================================================================
@@ -203,6 +239,49 @@ func _parse_args() -> void:
 				emissive_energy = float(v)
 			"white":
 				tonemap_white = float(v)
+			"fov":
+				fov_deg = float(v)
+			"yaw":
+				cam_yaw_deg = float(v)
+			"layout":
+				layout = v
+				if v == "v1":
+					cam_target = Vector3(2.0, 0.0, -3.0)
+					cam_yaw_deg = 34.0
+			"target":
+				var tz := v.split(",")
+				if tz.size() == 2:
+					cam_target = Vector3(float(tz[0]), 0.0, float(tz[1]))
+			"sun_desat":
+				sun_desat = float(v)
+			"skylight":
+				skylight_on = _b(v)
+			"skylight_energy":
+				skylight_energy = float(v)
+			"skylight_angle":
+				skylight_angle = float(v)
+			"skylight_pitch":
+				skylight_pitch = float(v)
+			"skylight_yaw":
+				skylight_yaw = float(v)
+			"extra_dirlights":
+				extra_dirlights = int(v)
+			"texel":
+				base_texel_per_meter = float(v)
+			"c1":
+				c1_mode = _b(v)
+			"seq":
+				seq_dir = v
+			"seq_frames":
+				seq_frames = maxi(int(v), 2)
+			"pan":
+				pan_meters = float(v)
+			"snap":
+				snap_on = _b(v)
+			"fxaa":
+				fxaa_on = _b(v)
+			"flat":
+				flat_on = _b(v)
 			"lamps":
 				lamps_override = 1 if _b(v) else 0
 			"ambient_mul":
@@ -306,7 +385,15 @@ func _grass_image() -> Image:
 
 func _mat(img: Image, world_scale: float = 1.0, rough: float = 0.95) -> StandardMaterial3D:
 	var m := StandardMaterial3D.new()
-	m.albedo_texture = _tex(img)
+	if flat_on:
+		# 単色（テクスチャの平均色）。影のエッジのちらつきだけを測るため
+		var acc := Color(0, 0, 0)
+		for y in img.get_height():
+			for x in img.get_width():
+				acc += img.get_pixel(x, y)
+		m.albedo_color = acc / float(img.get_width() * img.get_height())
+	else:
+		m.albedo_texture = _tex(img)
 	m.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
 	m.roughness = rough
 	m.metallic = 0.0
@@ -315,7 +402,7 @@ func _mat(img: Image, world_scale: float = 1.0, rough: float = 0.95) -> Standard
 	m.uv1_triplanar = true
 	m.uv1_world_triplanar = true
 	var texels_per_tile := float(img.get_width())
-	var meters_per_tile := texels_per_tile / TEXELS_PER_METER * world_scale
+	var meters_per_tile := texels_per_tile / base_texel_per_meter * world_scale
 	m.uv1_scale = Vector3.ONE / meters_per_tile
 	world_mats.append(m)
 	return m
@@ -361,8 +448,11 @@ func _build_world() -> void:
 
 	# 草地（建物の裏側・空き地）
 	var grass := _mat(_grass_image())
-	_box(Vector3(14, 0.05, 10), Vector3(6, 0.025, 14), grass, "GrassN")
-	_box(Vector3(10, 0.05, 8), Vector3(-22, 0.025, -12), grass, "GrassS")
+	if layout == "v1":
+		_box(Vector3(14, 0.05, 10), Vector3(6, 0.025, 14), grass, "GrassN")
+		_box(Vector3(10, 0.05, 8), Vector3(-22, 0.025, -12), grass, "GrassS")
+	else:
+		_box(Vector3(17, 0.05, 12), Vector3(-17, 0.025, -11.5), grass, "GrassLot")   # 向こう側の空き地
 
 	# 車線の白線（破線）
 	var white := StandardMaterial3D.new()
@@ -378,20 +468,34 @@ func _build_world() -> void:
 	var wall_b := _mat(_siding_image(_wall_base(Color(0.20, 0.18, 0.22)), Color(0.55, 0.52, 0.55)))
 	var wall_c := _mat(_siding_image(_wall_base(Color(0.30, 0.28, 0.32)), Color(0.70, 0.68, 0.72)))
 	var roof := _mat(_roof_image())
-	var specs := [
-		# [x, side(+1 手前/-1 向こう), width, height, depth, wall]
-		# 向こう側（カメラから見て奥）は 2 階建て相当で高く、長い影を街路に落とす
-		[-12.0, -1, 10.0, 8.0, 8.0, wall_a],   # 参考画像の「手前左の大きな建物」相当
-		[-1.0, -1, 6.0, 6.5, 7.0, wall_b],
-		[7.0, -1, 5.0, 7.5, 6.0, wall_c],
-		[15.0, -1, 8.0, 6.0, 7.0, wall_a],
-		[25.0, -1, 6.0, 9.0, 6.0, wall_b],
-		# 手前側は低め。多くは画面外に出る
-		[-14.0, 1, 7.0, 4.0, 6.0, wall_c],
-		[-4.0, 1, 5.0, 3.5, 5.0, wall_a],
-		[6.0, 1, 8.0, 4.5, 7.0, wall_b],
-		[17.0, 1, 6.0, 4.0, 6.0, wall_c],
-	]
+	var specs := []
+	if layout == "v1":
+		specs = [
+			# [x, side(+1 手前/-1 向こう), width, height, depth, wall]
+			[-12.0, -1, 10.0, 8.0, 8.0, wall_a],
+			[-1.0, -1, 6.0, 6.5, 7.0, wall_b],
+			[7.0, -1, 5.0, 7.5, 6.0, wall_c],
+			[15.0, -1, 8.0, 6.0, 7.0, wall_a],
+			[25.0, -1, 6.0, 9.0, 6.0, wall_b],
+			[-14.0, 1, 7.0, 4.0, 6.0, wall_c],
+			[-4.0, 1, 5.0, 3.5, 5.0, wall_a],
+			[6.0, 1, 8.0, 4.5, 7.0, wall_b],
+			[17.0, 1, 6.0, 4.0, 6.0, wall_c],
+		]
+	else:
+		# v2: 街路（X 軸、-X が奥）の両側に 2 階建て相当の建物を等間隔で並べる。
+		# 手前側にも同じ高さの列を置き、奥（-X）へ抜ける見通しを作る。
+		# 向こう側（-Z）は x が -24〜-8 の区間を空き地にして、奥の路面に日が差し込む抜けを作る
+		for i in range(-5, 4):
+			var x := -30.0 + (i + 5) * 7.0
+			var far_h: Array[float] = [6.5, 7.5, 6.0, 8.0, 7.0, 6.5, 7.5, 6.0, 7.0]
+			var near_h: Array[float] = [6.0, 7.0, 6.5, 6.0, 7.5, 6.5, 6.0, 7.0, 6.5]
+			var h_far: float = far_h[i + 5]
+			var h_near: float = near_h[i + 5]
+			var mats: Array[StandardMaterial3D] = [wall_a, wall_b, wall_c]
+			if x < -26.0 or x > -8.0:
+				specs.append([x, -1, 5.5, h_far, 7.0, mats[(i + 5) % 3]])
+			specs.append([x + 3.0, 1, 5.5, h_near, 7.0, mats[(i + 6) % 3]])
 	var band_mat := StandardMaterial3D.new()
 	band_mat.albedo_color = Color(0.85, 0.85, 0.85)
 	band_mat.roughness = 1.0
@@ -464,7 +568,7 @@ func _add_billboard(kind: String, pos: Vector3) -> void:
 
 	var sp := Sprite3D.new()
 	sp.texture = _tex(img)
-	sp.pixel_size = PIXEL_SIZE
+	sp.pixel_size = pixel_size
 	sp.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
 	sp.billboard = BaseMaterial3D.BILLBOARD_DISABLED   # 向きは pivot で手動制御
 	sp.alpha_cut = SpriteBase3D.ALPHA_CUT_DISCARD       # 影を落とせるようにする
@@ -473,7 +577,7 @@ func _add_billboard(kind: String, pos: Vector3) -> void:
 	sp.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
 	sp.shaded = sprites_shaded
 	# 足元を pivot に合わせる（centered のまま高さの半分だけ持ち上げる）
-	sp.position = Vector3(0, img.get_height() * PIXEL_SIZE * 0.5, 0)
+	sp.position = Vector3(0, img.get_height() * pixel_size * 0.5, 0)
 	pivot.add_child(sp)
 	billboards.append(pivot)
 	sprites.append(sp)
@@ -503,16 +607,25 @@ func _add_emissive(pivot: Node3D, size: Vector2i, rect: Rect2i, color: Color, en
 	m.cull_mode = BaseMaterial3D.CULL_DISABLED
 	var mi := MeshInstance3D.new()
 	var q := QuadMesh.new()
-	q.size = Vector2(size.x, size.y) * PIXEL_SIZE
+	q.size = Vector2(size.x, size.y) * pixel_size
 	mi.mesh = q
 	mi.material_override = m
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	mi.position = Vector3(0, size.y * PIXEL_SIZE * 0.5, 0.005)   # 本体のわずかに手前
+	mi.position = Vector3(0, size.y * pixel_size * 0.5, 0.005)   # 本体のわずかに手前
 	pivot.add_child(mi)
 	emissives.append(mi)
 
 
 func _build_sprites() -> void:
+	if layout != "v1":
+		_add_billboard("vending", Vector3(-2.0, 0.12, -4.9))
+		_add_emissive(billboards[-1], Vector2i(16, 30), Rect2i(3, 2, 8, 12), Color(0.75, 0.95, 0.90), 1.8)
+		_add_billboard("streetlight", Vector3(-9.0, 0.12, 4.0))
+		_add_emissive(billboards[-1], Vector2i(12, 80), Rect2i(3, 6, 6, 3), Color(1.0, 0.92, 0.70), 2.5)
+		_add_billboard("pole", Vector3(5.0, 0.12, -4.9))
+		_add_billboard("streetlight", Vector3(3.0, 0.12, 4.0))
+		_add_emissive(billboards[-1], Vector2i(12, 80), Rect2i(3, 6, 6, 3), Color(1.0, 0.92, 0.70), 2.5)
+		return
 	_add_billboard("vending", Vector3(-4.5, 0.12, -4.9))      # 向こう側歩道、建物の前
 	_add_emissive(billboards[-1], Vector2i(16, 30), Rect2i(3, 2, 8, 12), Color(0.75, 0.95, 0.90), 1.8)
 	_add_billboard("streetlight", Vector3(2.0, 0.12, 4.0))    # 手前側歩道
@@ -536,6 +649,27 @@ func _build_lights() -> void:
 	sun.shadow_bias = 0.03
 	sun.shadow_normal_bias = 1.5
 	add_child(sun)
+
+	# 疑似スカイライト（D-1）。ほぼ真下向きの 2 本目の平行光。影あり・鏡面なし・広い半影。
+	skylight = DirectionalLight3D.new()
+	skylight.name = "SkyLight"
+	skylight.shadow_enabled = true
+	skylight.light_specular = 0.0
+	skylight.directional_shadow_mode = DirectionalLight3D.SHADOW_ORTHOGONAL
+	skylight.directional_shadow_max_distance = 120.0
+	skylight.shadow_bias = 0.05
+	skylight.shadow_normal_bias = 2.0
+	skylight.visible = false
+	add_child(skylight)
+
+	# 上限テスト用ダミー（極めて弱い光。影だけ有効）
+	for i in extra_dirlights:
+		var dl := DirectionalLight3D.new()
+		dl.name = "Dummy%d" % i
+		dl.light_energy = 0.001
+		dl.shadow_enabled = true
+		dl.rotation_degrees = Vector3(-60.0 - i * 3.0, 40.0 * i, 0.0)
+		add_child(dl)
 
 	# 点光源: 街灯（暖色）と自販機（寒色）
 	_add_lamp(Vector3(2.0, 4.6, 4.0), Color(1.0, 0.78, 0.48), 5.0, 11.0, 1.6)    # 街灯 1
@@ -595,18 +729,14 @@ func _build_camera() -> void:
 	cam.near = 0.5
 	cam.far = 200.0
 	cam_attr = CameraAttributesPractical.new()
-	cam_attr.dof_blur_far_distance = CAM_DISTANCE + 8.0
+	cam_attr.dof_blur_far_distance = cam_distance + 8.0
 	cam_attr.dof_blur_far_transition = 14.0
-	cam_attr.dof_blur_near_distance = CAM_DISTANCE - 9.0
+	cam_attr.dof_blur_near_distance = cam_distance - 9.0
 	cam_attr.dof_blur_near_transition = 6.0
 	cam_attr.dof_blur_amount = 0.25
 	cam.attributes = cam_attr
 	add_child(cam)
-	var basis := Basis.from_euler(Vector3(deg_to_rad(CAM_PITCH_DEG), deg_to_rad(CAM_YAW_DEG), 0.0))
-	var target := CAM_TARGET
-	cam.position = target + basis.z * CAM_DISTANCE   # basis.z はカメラの後ろ向き
-	cam.look_at(target, Vector3.UP)
-	cam.make_current()
+	cam.make_current()   # 位置・向きは _apply_camera で決める
 
 
 func _build_hud() -> void:
@@ -651,7 +781,7 @@ func _apply_pixel_scale() -> void:
 	# 内部で使うアンチエイリアスは切る（ドットの縁を保つ）
 	var vp := get_viewport()
 	vp.msaa_3d = Viewport.MSAA_DISABLED
-	vp.screen_space_aa = Viewport.SCREEN_SPACE_AA_DISABLED
+	vp.screen_space_aa = Viewport.SCREEN_SPACE_AA_FXAA if fxaa_on else Viewport.SCREEN_SPACE_AA_DISABLED
 	vp.use_taa = false
 	vp.scaling_3d_mode = Viewport.SCALING_3D_MODE_BILINEAR
 	vp.scaling_3d_scale = 1.0
@@ -666,8 +796,13 @@ func _apply_time() -> void:
 	var elev: float = t["sun_elev"] if is_nan(sun_elev_override) else sun_elev_override
 	var az: float = t["sun_az"] if is_nan(sun_az_override) else sun_az_override
 	# 方位はカメラのヨーに対する相対角。0 = カメラの背後から、180 = 正面から（逆光）。
-	sun.rotation_degrees = Vector3(-elev, CAM_YAW_DEG + az, 0.0)
-	sun.light_color = t["sun_color"]
+	sun.rotation_degrees = Vector3(-elev, cam_yaw_deg + az, 0.0)
+	var sc: Color = t["sun_color"]
+	if sun_desat > 0.0:
+		# 輝度一定で彩度だけ落とす（sun_energy には触らない）
+		var ys := 0.2126 * sc.r + 0.7152 * sc.g + 0.0722 * sc.b
+		sc = Color(lerpf(sc.r, ys, sun_desat), lerpf(sc.g, ys, sun_desat), lerpf(sc.b, ys, sun_desat))
+	sun.light_color = sc
 	sun.light_energy = t["sun_energy"]
 	sun.visible = t["sun_energy"] > 0.0
 
@@ -681,6 +816,12 @@ func _apply_time() -> void:
 		var y := 0.2126 * amb.r + 0.7152 * amb.g + 0.0722 * amb.b
 		amb = Color(lerpf(amb.r, y, ambient_desat), lerpf(amb.g, y, ambient_desat), lerpf(amb.b, y, ambient_desat))
 	env.ambient_light_color = amb
+	# 疑似スカイライト: 色は環境光と同じ、輝度は独立
+	skylight.visible = skylight_on
+	skylight.light_color = amb
+	skylight.light_energy = skylight_energy
+	skylight.light_angular_distance = skylight_angle
+	skylight.rotation_degrees = Vector3(skylight_pitch, cam_yaw_deg + skylight_yaw, 0.0)
 	env.ambient_light_energy = t["ambient_energy"] * ambient_mul
 	env.fog_light_color = t["fog_color"]
 	env.fog_density = t["fog_density"]
@@ -697,16 +838,25 @@ func _apply_time() -> void:
 
 
 func _apply_camera() -> void:
+	# 基準面 = 画面中央の地面（カメラの注視点）。そこで 1 m が base_texel_per_meter px になる。
+	var view_h_m := float(DESIGN_H) * pixel_size          # 基準面での画面の縦幅 (m)
 	if ortho:
 		cam.projection = Camera3D.PROJECTION_ORTHOGONAL
-		# 基準高さ(px) × pixel_size = 画面の縦の世界サイズ。描画高さが DESIGN_H のとき
-		# スプライトの 1 texel がちょうど 1 画面ピクセルになる（構図は解像度で変えない）
-		cam.size = float(DESIGN_H) * PIXEL_SIZE
+		cam.size = view_h_m
+		cam_distance = ORTHO_DISTANCE
 	else:
 		cam.projection = Camera3D.PROJECTION_PERSPECTIVE
-		# 正射影と同じ縦幅になる FOV（距離 CAM_DISTANCE の位置で）
-		var half_h := float(DESIGN_H) * PIXEL_SIZE * 0.5
-		cam.fov = rad_to_deg(2.0 * atan(half_h / CAM_DISTANCE))
+		cam.fov = fov_deg
+		# 縦 FOV で基準面の縦幅が view_h_m になる距離を逆算
+		cam_distance = (view_h_m * 0.5) / tan(deg_to_rad(fov_deg * 0.5))
+	var basis := Basis.from_euler(Vector3(deg_to_rad(CAM_PITCH_DEG), deg_to_rad(cam_yaw_deg), 0.0))
+	cam.position = cam_target + basis.z * cam_distance
+	cam.look_at(cam_target, Vector3.UP)
+	_cam_base_pos = cam.position
+	# 影の描画距離とDOF の距離をカメラ距離に追従させる（FOV を絞ると距離が 40〜60 m になる）
+	sun.directional_shadow_max_distance = cam_distance + 40.0
+	cam_attr.dof_blur_far_distance = cam_distance + 8.0
+	cam_attr.dof_blur_near_distance = maxf(cam_distance - 9.0, 1.0)
 	cam_attr.dof_blur_far_enabled = dof_on and not ortho
 	cam_attr.dof_blur_near_enabled = dof_on and not ortho
 
@@ -751,18 +901,97 @@ func _apply_sprites() -> void:
 	var f := BaseMaterial3D.TEXTURE_FILTER_NEAREST_WITH_MIPMAPS if mipmaps else BaseMaterial3D.TEXTURE_FILTER_NEAREST
 	for sp in sprites:
 		sp.shaded = sprites_shaded
-		sp.texture_filter = f
+		sp.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST   # スプライトは常に Nearest
 	for m in world_mats:
 		m.texture_filter = f
 
 
 func _process(_delta: float) -> void:
 	_face_billboards()
+	if seq_dir != "":
+		_frame += 1
+		if _frame > shot_frames:
+			# 等速パン: カメラの右方向に pan_meters / seq_frames ずつ動かす
+			var right := cam.global_transform.basis.x
+			var t := float(_seq_i) / float(seq_frames)
+			cam.position = _cam_base_pos + right * (pan_meters * t)
+			if snap_on:
+				cam.position = _snap_to_texel_grid(cam.position)
+			if _seq_i >= 1:
+				# 1 フレーム前に動かした位置が描画されているので、今フレームで撮る
+				var img := get_viewport().get_texture().get_image()
+				img.save_png("%s/f%03d.png" % [seq_dir, _seq_i - 1])
+			_seq_i += 1
+			if _seq_i > seq_frames:
+				print("lookdev: seq done %d frames -> %s" % [seq_frames, seq_dir])
+				get_tree().quit()
+		return
 	if shot_path != "":
 		_frame += 1
 		if _frame == shot_frames:
 			_take_shot(shot_path)
 			get_tree().quit()
+
+
+## カメラ位置を、注視点基準で「画面 1 px = 1 texel」の格子にスナップする（右・上方向のみ）。
+func _snap_to_texel_grid(p: Vector3) -> Vector3:
+	var b := cam.global_transform.basis
+	var d := p - cam_target
+	var r := d.dot(b.x)
+	var u := d.dot(b.y)
+	var f := d.dot(b.z)
+	r = round(r / pixel_size) * pixel_size
+	u = round(u / pixel_size) * pixel_size
+	return cam_target + b.x * r + b.y * u + b.z * f
+
+
+# ============================================================================
+# C-1: 投影の検証用。平らな地面と、画面上端・中央・下端に置いた同一サイズの板
+# ============================================================================
+func _build_c1_ground() -> void:
+	var ground := MeshInstance3D.new()
+	var pm := PlaneMesh.new()
+	pm.size = Vector2(400, 400)
+	ground.mesh = pm
+	var m := StandardMaterial3D.new()
+	m.albedo_color = Color(0.5, 0.5, 0.5)
+	m.roughness = 1.0
+	ground.material_override = m
+	ground.name = "C1Ground"
+	add_child(ground)
+
+
+func _build_c1_boards() -> void:
+	# 画面の縦 8% / 50% / 92%（横は中央）から地面への交点に、高さ 1 m・幅 0.25 m の板を立てる
+	var rw := float(BASE_W / maxi(pixel_scale, 1))
+	var rh := float(_render_height())
+	for frac in [0.08, 0.5, 0.92]:
+		var sp := Vector2(rw * 0.5, rh * frac)
+		var o := cam.project_ray_origin(sp)
+		var n := cam.project_ray_normal(sp)
+		if absf(n.y) < 1e-6:
+			continue
+		var t := -o.y / n.y
+		var hit := o + n * t
+		var mi := MeshInstance3D.new()
+		var q := QuadMesh.new()
+		q.size = Vector2(0.25, 1.0)
+		mi.mesh = q
+		var m := StandardMaterial3D.new()
+		m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		m.albedo_color = Color(1, 0, 1)
+		m.cull_mode = BaseMaterial3D.CULL_DISABLED
+		mi.material_override = m
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		var pivot := Node3D.new()
+		pivot.position = hit
+		add_child(pivot)
+		mi.position = Vector3(0, 0.5, 0)
+		pivot.add_child(mi)
+		billboards.append(pivot)   # カメラ正対（_face_billboards が回す）
+		c1_boards.append(mi)
+		print("C1BOARD {\"frac\":%.2f,\"world\":[%.2f,%.2f,%.2f],\"dist\":%.3f}" % [frac, hit.x, hit.y, hit.z, cam.global_position.distance_to(hit + Vector3(0, 0.5, 0))])
+	print("C1CAM {\"fov\":%.2f,\"ortho\":%s,\"distance\":%.3f,\"height\":%.3f,\"pitch\":%.1f}" % [cam.fov, "true" if ortho else "false", cam_distance, cam.global_position.y, -CAM_PITCH_DEG])
 
 
 ## ビルボードの向き。full: カメラに正対（足元は地面に固定）。y: Y 軸回転のみ。
@@ -791,8 +1020,8 @@ func _take_shot(path: String) -> void:
 func _report_probes(img: Image) -> void:
 	var pts := probes.duplicate()
 	if probe_grid:
-		for xi in range(-18, 19):
-			for zz in [-2.5, -1.25, 0.0, 1.25, 2.5]:
+		for xi in range(-34, 35):
+			for zz in [-3.0, -2.0, -1.0, 0.0, 1.0, 2.0, 3.0]:
 				pts.append(Vector3(float(xi), 0.0, zz))
 	if pts.is_empty():
 		return
@@ -813,6 +1042,9 @@ func _report_probes(img: Image) -> void:
 				acc += Vector3(c.r, c.g, c.b)
 		acc /= 9.0
 		var shadow := _in_sun_shadow(p, sun_dir)
+		var sky_shadow := false
+		if skylight_on:
+			sky_shadow = _in_sun_shadow(p, -skylight.global_transform.basis.z)
 		var margin := 0.0
 		for r in [0.5, 1.0, 1.5, 2.0]:
 			var same := true
@@ -824,8 +1056,8 @@ func _report_probes(img: Image) -> void:
 				break
 			margin = r
 		var wall_dist := _dist_to_buildings(p)
-		print("PROBE {\"x\":%.2f,\"z\":%.2f,\"px\":%d,\"py\":%d,\"rgb\":[%.4f,%.4f,%.4f],\"shadow\":%s,\"margin\":%.1f,\"wall\":%.2f}" % [
-			p.x, p.z, px, py, acc.x, acc.y, acc.z, "true" if shadow else "false", margin, wall_dist])
+		print("PROBE {\"x\":%.2f,\"z\":%.2f,\"px\":%d,\"py\":%d,\"rgb\":[%.4f,%.4f,%.4f],\"shadow\":%s,\"sky_shadow\":%s,\"margin\":%.1f,\"wall\":%.2f}" % [
+			p.x, p.z, px, py, acc.x, acc.y, acc.z, "true" if shadow else "false", "true" if sky_shadow else "false", margin, wall_dist])
 
 
 func _in_sun_shadow(p: Vector3, sun_dir: Vector3) -> bool:
@@ -936,13 +1168,13 @@ func _update_hud() -> void:
 	hud.visible = hud_on
 	var rh := _render_height()
 	var rw := BASE_W / maxi(pixel_scale, 1)
-	var proj_s := ("ORTHO size=%.1fm" % cam.size) if ortho else ("PERSP fov=%.1f" % cam.fov)
+	var proj_s := ("ORTHO size=%.1fm" % cam.size) if ortho else ("PERSP fov=%.1f dist=%.1fm" % [cam.fov, cam_distance])
 	hud.text = "\n".join([
-		"[1-4] time=%s   sun elev=%.0f az=%.0f (rel. to camera)   exposure=%.2f" % [time_name, _cur_elev(), _cur_az(), _cur_exposure()],
+		"[1-4] time=%s   sun elev=%.0f az=%.0f (rel. to camera)   exposure=%.2f   skylight=%s e=%.2f ang=%.0f" % [time_name, _cur_elev(), _cur_az(), _cur_exposure(), _oo(skylight_on), skylight_energy, skylight_angle],
 		"[O] %s   [P] render %dx%d x%d   [T] tonemap=%s" % [proj_s, rw, rh, pixel_scale, tonemap],
 		"[F] dof=%s  [G] glow=%s  [Z] fog=%s  [A] ssao=%s  [I] ssil=%s" % [_oo(dof_on and not ortho), _oo(glow_on), _oo(fog_on), _oo(ssao_on), _oo(ssil_on)],
 		"[B] shadow soft=%d  [N] shadow res=%d  [L] omni shadows=%s" % [soft_level, shadow_res, _oo(omni_shadows)],
-		"[V] billboard=%s  [K] sprites shaded=%s  [M] filter=%s  pixel_size=%.4f (%d texel/m)" % ["full" if billboard_full else "y-axis", _oo(sprites_shaded), "nearest+mipmap" if mipmaps else "nearest", PIXEL_SIZE, int(TEXELS_PER_METER)],
+		"[V] billboard=%s  [K] sprites shaded=%s  [M] filter=%s  pixel_size=%.4f (%d texel/m)  snap=%s fxaa=%s" % ["full" if billboard_full else "y-axis", _oo(sprites_shaded), "nearest+mipmap" if mipmaps else "nearest", pixel_size, int(base_texel_per_meter), _oo(snap_on), _oo(fxaa_on)],
 		"[ ] sun elev  , . sun az  - = exposure  [S] screenshot  [H] hud  [Esc] quit",
 	])
 
