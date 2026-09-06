@@ -43,6 +43,20 @@ godot --path .            # ゲームを起動
 godot --path . --editor   # エディタで開く
 ```
 
+## 見え方の検証シーン（lookdev）
+
+「3D背景 + ドット絵スプライト」方式の見え方を確かめる検証シーン。
+時間帯・投影・トーンマップ・DOF・Glow などをキーとコマンドライン引数で切り替えられる。
+所見と比較シートは [docs/lookdev/REPORT.md](docs/lookdev/REPORT.md)。
+
+```sh
+godot --path . res://scenes/lookdev.tscn
+godot --path . res://scenes/lookdev.tscn -- time=evening proj=ortho tonemap=aces
+python tools/lookdev_shots.py          # 設定違いを一括撮影して比較シートを作る（実機が必要）
+```
+
+参考画像は `refs/` に置く（Git 管理外）。
+
 ## 検証（CI と同じ内容）
 
 ```sh
@@ -59,6 +73,9 @@ project.godot        プロジェクト設定
 scenes/main.tscn     メインシーン
 scripts/main.gd      メインシーンのスクリプト
 tests/smoke_test.gd  ヘッドレスのスモークテスト
+scenes/lookdev.tscn  見え方の検証シーン（scripts/lookdev.gd）
+tools/lookdev_shots.py 検証シーンの一括撮影と比較シート作成
+docs/lookdev/        検証の所見と比較シート
 tools/setup_godot.sh Godot のインストール（Linux）
 tools/setup_godot.ps1 Godot のインストール（Windows）
 tools/check.sh       検証スクリプト
