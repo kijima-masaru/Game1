@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    name: Godot headless check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read Godot version
+        id: godot
+        run: echo "version=$(tr -d '[:space:]' < .godot-version)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Godot
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/godot
+          key: godot-${{ steps.godot.outputs.version }}-linux-x86_64
+
+      - name: Install Godot
+        run: ./tools/setup_godot.sh
+
+      - name: Run checks
+        run: PATH="$HOME/.local/bin:$PATH" ./tools/check.sh

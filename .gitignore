@@ -1,0 +1,23 @@
+# Godot 4 が生成するキャッシュ
+.godot/
+/android/
+
+# エクスポート成果物
+/build/
+/export/
+*.pck
+*.zip
+*.exe
+*.dmg
+*.apk
+*.aab
+
+# ローカルにインストールした Godot バイナリ
+/.godot-bin/
+
+# OS / エディタ
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
