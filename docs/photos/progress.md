@@ -15,11 +15,18 @@ GitHub/Anthropic API など限られたホストしか外部通信を許可し�
 
 | 手段 | 結果 |
 |---|---|
-| `curl` で commons.wikimedia.org 等へ接続 | プロキシが CONNECT を 403 で拒否 |
-| `WebFetch`（任意 URL の取得） | `EGRESS_BLOCKED` エラー（同じポリシー） |
+| `curl` で commons.wikimedia.org, example.com, via.placeholder.com 等へ接続 | プロキシが CONNECT を 403 で拒否 |
+| `curl` で `raw.githubusercontent.com` へ接続 | **成功する**（GitHub 関連ドメインは許可リストに入っている。git 操作用と思われる） |
+| `WebFetch`（任意 URL の取得） | 一般サイトは `EGRESS_BLOCKED` エラー（curl と同じポリシー） |
 | `WebSearch` | テキストスニペットと URL のみ。画像本体は取得できない仕様 |
 | Google Drive コネクタ | 接続済みだが関連写真資料なし |
 | GitHub（このセッションのスコープ） | `kijima-masaru/game1` 単体に限定。他リポジトリの検索/横断は指示で禁止 |
+
+**訂正（2026-09-06）**: 当初「curl は一切使えない」と記録したが、再検証で
+`raw.githubusercontent.com` など GitHub 関連ドメインへは接続できることを
+確認した。ただし実在の町並み・建物写真が GitHub 上に置かれているケースは
+実質皆無で、それを探すための GitHub 全体の横断検索もリポジトリスコープの
+制約で行えない。したがって**結論（実写真は収集できない）自体は変わらない**。
 
 つまり、実写真を 1 枚もダウンロードできない状態です。収集枚数は
 **フィールド別・カテゴリ別すべて 0 枚**。`refs/photos/` の下は空のディレ
