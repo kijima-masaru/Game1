@@ -1,0 +1,104 @@
+[
+ {
+  "fov": 12.0,
+  "distance_m": 61.16,
+  "cam_height_m": 40.93,
+  "ground_dist_ratio_top_over_bottom": 1.264,
+  "board_dist_m": [
+   67.78,
+   60.83,
+   55.55
+  ],
+  "board_px_top_mid_bottom": [
+   25,
+   28,
+   31
+  ],
+  "measured_ratio_bottom_over_top": 1.24
+ },
+ {
+  "fov": 18.0,
+  "distance_m": 40.59,
+  "cam_height_m": 27.16,
+  "ground_dist_ratio_top_over_bottom": 1.427,
+  "board_dist_m": [
+   47.76,
+   40.26,
+   35.3
+  ],
+  "board_px_top_mid_bottom": [
+   24,
+   28,
+   32
+  ],
+  "measured_ratio_bottom_over_top": 1.333
+ },
+ {
+  "fov": 22.0,
+  "distance_m": 33.07,
+  "cam_height_m": 22.13,
+  "ground_dist_ratio_top_over_bottom": 1.551,
+  "board_dist_m": [
+   40.66,
+   32.74,
+   27.98
+  ],
+  "board_px_top_mid_bottom": [
+   23,
+   28,
+   33
+  ],
+  "measured_ratio_bottom_over_top": 1.435
+ },
+ {
+  "fov": 30.0,
+  "distance_m": 23.99,
+  "cam_height_m": 16.05,
+  "ground_dist_ratio_top_over_bottom": 1.847,
+  "board_dist_m": [
+   32.55,
+   23.66,
+   19.27
+  ],
+  "board_px_top_mid_bottom": [
+   21,
+   28,
+   35
+  ],
+  "measured_ratio_bottom_over_top": 1.667
+ },
+ {
+  "fov": 45.0,
+  "distance_m": 15.52,
+  "cam_height_m": 10.38,
+  "ground_dist_ratio_top_over_bottom": 2.704,
+  "board_dist_m": [
+   26.59,
+   15.19,
+   11.42
+  ],
+  "board_px_top_mid_bottom": [
+   16,
+   28,
+   39
+  ],
+  "measured_ratio_bottom_over_top": 2.438
+ },
+ {
+  "fov": "ortho",
+  "distance_m": 30.0,
+  "cam_height_m": 20.07,
+  "ground_dist_ratio_top_over_bottom": 1.0,
+  "board_dist_m": [
+   36.13,
+   29.67,
+   24.2
+  ],
+  "board_px_top_mid_bottom": [
+   28,
+   28,
+   28
+  ],
+  "measured_ratio_bottom_over_top": 1.0
+ }
+]
