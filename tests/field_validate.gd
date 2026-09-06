@@ -28,6 +28,9 @@ func _init() -> void:
 		print("  遮蔽の式: 階数を落とした建物 %d、平屋でも隠す建物 %d、隠される歩行可能タイル %d" % [lowered, fd.lots.filter(func(l): return int(l.get("violates", 0)) > 0).size(), fd.layout.violations.size()])
 		for v in fd.layout.violations.slice(0, 8):
 			print("    %s が (%d,%d) を隠す: %s まで %.1f m、必要 %.1f m" % [v["lot"], v["tile"].x, v["tile"].y, v["part"], v["dist_m"], v["need_m"]])
+		print("  近景の屋根（5 m 以内）: 建物 %d、歩行可能タイル %d" % [fd.lots.filter(func(l): return int(l.get("near_roof", 0)) > 0).size(), fd.layout.near_roofs.size()])
+		for v in fd.layout.near_roofs.slice(0, 6):
+			print("    %s が (%d,%d) の手前 %.1f m" % [v["lot"], v["tile"].x, v["tile"].y, v["dist_m"]])
 		var out := "res://cache/fields/%s/occlusion.png" % fd.d["id"]
 		DirAccess.make_dir_recursive_absolute(ProjectSettings.globalize_path(out.get_base_dir()))
 		fd.layout.occlusion_image().save_png(ProjectSettings.globalize_path(out))

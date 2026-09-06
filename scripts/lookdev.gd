@@ -100,7 +100,8 @@ const TIME_ORDER := ["morning", "noon", "evening", "night"]
 var time_name := "evening"
 var ortho := false
 var tonemap := "filmic"
-var dof_on := false            # ドット絵に光学ボケは掛けない（フェーズ4 E-0b）。参考画像のボケ再現は F キーで
+var dof_on := false            # フェーズ 4 で OFF。フェーズ 11 P-2b で再検討（近景を強く、遠景を弱く、ぼけ半径は控えめ）
+var dof_amount := 0.06         # dof_amount= で指定。ドットが溶けない範囲
 var glow_on := true
 var fog_on := false           # Fog は黒を浮かせる。参考画像に霞は無い
 var ssao_on := false
@@ -227,6 +228,8 @@ func _parse_args() -> void:
 					tonemap = v
 			"dof":
 				dof_on = _b(v)
+			"dof_amount":
+				dof_amount = float(v)
 			"glow":
 				glow_on = _b(v)
 			"fog":
@@ -1025,11 +1028,11 @@ func _build_camera() -> void:
 	cam.near = 0.5
 	cam.far = 200.0
 	cam_attr = CameraAttributesPractical.new()
-	cam_attr.dof_blur_far_distance = cam_distance + 8.0
-	cam_attr.dof_blur_far_transition = 14.0
-	cam_attr.dof_blur_near_distance = cam_distance - 9.0
-	cam_attr.dof_blur_near_transition = 6.0
-	cam_attr.dof_blur_amount = 0.25
+	cam_attr.dof_blur_far_distance = cam_distance + 12.0
+	cam_attr.dof_blur_far_transition = 40.0       # 遠景は弱く（画面の奥の端でもほとんど掛からない）
+	cam_attr.dof_blur_near_distance = cam_distance - 3.0
+	cam_attr.dof_blur_near_transition = 5.0       # 近景は強く（主人公の 3 m 手前から 5 m で最大）
+	cam_attr.dof_blur_amount = dof_amount
 	cam.attributes = cam_attr
 	add_child(cam)
 	cam.make_current()   # 位置・向きは _apply_camera で決める
@@ -1160,8 +1163,9 @@ func _apply_camera() -> void:
 	_cam_base_pos = cam.position
 	# 影の描画距離とDOF の距離をカメラ距離に追従させる（FOV を絞ると距離が 40〜60 m になる）
 	sun.directional_shadow_max_distance = cam_distance + 40.0
-	cam_attr.dof_blur_far_distance = cam_distance + 8.0
-	cam_attr.dof_blur_near_distance = maxf(cam_distance - 9.0, 1.0)
+	cam_attr.dof_blur_far_distance = cam_distance + 12.0
+	cam_attr.dof_blur_near_distance = maxf(cam_distance - 3.0, 1.0)
+	cam_attr.dof_blur_amount = dof_amount
 	cam_attr.dof_blur_far_enabled = dof_on and not ortho
 	cam_attr.dof_blur_near_enabled = dof_on and not ortho
 

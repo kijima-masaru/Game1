@@ -9,11 +9,11 @@
  "elevation": 2,
  "biome": "old_shopping_street",
  "scene": "res://scenes/fields/f05_kaido.tscn",
- "field_yaw": 45,
+ "field_yaw": 50,
  "sun_az": {
-  "evening": 232
+  "evening": 235
  },
- "note": "歩ける範囲は F05_walkable.png（唯一の真実）。refs/field/F05.png を元に道幅 6 タイルへ作り直した（フェーズ 9）。調べ物・出入口は F05_spec.md の値。駄菓子屋は正面がカメラから見える東の列へ移した。ずらした点は docs/lookdev/PHASE9.md に一覧。",
+ "note": "歩ける範囲は F05_walkable.png（唯一の真実）。手前（西）側は 4 タイルの帯（生垣・塀・自転車・室外機）で屋根を 5 m 以上引く（フェーズ 11 P-2a）。調べ物・出入口は F05_spec.md の値。ずらした点は docs/lookdev/PHASE9.md に一覧。",
  "walkable": "res://data/fields/F05_walkable.png",
  "ground": {
   "walk": "old_street",
@@ -52,32 +52,12 @@
     "tex": "stone_path"
    },
    {
-    "id": "gutter_w1",
+    "id": "gutter_w",
     "rect": [
      5,
      0,
      1,
-     13
-    ],
-    "tex": "sidewalk"
-   },
-   {
-    "id": "gutter_w2",
-    "rect": [
-     5,
-     20,
-     1,
-     10
-    ],
-    "tex": "sidewalk"
-   },
-   {
-    "id": "gutter_w3",
-    "rect": [
-     5,
-     32,
-     1,
-     8
+     40
     ],
     "tex": "sidewalk"
    },
@@ -116,9 +96,9 @@
  "edge_fill": [
   {
    "rect": [
-    17,
+    18,
     4,
-    15,
+    14,
     14
    ],
    "kind": "fence_wall",
@@ -654,141 +634,6 @@
    "facing": "W"
   },
   {
-   "id": "w00",
-   "asset": "obj_potted_plant",
-   "at": [
-    5.5,
-    1.5
-   ],
-   "facing": "E"
-  },
-  {
-   "id": "w01",
-   "asset": "obj_air_conditioner_outdoor",
-   "at": [
-    5.5,
-    3.5
-   ],
-   "facing": "E"
-  },
-  {
-   "id": "w02",
-   "asset": "obj_bicycle_rack",
-   "at": [
-    5.5,
-    5.5
-   ],
-   "facing": "E"
-  },
-  {
-   "id": "w03",
-   "asset": "obj_planter_box",
-   "at": [
-    5.5,
-    7.5
-   ],
-   "facing": "E"
-  },
-  {
-   "id": "w04",
-   "asset": "obj_signboard_shutter",
-   "at": [
-    5.5,
-    9.5
-   ],
-   "facing": "E"
-  },
-  {
-   "id": "w05",
-   "asset": "obj_water_tank",
-   "at": [
-    5.5,
-    11.5
-   ],
-   "facing": "E"
-  },
-  {
-   "id": "w06",
-   "asset": "obj_potted_plant",
-   "at": [
-    5.5,
-    20.5
-   ],
-   "facing": "E"
-  },
-  {
-   "id": "w07",
-   "asset": "obj_traffic_cone",
-   "at": [
-    5.5,
-    22.5
-   ],
-   "facing": "E"
-  },
-  {
-   "id": "w08",
-   "asset": "obj_air_conditioner_outdoor",
-   "at": [
-    5.5,
-    24.5
-   ],
-   "facing": "E"
-  },
-  {
-   "id": "w09",
-   "asset": "obj_planter_box",
-   "at": [
-    5.5,
-    26.5
-   ],
-   "facing": "E"
-  },
-  {
-   "id": "w10",
-   "asset": "obj_road_closure_sign",
-   "at": [
-    5.5,
-    28.5
-   ],
-   "facing": "E"
-  },
-  {
-   "id": "w11",
-   "asset": "obj_potted_plant",
-   "at": [
-    5.5,
-    33.5
-   ],
-   "facing": "E"
-  },
-  {
-   "id": "w12",
-   "asset": "obj_bicycle_rack",
-   "at": [
-    5.5,
-    35.5
-   ],
-   "facing": "E"
-  },
-  {
-   "id": "w13",
-   "asset": "obj_laundry_pole",
-   "at": [
-    5.5,
-    37.5
-   ],
-   "facing": "E"
-  },
-  {
-   "id": "w14",
-   "asset": "obj_air_conditioner_outdoor",
-   "at": [
-    5.5,
-    38.5
-   ],
-   "facing": "E"
-  },
-  {
    "id": "e00",
    "asset": "obj_potted_plant",
    "at": [
@@ -1062,6 +907,150 @@
     19.5
    ],
    "facing": "N"
+  },
+  {
+   "id": "w00",
+   "asset": "obj_bicycle_rack",
+   "at": [
+    3.0,
+    1.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "w01",
+   "asset": "obj_air_conditioner_outdoor",
+   "at": [
+    3.0,
+    3.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "w02",
+   "asset": "obj_planter_box",
+   "at": [
+    3.0,
+    6.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "w03",
+   "asset": "obj_water_tank",
+   "at": [
+    3.0,
+    9.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "w04",
+   "asset": "obj_potted_plant",
+   "at": [
+    3.0,
+    11.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "w05",
+   "asset": "obj_bicycle_rack",
+   "at": [
+    3.0,
+    23.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "w06",
+   "asset": "obj_potted_plant",
+   "at": [
+    3.0,
+    25.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "w07",
+   "asset": "obj_air_conditioner_outdoor",
+   "at": [
+    3.0,
+    27.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "w08",
+   "asset": "obj_road_closure_sign",
+   "at": [
+    3.0,
+    29.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "w09",
+   "asset": "obj_laundry_pole",
+   "at": [
+    3.0,
+    33.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "w10",
+   "asset": "obj_planter_box",
+   "at": [
+    3.0,
+    35.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "w11",
+   "asset": "obj_air_conditioner_outdoor",
+   "at": [
+    3.0,
+    37.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "g00",
+   "asset": "obj_traffic_cone",
+   "at": [
+    5.5,
+    2.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "g01",
+   "asset": "obj_potted_plant",
+   "at": [
+    5.5,
+    8.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "g02",
+   "asset": "obj_planter_box",
+   "at": [
+    5.5,
+    24.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "g03",
+   "asset": "obj_traffic_cone",
+   "at": [
+    5.5,
+    34.5
+   ],
+   "facing": "E"
   }
  ],
  "collision": {
@@ -1232,6 +1221,62 @@
     5,
     12,
     12
+   ]
+  }
+ ],
+ "barriers": [
+  {
+   "kind": "hedge",
+   "rect": [
+    4,
+    0,
+    1,
+    12
+   ]
+  },
+  {
+   "kind": "fence_block",
+   "rect": [
+    4,
+    22,
+    1,
+    8
+   ]
+  },
+  {
+   "kind": "hedge",
+   "rect": [
+    4,
+    32,
+    1,
+    8
+   ]
+  },
+  {
+   "kind": "wire_fence",
+   "rect": [
+    16,
+    25,
+    16,
+    1
+   ]
+  },
+  {
+   "kind": "hedge",
+   "rect": [
+    0,
+    20,
+    5,
+    1
+   ]
+  },
+  {
+   "kind": "hedge",
+   "rect": [
+    15,
+    5,
+    1,
+    16
    ]
   }
  ]
