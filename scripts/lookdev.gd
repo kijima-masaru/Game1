@@ -116,6 +116,7 @@ var hud_on := true
 var glow_intensity := 1.0
 var glow_threshold := 0.9
 var tonemap_white := 1.0
+var extra_pole := Vector3.INF     # G-0b: 日向に電柱を 1 本追加して影の接地を見る
 var walk_mode := ""             # E-3b: "A" Nearest / "B" 線形+ミップマップ / "C" 整数 texel 比スナップ / "D" C + 画面位置を整数 px にスナップ。空で無効
 var walk_from := Vector3(-13.0, 0.0, 0.5)
 var walk_to := Vector3(2.0, 0.0, 0.5)
@@ -261,6 +262,10 @@ func _parse_args() -> void:
 				fov_deg = float(v)
 			"yaw":
 				cam_yaw_deg = float(v)
+			"extra_pole":
+				var ep := v.split(",")
+				if ep.size() == 2:
+					extra_pole = Vector3(float(ep[0]), 0.12, float(ep[1]))
 			"walk":
 				walk_mode = v.to_upper()
 			"walk_from":
@@ -894,6 +899,8 @@ func _walk_snap_scale() -> float:
 func _build_sprites() -> void:
 	if walk_mode != "":
 		_build_walk_sprite()
+	if extra_pole != Vector3.INF:
+		_add_billboard("pole", extra_pole)
 	if layout != "v1":
 		_add_billboard("vending", Vector3(-2.0, 0.12, -4.9))
 		_add_emissive(billboards[-1], Vector2i(16, 30), Rect2i(3, 2, 8, 12), Color(0.75, 0.95, 0.90), 1.8)
