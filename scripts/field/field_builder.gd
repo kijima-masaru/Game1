@@ -3,8 +3,20 @@ extends RefCounted
 ## data/fields/<id>.json から 3D の街を組む（docs/FIELD_FORMAT.md 第 9 節）。
 ## 地面 → 道 → 区画（建物生成器）→ 塀 → 配置物と光源 → field_yaw で全体を回す。AO は res://cache/fields/<id>/ にキャッシュ。
 
-const TEX_VERSION := 5            # テクスチャ生成の版。上げるとキャッシュを焼き直す（5: 地形、フェーズ 14 T-2b）
+const TEX_VERSION := 6            # テクスチャ生成の版。上げるとキャッシュを焼き直す（6: 経年・付属物、フェーズ 15）
 const T := FieldData.TILE
+
+# ---- 経年・付属物（REFERENCE_VOCAB.md 7節・3-5節）。値は写真検証まで仮のプロシージャル調整。
+# 現地写真が届いたら、ここと FieldLayout.OVERHANG_BY_KIND を実測値に差し替える。
+const FADE_TINT_SOUTH := Color(0.87, 0.86, 0.81)      # 南面の退色（彩度・明度をやや落とす）
+const MOSS_HEIGHT_M := 0.9                             # 北面の苔（文献値は地上30cm程度。視認性のため誇張）
+const FOUNDATION_KICK_M := 0.4                         # 基礎の水切り帯（VOCAB 3-3: 設計GL+400mm前後）
+const EAVE_STAIN_FRAC := 0.14                          # 軒下の陰影・雨だれ帯（壁上端に対する割合）
+const AC_UNIT_SIZE := Vector3(0.8, 0.55, 0.3)          # 室外機（VOCAB 3-5）
+const AC_UNIT_HEIGHT_M := 0.35                         # 床上0.3〜0.5m（据置）
+const METER_BOX_SIZE := Vector2(0.3, 0.4)              # メーター箱（VOCAB 3-5）
+const METER_BOX_HEIGHT_M := 1.5                        # 床上1.4〜1.8m
+const WEATHERED_KINDS := ["shop_shutter", "shop_wood", "dagashi", "house", "store", "apartment", "civic", "school", "gym"]
 
 var fd: FieldData
 var root: Node3D                   # 回転する親（フィールドのローカル座標 = タイル × T）
@@ -127,6 +139,16 @@ func _build_materials(tex_mode: String) -> void:
 	wt.uv1_scale = Vector3(28.0 / 16.0, 28.0 / 16.0, 1)
 	wt.cull_mode = BaseMaterial3D.CULL_DISABLED
 	mats["warm_window"] = wt
+	# 経年（REFERENCE_VOCAB.md 7節）: 南面の退色。値は写真検証まで仮のプロシージャル調整（要差し替え）。
+	for key in ["weatherboard", "mortar", "concrete", "plaster", "namako"]:
+		var arr: Array = mats[key] if mats[key] is Array else [mats[key]]
+		var faded: Array = []
+		for m in arr:
+			var m2: StandardMaterial3D = (m as StandardMaterial3D).duplicate()
+			m2.albedo_color = FADE_TINT_SOUTH
+			PT.register(m2)
+			faded.append(m2)
+		mats[key + "_faded"] = faded
 
 
 func _wall_mat(kind: String, variant: int) -> StandardMaterial3D:
@@ -134,6 +156,19 @@ func _wall_mat(kind: String, variant: int) -> StandardMaterial3D:
 	if arr is Array:
 		return arr[variant % arr.size()]
 	return arr
+
+
+## 南面用の退色版（無ければ通常の壁材にフォールバック。REFERENCE_VOCAB.md 7節）
+func _wall_mat_faded(kind: String, variant: int) -> StandardMaterial3D:
+	var arr = mats.get(kind + "_faded", null)
+	if arr == null:
+		return _wall_mat(kind, variant)
+	return arr[variant % arr.size()] if arr is Array else arr
+
+
+## 尺モジュール（455mm）にスナップ（REFERENCE_VOCAB.md 2-1: 窓・戸袋等の配置を筋の通った位置にする）
+func _snap455(x: float) -> float:
+	return roundi(x / 0.455) * 0.455
 
 
 # ============================================================================
@@ -226,22 +261,68 @@ func _front_frame(l: Dictionary, box: Dictionary, h: float) -> Dictionary:
 			return {"o": Vector3(c.x - hw, c.y, c.z - hd), "u": Vector3(0, 0, box["d"]), "v": Vector3(0, h, 0), "n": Vector3.LEFT, "len": box["d"]}
 
 
+## 側面の壁の座標系（附属物の取り付けに使う。正面ではない壁を固定で選ぶ: front が S/N なら東壁、E/W なら南壁）
+func _side_frame(l: Dictionary, box: Dictionary, h: float) -> Dictionary:
+	var c: Vector3 = box["center"]
+	var hw: float = box["w"] * 0.5
+	var hd: float = box["d"] * 0.5
+	if l.get("front", "S") in ["S", "N"]:
+		return {"o": Vector3(c.x + hw, c.y, c.z + hd), "u": Vector3(0, 0, -box["d"]), "v": Vector3(0, h, 0), "n": Vector3.RIGHT, "len": box["d"]}
+	return {"o": Vector3(c.x - hw, c.y, c.z + hd), "u": Vector3(box["w"], 0, 0), "v": Vector3(0, h, 0), "n": Vector3.BACK, "len": box["w"]}
+
+
+## 経年（REFERENCE_VOCAB.md 7節）: 基礎の水切り帯・北面の苔・軒下の陰影/雨だれ帯。
+## 発生位置と方位依存は文献で裏付け済み（北面に苔、庇の下に雨だれ）。量は写真検証までの仮値。
+func _apply_weathering(l: Dictionary, box: Dictionary, h: float) -> void:
+	var c: Vector3 = box["center"]
+	var hw: float = box["w"] * 0.5
+	var hd: float = box["d"] * 0.5
+	# 基礎の水切り帯（VOCAB 3-3: 設計GL+400mm前後。全面）
+	var kick_h: float = minf(FOUNDATION_KICK_M, h * 0.35)
+	gen.add_box(c, Vector3(box["w"] + 0.04, kick_h, box["d"] + 0.04), mats["concrete"][0], mats["concrete"][0], l["id"] + "_kick", false, false)
+	# 北面の苔（地上から立ち上がる帯。北面=_N は add_box_dir で origin (c.x+hw, c.z-hd) から -X 方向）
+	var moss_h: float = minf(MOSS_HEIGHT_M, h * 0.6)
+	gen.add_face(Vector3(c.x + hw, c.y, c.z - hd - 0.015), Vector3(-box["w"], 0, 0), Vector3(0, moss_h, 0), Vector3.FORWARD, mats["moss"], l["id"] + "_moss", false)
+	# 軒下の陰影・雨だれ帯（壁上端の帯。庇の下端から汚れが下に伸びるという文献の知見を、壁上部の暗い帯として近似）
+	var stain_h: float = h * EAVE_STAIN_FRAC
+	var stain_y: float = h - stain_h
+	gen.add_face(Vector3(c.x - hw, c.y + stain_y, c.z + hd + 0.015), Vector3(box["w"], 0, 0), Vector3(0, stain_h, 0), Vector3.BACK, mats["dark"], l["id"] + "_stainS", false)
+	gen.add_face(Vector3(c.x + hw, c.y + stain_y, c.z - hd - 0.015), Vector3(-box["w"], 0, 0), Vector3(0, stain_h, 0), Vector3.FORWARD, mats["dark"], l["id"] + "_stainN", false)
+
+
+## 換気口・メーター箱・給湯器・室外機（REFERENCE_VOCAB.md 3-5節）。値は写真検証まで仮のプロシージャル配置。
+func _attach_fixtures(l: Dictionary, box: Dictionary, h: float) -> void:
+	var side := _side_frame(l, box, h)
+	var L: float = side["len"]
+	if L < 2.5:
+		return
+	var o: Vector3 = side["o"]
+	var u: Vector3 = side["u"]
+	var v: Vector3 = side["v"]
+	var n: Vector3 = side["n"]
+	var ud: Vector3 = u.normalized()
+	var ac_c: Vector3 = o + ud * (L * 0.28) + n * (AC_UNIT_SIZE.z * 0.5 + 0.02)
+	gen.add_box(Vector3(ac_c.x, box["center"].y + AC_UNIT_HEIGHT_M, ac_c.z), AC_UNIT_SIZE, mats["concrete"][0], mats["concrete"][0], l["id"] + "_ac", false)
+	gen.add_plate(o, u, v, n, L * 0.62, METER_BOX_HEIGHT_M, METER_BOX_SIZE.x, METER_BOX_SIZE.y, mats["dark"], l["id"] + "_meter", 0.02)
+
+
 func _roof(l: Dictionary, box: Dictionary, h: float, roof_mat: Material, wall_mat: Material, overhang: float, rise: float) -> void:
 	var c: Vector3 = box["center"]
 	var along_z: bool = l.get("front", "S") in ["E", "W"]
-	# 連続する建物（N-2b）: 妻側（隣と接する側）には軒を出さず、屋根を一続きにする
-	var end_overhang := overhang
+	# 連続する建物（N-2b）: 妻側（隣と接する側）にはけらばを出さず、屋根を一続きにする。
+	# 独立した建物のけらばの出は overhang と同じ値から始める（REFERENCE_VOCAB.md 2-2）。
+	var keraba := overhang
 	if l.get("contiguous", false) and (fd.layout.has_neighbor(l, -1) or fd.layout.has_neighbor(l, 1)):
-		end_overhang = 0.0
+		keraba = 0.0
 	if l.get("roof", "gable") == "flat" or l.get("kind", "") in ["store", "apartment", "civic", "school", "gym", "shelter"]:
 		gen.add_face(Vector3(c.x - box["w"] * 0.5, c.y + h, c.z - box["d"] * 0.5), Vector3(box["w"], 0, 0), Vector3(0, 0, box["d"]), Vector3.UP, roof_mat, l["id"] + "_top", true, true)
 		return
 	if l.get("roof", "gable") == "none":
 		return
 	if along_z:
-		gen.add_gable_roof_z(Vector3(c.x, c.y + h, c.z), box["w"], box["d"] + 2.0 * end_overhang, rise, roof_mat, wall_mat, l["id"], overhang)
+		gen.add_gable_roof_z(Vector3(c.x, c.y + h, c.z), box["w"], box["d"], rise, roof_mat, wall_mat, l["id"], overhang, 0.12, keraba, mats["dark"])
 	else:
-		gen.add_gable_roof(Vector3(c.x, c.y + h, c.z), box["w"] + 2.0 * end_overhang, box["d"], rise, roof_mat, wall_mat, l["id"], overhang)
+		gen.add_gable_roof(Vector3(c.x, c.y + h, c.z), box["w"], box["d"], rise, roof_mat, wall_mat, l["id"], overhang, 0.12, keraba, mats["dark"])
 
 
 func _build_lot(l: Dictionary) -> void:
@@ -254,7 +335,8 @@ func _build_lot(l: Dictionary) -> void:
 	var rise: float = float(l.get("rise", 0.7))
 	var overhang: float = float(l.get("overhang", 0.5))
 	var contiguous: bool = l.get("contiguous", false)
-	var wall := _wall_mat(l.get("wall", "mortar"), variant)
+	var wall_key: String = l.get("wall", "mortar")
+	var wall := _wall_mat(wall_key, variant)
 	var roof: StandardMaterial3D = mats["kawara"][variant % 3]
 	# 地形: 区画の中で高さが揃わなければ最大に合わせ、下を基礎で埋める（8d）
 	if float(box["max"]) - float(box["min"]) > 0.01:
@@ -282,7 +364,23 @@ func _build_lot(l: Dictionary) -> void:
 				c.x = c.x - box["w"] * 0.5 + thick * 0.5
 		match kind:
 			"fence_block":
+				# 段目地はブロック塀テクスチャに焼き込み済み（PixelTextures.block_fence）。
+				# ここでは笠木と控え壁を追加する（REFERENCE_VOCAB.md 5節: 笠木120-190mm、控え壁3.4m間隔）。
 				gen.add_box(c, sz, mats["block_fence"], mats["block_fence"], l["id"], true)
+				var cap_h := 0.15
+				gen.add_box(Vector3(c.x, c.y + sz.y, c.z), Vector3(sz.x + 0.06, cap_h, sz.z + 0.06), mats["concrete"][0], mats["concrete"][0], l["id"] + "_cap", false)
+				var along_x: bool = sz.x >= sz.z
+				var wall_len: float = maxf(sz.x, sz.z)
+				var n_piers: int = int(wall_len / 3.4)
+				var thin_dir: Vector3 = (c - box["center"])
+				thin_dir.y = 0.0
+				thin_dir = thin_dir.normalized() if thin_dir.length() > 0.001 else Vector3.BACK
+				var pier_sz := Vector3(0.25, sz.y, 0.2) if along_x else Vector3(0.2, sz.y, 0.25)
+				for i in range(1, n_piers + 1):
+					var t: float = float(i) / float(n_piers + 1) - 0.5
+					var pc: Vector3 = c + (Vector3(wall_len * t, 0, 0) if along_x else Vector3(0, 0, wall_len * t))
+					pc += thin_dir * (thick * 0.5 + 0.1)
+					gen.add_box(pc, pier_sz, mats["block_fence"], mats["block_fence"], "%s_pier%d" % [l["id"], i], false)
 			"hedge":
 				sz.y = 1.0
 				gen.add_box(c, Vector3(sz.x + 0.3, sz.y, sz.z + 0.3), mats["hedge"], mats["hedge"], l["id"], true)
@@ -323,8 +421,14 @@ func _build_lot(l: Dictionary) -> void:
 			return
 	# --- 壁のある建物 ---
 	var with_top: bool = l.get("roof", "gable") == "flat" or kind in ["store", "apartment", "civic", "school", "gym"]
-	gen.add_box(box["center"], Vector3(box["w"], h, box["d"]), wall, wall, l["id"], true, with_top)
+	var weathered: bool = kind in WEATHERED_KINDS
+	var wall_south: Material = _wall_mat_faded(wall_key, variant) if weathered else wall
+	gen.add_box_dir(box["center"], Vector3(box["w"], h, box["d"]), wall_south, wall, wall, wall, l["id"], true, with_top)
+	if weathered:
+		_apply_weathering(l, box, h)
 	_roof(l, box, h, roof, wall, overhang, rise)
+	if weathered:
+		_attach_fixtures(l, box, h)
 	var fr := _front_frame(l, box, h)
 	var o: Vector3 = fr["o"]
 	var u: Vector3 = fr["u"]
@@ -370,8 +474,9 @@ func _build_lot(l: Dictionary) -> void:
 			if floors >= 2:
 				gen.add_window(o, u, v, n, 0.5, 3.6, L - 1.0, 1.1, mats["glass"], mats["frame"], l["id"] + "_w1")
 		"house":
-			gen.add_window(o, u, v, n, 0.4, 0.9, minf(1.6, L * 0.4), 1.0, mats["glass"], mats["frame"], l["id"] + "_w1")
-			gen.add_plate(o, u, v, n, L - 0.4 - 1.0, 0.05, 1.0, 2.0, mats["dark"], l["id"] + "_door")
+			var hw1 := _snap455(minf(1.6, L * 0.4))
+			gen.add_window(o, u, v, n, _snap455(0.4), 0.9, hw1, 1.0, mats["glass"], mats["frame"], l["id"] + "_w1")
+			gen.add_plate(o, u, v, n, L - _snap455(0.4) - _snap455(1.0), 0.05, _snap455(1.0), 2.0, mats["dark"], l["id"] + "_door")
 		"temple_hall":
 			gen.add_plate(o, u, v, n, L * 0.35, 0.05, L * 0.3, 2.6, mats["dark"], l["id"] + "_entrance")
 			gen.add_plate(o, u, v, n, 0.2, 2.8, L - 0.4, 0.3, mats["wood"], l["id"] + "_beam")

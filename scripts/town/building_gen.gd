@@ -5,6 +5,9 @@ extends RefCounted
 ## 生成は 2 段: add_* で面を登録 → finalize(baker) で AO を焼いて Mesh にする。
 ## 遮蔽物（AABB）は登録した箱と屋根から自動で集める。
 
+## 破風板の見付幅（REFERENCE_VOCAB.md 2-2: 実例180〜240mm幅。写真検証まではこの値で運用する）
+const BARGE_WIDTH_M := 0.22
+
 var faces: Array = []          # {origin,u,v,normal,mat,name,ao,skip_ground,tri}
 var aabbs: Array[AABB] = []
 var root: Node3D
@@ -44,22 +47,32 @@ func add_quad4(pts: Array, mat: Material, name_: String, ao := true, normal_over
 
 ## 直方体（4 壁 + 天面）。center は底面中心。
 func add_box(center: Vector3, size: Vector3, wall: Material, top: Material, name_: String, occlude := true, with_top := true) -> void:
+	add_box_dir(center, size, wall, wall, wall, top, name_, occlude, with_top)
+
+
+## add_box の面ごとに壁材を変えられる版（経年の方位差: 北面に苔、南面が退色 等）。
+## wall_s/_n は南面（+Z）・北面（-Z）、wall_ew は東西面（省略時は wall_s と同じ）。
+func add_box_dir(center: Vector3, size: Vector3, wall_s: Material, wall_n: Material, wall_ew: Material, top: Material, name_: String, occlude := true, with_top := true) -> void:
 	var hx := size.x * 0.5
 	var hz := size.z * 0.5
 	var y0 := center.y
-	add_face(Vector3(center.x - hx, y0, center.z + hz), Vector3(size.x, 0, 0), Vector3(0, size.y, 0), Vector3.BACK, wall, name_ + "_S")
-	add_face(Vector3(center.x + hx, y0, center.z - hz), Vector3(-size.x, 0, 0), Vector3(0, size.y, 0), Vector3.FORWARD, wall, name_ + "_N")
-	add_face(Vector3(center.x + hx, y0, center.z + hz), Vector3(0, 0, -size.z), Vector3(0, size.y, 0), Vector3.RIGHT, wall, name_ + "_E")
-	add_face(Vector3(center.x - hx, y0, center.z - hz), Vector3(0, 0, size.z), Vector3(0, size.y, 0), Vector3.LEFT, wall, name_ + "_W")
+	add_face(Vector3(center.x - hx, y0, center.z + hz), Vector3(size.x, 0, 0), Vector3(0, size.y, 0), Vector3.BACK, wall_s, name_ + "_S")
+	add_face(Vector3(center.x + hx, y0, center.z - hz), Vector3(-size.x, 0, 0), Vector3(0, size.y, 0), Vector3.FORWARD, wall_n, name_ + "_N")
+	add_face(Vector3(center.x + hx, y0, center.z + hz), Vector3(0, 0, -size.z), Vector3(0, size.y, 0), Vector3.RIGHT, wall_ew, name_ + "_E")
+	add_face(Vector3(center.x - hx, y0, center.z - hz), Vector3(0, 0, size.z), Vector3(0, size.y, 0), Vector3.LEFT, wall_ew, name_ + "_W")
 	if with_top:
 		add_face(Vector3(center.x - hx, y0 + size.y, center.z - hz), Vector3(size.x, 0, 0), Vector3(0, 0, size.z), Vector3.UP, top, name_ + "_top", true, true)
 	if occlude:
 		aabbs.append(AABB(Vector3(center.x - hx, y0, center.z - hz), size))
 
 
-## 切妻屋根。棟は X 方向。base_y に軒、rise だけ上がる。overhang は軒の出。
-func add_gable_roof(center: Vector3, size_x: float, size_z: float, rise: float, roof: Material, gable_wall: Material, name_: String, overhang := 0.5, thickness := 0.12) -> void:
-	var hx := size_x * 0.5 + overhang
+## 切妻屋根。棟は X 方向。base_y に軒、rise だけ上がる。overhang は軒の出（Z 方向）。
+## keraba はけらばの出（X 方向、妻面を越える屋根の張り出し）。省略時（負値）は overhang と同じ値を使う
+## （REFERENCE_VOCAB.md 2-2: けらばの出は文献上の標準値が無いため、軒の出と同程度から始める設計）。
+## barge_mat を渡すと妻の破風板（けらば端の見付材）を追加する。省略時は roof 材を使う。
+func add_gable_roof(center: Vector3, size_x: float, size_z: float, rise: float, roof: Material, gable_wall: Material, name_: String, overhang := 0.5, thickness := 0.12, keraba := -1.0, barge_mat: Material = null, barge_width := BARGE_WIDTH_M) -> void:
+	var kb: float = overhang if keraba < 0.0 else keraba
+	var hx := size_x * 0.5 + kb
 	var hz := size_z * 0.5 + overhang
 	var y0 := center.y
 	var ridge := Vector3(center.x, y0 + rise, center.z)
@@ -79,6 +92,12 @@ func add_gable_roof(center: Vector3, size_x: float, size_z: float, rise: float, 
 	var wz := size_z * 0.5
 	add_tri(Vector3(center.x + size_x * 0.5, y0, center.z + wz), Vector3(0, 0, -2 * wz), Vector3(0, rise * (wz / hz), 0), Vector3.RIGHT, gable_wall, name_ + "_gableE")
 	add_tri(Vector3(center.x - size_x * 0.5, y0, center.z - wz), Vector3(0, 0, 2 * wz), Vector3(0, rise * (wz / hz), 0), Vector3.LEFT, gable_wall, name_ + "_gableW")
+	# 破風板（けらば端の見付材。俯角から見たときの妻面の輪郭を強調する）
+	var bmat: Material = barge_mat if barge_mat != null else roof
+	add_face(Vector3(center.x + hx, y0, center.z + hz), slope_s, Vector3(0, -barge_width, 0), Vector3.RIGHT, bmat, name_ + "_bargeES", false)
+	add_face(Vector3(center.x + hx, y0, center.z - hz), slope_n, Vector3(0, -barge_width, 0), Vector3.RIGHT, bmat, name_ + "_bargeEN", false)
+	add_face(Vector3(center.x - hx, y0, center.z + hz), slope_s, Vector3(0, -barge_width, 0), Vector3.LEFT, bmat, name_ + "_bargeWS", false)
+	add_face(Vector3(center.x - hx, y0, center.z - hz), slope_n, Vector3(0, -barge_width, 0), Vector3.LEFT, bmat, name_ + "_bargeWN", false)
 	aabbs.append(AABB(Vector3(center.x - hx, y0, center.z - hz), Vector3(2 * hx, rise, 2 * hz)))
 
 
@@ -98,20 +117,30 @@ func add_window(wall_origin: Vector3, wall_u: Vector3, wall_v: Vector3, normal: 
 	add_plate(wall_origin, wall_u, wall_v, normal, ox + w * 0.5 - bar * 0.5, oy, bar, h * 0.9, frame, name_ + "_f4", 0.03)
 
 
-## 切妻屋根（棟が Z 方向。正面が E/W の建物用）。
-func add_gable_roof_z(center: Vector3, size_x: float, size_z: float, rise: float, roof: Material, gable_wall: Material, name_: String, overhang := 0.5, thickness := 0.12) -> void:
+## 切妻屋根（棟が Z 方向。正面が E/W の建物用）。overhang は軒の出（X 方向）。
+## keraba はけらばの出（Z 方向）。省略時（負値）は overhang と同じ値を使う（add_gable_roof 参照）。
+func add_gable_roof_z(center: Vector3, size_x: float, size_z: float, rise: float, roof: Material, gable_wall: Material, name_: String, overhang := 0.5, thickness := 0.12, keraba := -1.0, barge_mat: Material = null, barge_width := BARGE_WIDTH_M) -> void:
+	var kb: float = overhang if keraba < 0.0 else keraba
 	var hx := size_x * 0.5 + overhang
-	var hz := size_z * 0.5 + overhang
+	var hz := size_z * 0.5 + kb
 	var y0 := center.y
 	# 東斜面（+X 側）: 軒 (x = +hx) から棟へ
+	var slope_e := Vector3(-hx, rise, 0)
 	var eave_e := Vector3(center.x + hx, y0, center.z - hz)
-	add_face(eave_e, Vector3(0, 0, 2 * hz), Vector3(-hx, rise, 0), Vector3(rise, hx, 0).normalized(), roof, name_ + "_roofE", true, true)
+	add_face(eave_e, Vector3(0, 0, 2 * hz), slope_e, Vector3(rise, hx, 0).normalized(), roof, name_ + "_roofE", true, true)
+	var slope_w := Vector3(hx, rise, 0)
 	var eave_w := Vector3(center.x - hx, y0, center.z + hz)
-	add_face(eave_w, Vector3(0, 0, -2 * hz), Vector3(hx, rise, 0), Vector3(-rise, hx, 0).normalized(), roof, name_ + "_roofW", true, true)
+	add_face(eave_w, Vector3(0, 0, -2 * hz), slope_w, Vector3(-rise, hx, 0).normalized(), roof, name_ + "_roofW", true, true)
 	add_face(Vector3(center.x - hx, y0 - thickness, center.z - hz), Vector3(2 * hx, 0, 0), Vector3(0, 0, 2 * hz), Vector3.DOWN, gable_wall, name_ + "_soffit", false, true)
 	var wx := size_x * 0.5
 	add_tri(Vector3(center.x - wx, y0, center.z + size_z * 0.5), Vector3(2 * wx, 0, 0), Vector3(0, rise * (wx / hx), 0), Vector3.BACK, gable_wall, name_ + "_gableS")
 	add_tri(Vector3(center.x + wx, y0, center.z - size_z * 0.5), Vector3(-2 * wx, 0, 0), Vector3(0, rise * (wx / hx), 0), Vector3.FORWARD, gable_wall, name_ + "_gableN")
+	# 破風板（けらば端の見付材）
+	var bmat: Material = barge_mat if barge_mat != null else roof
+	add_face(Vector3(center.x + hx, y0, center.z + hz), slope_e, Vector3(0, -barge_width, 0), Vector3.BACK, bmat, name_ + "_bargeES", false)
+	add_face(Vector3(center.x + hx, y0, center.z - hz), slope_e, Vector3(0, -barge_width, 0), Vector3.FORWARD, bmat, name_ + "_bargeEN", false)
+	add_face(Vector3(center.x - hx, y0, center.z + hz), slope_w, Vector3(0, -barge_width, 0), Vector3.BACK, bmat, name_ + "_bargeWS", false)
+	add_face(Vector3(center.x - hx, y0, center.z - hz), slope_w, Vector3(0, -barge_width, 0), Vector3.FORWARD, bmat, name_ + "_bargeWN", false)
 	aabbs.append(AABB(Vector3(center.x - hx, y0, center.z - hz), Vector3(2 * hx, rise, 2 * hz)))
 
 
