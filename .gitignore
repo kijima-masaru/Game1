@@ -24,3 +24,6 @@ Thumbs.db
 
 # 参考画像（リポジトリには含めない）
 /refs/
+
+# lookdev の個別ショット（tools/lookdev_shots.py で再生成できる。シートだけ残す）
+/docs/lookdev/shots/

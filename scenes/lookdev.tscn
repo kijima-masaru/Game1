@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://c1game1lookdev01"]
+
+[ext_resource type="Script" path="res://scripts/lookdev.gd" id="1_lookdev"]
+
+[node name="Lookdev" type="Node3D"]
+script = ExtResource("1_lookdev")
