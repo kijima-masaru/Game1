@@ -48,6 +48,8 @@ SETS: dict[str, list[tuple[str, list[str]]]] = {
         ("filmic", ["time=evening", "tonemap=filmic"]),
         ("aces", ["time=evening", "tonemap=aces"]),
         ("agx", ["time=evening", "tonemap=agx"]),
+        ("reinhard white=4", ["time=evening", "tonemap=reinhard", "white=4"]),
+        ("filmic white=4", ["time=evening", "tonemap=filmic", "white=4"]),
     ],
     "post": [
         ("glow=1 fog=1", ["time=evening", "glow=1", "fog=1"]),

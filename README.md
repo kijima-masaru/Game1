@@ -53,6 +53,8 @@ godot --path . --editor   # エディタで開く
 godot --path . res://scenes/lookdev.tscn
 godot --path . res://scenes/lookdev.tscn -- time=evening proj=ortho tonemap=aces
 python tools/lookdev_shots.py          # 設定違いを一括撮影して比較シートを作る（実機が必要）
+python tools/lookdev_calib.py ambient  # 環境光スイープと路面の点測定（較正）
+python tools/measure.py refs/reference_evening.png docs/lookdev/shots/best_p2.png --hist out.png
 ```
 
 参考画像は `refs/` に置く（Git 管理外）。
@@ -75,6 +77,8 @@ scripts/main.gd      メインシーンのスクリプト
 tests/smoke_test.gd  ヘッドレスのスモークテスト
 scenes/lookdev.tscn  見え方の検証シーン（scripts/lookdev.gd）
 tools/lookdev_shots.py 検証シーンの一括撮影と比較シート作成
+tools/lookdev_calib.py 較正スイープ（環境光・壁アルベド・トーンマップ）と点測定
+tools/measure.py     明度分布・日陰面積率・色相統計・ヒストグラム
 docs/lookdev/        検証の所見と比較シート
 tools/setup_godot.sh Godot のインストール（Linux）
 tools/setup_godot.ps1 Godot のインストール（Windows）
