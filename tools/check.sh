@@ -31,4 +31,7 @@ done < <(find scripts tests -name '*.gd' -print0 | sort -z)
 echo "== スモークテスト"
 "$GODOT" --headless --path . --script res://tests/smoke_test.gd
 
+echo "== 脚本の総当たりテスト（上限 5000 通り。全数は max_leaves 無しで約 80 秒）"
+"$GODOT" --headless --path . --script res://tests/story_exhaustive.gd -- max_leaves=5000
+
 echo "== すべて成功"

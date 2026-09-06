@@ -61,6 +61,15 @@ python tools/lookdev_walk.py           # スプライトのスケール変動（
 
 素材制作のルールは [docs/ART_SPEC.md](docs/ART_SPEC.md)。
 
+## 縦切りプロトタイプ（8/1〜8/3）
+
+```sh
+godot --path . res://scenes/proto.tscn                                  # 遊ぶ（E 話す / N 手帳 / F1 デバッグ / T 日を終える）
+godot --headless --path . --script res://tests/story_exhaustive.gd     # 3 日分の全選択肢を総当たり（約 80 秒）
+```
+
+状態管理の設計は [docs/DESIGN_STATE.md](docs/DESIGN_STATE.md)、遊び方とテスト結果は [docs/PROTO.md](docs/PROTO.md)。
+
 参考画像は `refs/` に置く（Git 管理外）。
 
 ## 検証（CI と同じ内容）
@@ -86,6 +95,12 @@ tools/measure.py     明度分布・日陰面積率・色相統計・ヒスト�
 tools/lookdev_c.py   ピクセル整合の計測（FOV スイープ・シマー MAD・モアレ）
 tools/lookdev_walk.py スプライト歩行テスト（A〜D 条件、GIF、MAD）
 docs/ART_SPEC.md     素材制作仕様（lookdev の結論）
+scenes/proto.tscn    縦切りプロトタイプ（scripts/proto.gd）
+scripts/story/       状態管理エンジンと脚本ランナー
+data/story/proto.json 3 日分の脚本
+tests/story_exhaustive.gd 脚本の総当たりテスト
+docs/DESIGN_STATE.md 状態管理の設計
+docs/PROTO.md        プロトタイプの遊び方・テスト結果・脚本の作業量
 docs/lookdev/        検証の所見と比較シート
 tools/setup_godot.sh Godot のインストール（Linux）
 tools/setup_godot.ps1 Godot のインストール（Windows）

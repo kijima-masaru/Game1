@@ -1,0 +1,178 @@
+{
+  "version": 1,
+  "title": "磐戸町奇譚 縦切り（8/1〜8/3）",
+  "last_day": 3,
+  "stage_thresholds": [20, 45, 70],
+  "confidant_trust": 50,
+  "prologue": "八月一日。\n三日前の夜、私は美咲を岩戸神社の裏へ連れて行った。鈴が鳴り、美咲は戻らなかった。\n私はそれを誰にも言っていない。今日から、美咲の捜索に加わる。",
+  "facts": {
+    "misaki_fate": {"tier": "core", "core_secret": true, "domain": ["missing", "sacrificed"], "truth": "sacrificed", "weight": 5,
+      "incriminating": "sacrificed", "label": "美咲はどうなったか",
+      "value_labels": {"missing": "行方不明のまま", "sacrificed": "私が神社の裏で捧げた"}},
+    "night_0731_pc_location": {"tier": "core", "domain": ["home", "shrine", "with_misaki"], "truth": "shrine", "weight": 3,
+      "incriminating": "shrine", "label": "7/31 の夜の所在",
+      "value_labels": {"home": "家にいた", "shrine": "神社にいた", "with_misaki": "美咲と一緒だった"}},
+    "last_contact": {"tier": "core", "domain": ["school", "shrine_path", "none"], "truth": "shrine_path", "weight": 3,
+      "incriminating": "shrine_path", "label": "美咲と最後に会った場所",
+      "value_labels": {"school": "学校で別れた", "shrine_path": "神社の参道で", "none": "その日は会っていない"}},
+    "invited_misaki": {"tier": "core", "domain": ["yes", "no"], "truth": "yes", "weight": 4,
+      "incriminating": "yes", "label": "美咲を神社に誘ったか",
+      "value_labels": {"yes": "私が誘った", "no": "誘っていない"}},
+    "heard_bell": {"tier": "core", "domain": ["yes", "no"], "truth": "yes", "weight": 2,
+      "label": "あの夜、鈴の音を聞いたか",
+      "value_labels": {"yes": "聞いた", "no": "聞いていない"}},
+    "shrine_visited": {"tier": "flag", "label": "神社を調べた"},
+    "ribbon_found": {"tier": "flag", "label": "神社の裏で美咲のリボンを見つけた"},
+    "rite_requires_name": {"tier": "flag", "label": "儀式は「名前を呼ぶこと」を求めた（記憶の欠落）"}
+  },
+  "pc_knowledge": {
+    "misaki_fate": "sacrificed",
+    "night_0731_pc_location": "shrine",
+    "last_contact": "shrine_path",
+    "invited_misaki": "yes",
+    "heard_bell": "yes"
+  },
+  "npcs": {
+    "kanae": {
+      "name": "佳苗", "desc": "幼なじみ。7/31 の夕方、参道で私と美咲を見かけている。",
+      "trust": 60, "relations": {"naoto": 0.6},
+      "observe": {"last_contact": "shrine_path"},
+      "stage_lines": {
+        "1": "佳苗は、こちらを見ずに返事をした。一拍、間があった。",
+        "2": "佳苗の質問が、急に細かくなった。「何時ごろ？ どの道から？」",
+        "3": "佳苗は、まっすぐこちらを見た。"
+      },
+      "confront_line": "「%s。……前に、%s、って言ったよね」",
+      "confront_outcome": {
+        "confess": "佳苗は長いあいだ黙っていた。「……分かった。誰にも言わない。でも、私も一緒に背負うから」",
+        "deny": "「……もういい」佳苗は背を向けた。それきり、こちらを見なかった。",
+        "silence": "佳苗は答えを待っていたが、私は何も言えなかった。「明日、もう一度聞く」"
+      },
+      "confidant_line": "……佳苗は何も言わずに、私の手を握った。",
+      "estranged_line": "佳苗は、私を見ても何も言わなかった。",
+      "idle_line": "「……今日はもう、いいよ」"
+    },
+    "naoto": {
+      "name": "直人", "desc": "美咲の兄。あの夜、鈴の音を聞いている。",
+      "trust": 40, "relations": {"kanae": 0.6},
+      "observe": {"heard_bell": "yes"},
+      "stage_lines": {
+        "1": "直人は、私の答えを聞いてから、もう一度同じことを聞いた。",
+        "2": "「……おまえ、あの夜どこにいた。正確に言え」直人の声が低くなった。",
+        "3": "直人は椅子を蹴って立ち上がった。"
+      },
+      "confront_line": "「%s。……この前は、%s、と言ったな」",
+      "confront_outcome": {
+        "confess": "直人はしばらく動かなかった。「……美咲のところへ、連れていけ」",
+        "deny": "「嘘つきめ」直人はそれきり口をきかなかった。",
+        "silence": "直人は私の顔を見つめたまま、待っていた。「……明日だ。明日、答えろ」"
+      },
+      "confidant_line": "直人は拳を握りしめて、それでも殴らなかった。",
+      "estranged_line": "直人は私を見ると、黙って背を向けた。",
+      "idle_line": "「……用がないなら帰れ」"
+    }
+  },
+  "confront_options": [
+    {"outcome": "confess", "label": "本当のことを、全部話す"},
+    {"outcome": "deny", "label": "嘘を重ねる"},
+    {"outcome": "silence", "label": "何も言わない"}
+  ],
+  "targets": {
+    "shrine": {
+      "label": "岩戸神社",
+      "nothing": "参道は静かだ。もう調べることはない。",
+      "day_events": {
+        "1": {"text": "参道を上る。鳥居の先は昼でも暗い。あの夜のことを思い出しかけて、やめた。", "flags": ["shrine_visited"]},
+        "2": {"text": "社の裏に回る。落ち葉の下に、美咲の赤いリボンがあった。\n……拾って、ポケットに入れた。誰にも見つからないように。", "flags": ["ribbon_found"], "reveal": "rite_requires_name"},
+        "3": {"text": "鈴の音がした気がして、振り返った。誰もいない。", "flags": []}
+      }
+    }
+  },
+  "days": {
+    "1": {
+      "intro": "八月一日。美咲がいなくなって三日目。町の人が集まって捜索が始まった。",
+      "kanae": [
+        {"id": "d1_kanae_where", "fact": "night_0731_pc_location",
+         "prompt": "「ねえ。あの夜……美咲がいなくなった夜、どこにいたの？」",
+         "options": [
+           {"kind": "truth", "label": "神社にいた、と話す"},
+           {"kind": "lie", "asserted": "home", "label": "家にいた、と言う"},
+           {"kind": "lie", "asserted": "with_misaki", "label": "美咲と一緒だった、と言う"},
+           {"kind": "silence", "label": "答えない"}],
+         "responses": {"truth": "「神社……？ 夜に？」佳苗は少し驚いた顔をした。", "lie": "「そう。ならいいけど」", "lie_with_misaki": "「一緒だったの？ じゃあ、どこで別れたの……」", "silence": "「……言いたくないなら、いいけど」"}},
+        {"id": "d1_kanae_last", "fact": "last_contact",
+         "prompt": "「最後に美咲と会ったの、いつ？ どこで？」",
+         "options": [
+           {"kind": "truth", "label": "神社の参道で、と話す"},
+           {"kind": "lie", "asserted": "school", "label": "学校で別れた、と言う"},
+           {"kind": "lie", "asserted": "none", "label": "その日は会っていない、と言う"},
+           {"kind": "silence", "label": "答えない"}],
+         "responses": {"truth": "「……そっか。私も、夕方に参道で二人を見たよ」", "lie": "「学校で……」佳苗は何か言いかけて、やめた。", "lie_none": "「会ってない？ ……私、夕方に参道で見たと思ったんだけど」", "silence": "「……そう」"}}
+      ],
+      "naoto": [
+        {"id": "d1_naoto_invite", "fact": "invited_misaki",
+         "prompt": "「妹は、あの日おまえと出かけたと言っていた。おまえが誘ったのか」",
+         "options": [
+           {"kind": "truth", "label": "私が誘った、と話す"},
+           {"kind": "lie", "asserted": "no", "label": "誘っていない、と言う"},
+           {"kind": "silence", "label": "答えない"}],
+         "responses": {"truth": "「……おまえが」直人の目が細くなった。", "lie": "「そうか」直人は疑うでもなく頷いた。", "silence": "「……答えろよ」"}}
+      ]
+    },
+    "2": {
+      "intro": "八月二日。捜索は神社の山側に広がった。誰かが、夜に鈴の音を聞いたと言っている。",
+      "naoto": [
+        {"id": "d2_naoto_where", "fact": "night_0731_pc_location",
+         "prompt": "「あの夜、おまえはどこにいた」",
+         "options": [
+           {"kind": "truth", "label": "神社にいた、と話す"},
+           {"kind": "lie", "asserted": "home", "label": "家にいた、と言う"},
+           {"kind": "lie", "asserted": "with_misaki", "label": "美咲と一緒だった、と言う"},
+           {"kind": "silence", "label": "答えない"}],
+         "responses": {"truth": "「神社に……」直人は立ち上がった。", "lie": "「家か」", "lie_with_misaki": "「一緒だった？ それで、妹だけ帰ってこないのか」", "silence": "「……」"}},
+        {"id": "d2_naoto_bell", "fact": "heard_bell",
+         "prompt": "「鈴の音を聞いたか。あの夜」",
+         "options": [
+           {"kind": "truth", "label": "聞いた、と話す"},
+           {"kind": "lie", "asserted": "no", "label": "聞いていない、と言う"},
+           {"kind": "silence", "label": "答えない"}],
+         "responses": {"truth": "「……俺もだ」", "lie": "「そうか。俺は聞いた」", "silence": "「……」"}}
+      ],
+      "kanae": [
+        {"id": "d2_kanae_invite", "fact": "invited_misaki",
+         "prompt": "「直人くんが言ってた。あなたが美咲を誘ったって……本当？」",
+         "options": [
+           {"kind": "truth", "label": "私が誘った、と話す"},
+           {"kind": "lie", "asserted": "no", "label": "誘っていない、と言う"},
+           {"kind": "silence", "label": "答えない"}],
+         "responses": {"truth": "「……そう」佳苗はそれ以上聞かなかった。", "lie": "「そうだよね」", "silence": "「……」"}}
+      ]
+    },
+    "3": {
+      "intro": "八月三日。捜索隊が神社の裏で足跡を見つけた。二人分だった。",
+      "kanae": [
+        {"id": "d3_kanae_where_again", "fact": "night_0731_pc_location",
+         "prompt": "「もう一度だけ聞かせて。あの夜、どこにいたの」",
+         "options": [
+           {"kind": "truth", "label": "神社にいた、と話す"},
+           {"kind": "lie", "asserted": "home", "label": "家にいた、と言う"},
+           {"kind": "silence", "label": "答えない"}],
+         "responses": {"truth": "「……うん」", "lie": "「……分かった」", "silence": "「……」"}}
+      ],
+      "naoto": [
+        {"id": "d3_naoto_fate", "fact": "misaki_fate",
+         "prompt": "「おまえは、何か知ってるんだろう。妹は……どうなった」",
+         "options": [
+           {"kind": "truth", "label": "全部話す"},
+           {"kind": "lie", "asserted": "missing", "label": "分からない、と言う"},
+           {"kind": "silence", "label": "答えない"}],
+         "responses": {"truth": "直人は何も言わなかった。長いあいだ。", "lie": "「……そうか」", "silence": "「……」"}}
+      ]
+    }
+  },
+  "endings": {
+    "exposed": "【露見】\n町は私を知った。捜索から外され、家の戸を叩く音が朝まで続いた。\n美咲がどこへ行ったのか、誰も知らないまま。",
+    "confidant": "【共犯】\n秘密を知る人が、一人だけいる。三日目の夜、私たちは並んで神社の鳥居を見上げていた。\n鈴は、まだ鳴っている。",
+    "concealed": "【隠し通した】\n三日が過ぎた。誰も私を疑っていない。\n手帳には、私が言った嘘が並んでいる。"
+  }
+}
