@@ -13,28 +13,28 @@
  "sun_az": {
   "evening": 235
  },
- "note": "歩ける範囲は F01_walkable.png（唯一の真実）。帯・塀・配置物は生成器 v2 が規則から自動配置。仕様 md 未受領のため調べ物は個数だけ合わせた仮の点（フェーズ 11 P-4）。",
+ "note": "歩ける範囲は F01_walkable.png（唯一の真実）。座標は refs/field/F01.png と docs/field/F01_spec.md（調べ物・出入口はそのまま）。道は 6 タイル以上に広げた。帯・塀・配置物は tools/gen_fields_a.py が規則から自動配置（フェーズ 12）。",
  "walkable": "res://data/fields/F01_walkable.png",
  "ground": {
   "walk": "asphalt",
   "narrow": "alley",
-  "open": "grass",
+  "open": "lot_ground",
   "default": "lot_ground",
   "patches": [
    {
     "id": "p000",
     "rect": [
-     1,
+     8,
      0,
-     10,
+     2,
      1
     ],
-    "tex": "grass"
+    "tex": "sidewalk"
    },
    {
     "id": "p001",
     "rect": [
-     11,
+     19,
      0,
      1,
      1
@@ -44,9 +44,9 @@
    {
     "id": "p002",
     "rect": [
-     20,
-     0,
+     8,
      1,
+     2,
      1
     ],
     "tex": "sidewalk"
@@ -54,17 +54,7 @@
    {
     "id": "p003",
     "rect": [
-     1,
-     1,
-     10,
-     1
-    ],
-    "tex": "grass"
-   },
-   {
-    "id": "p004",
-    "rect": [
-     11,
+     19,
      1,
      1,
      1
@@ -72,10 +62,20 @@
     "tex": "sidewalk"
    },
    {
+    "id": "p004",
+    "rect": [
+     8,
+     2,
+     2,
+     1
+    ],
+    "tex": "sidewalk"
+   },
+   {
     "id": "p005",
     "rect": [
-     20,
-     1,
+     19,
+     2,
      1,
      1
     ],
@@ -84,18 +84,18 @@
    {
     "id": "p006",
     "rect": [
-     1,
+     8,
+     3,
      2,
-     10,
      1
     ],
-    "tex": "grass"
+    "tex": "sidewalk"
    },
    {
     "id": "p007",
     "rect": [
-     11,
-     2,
+     19,
+     3,
      1,
      1
     ],
@@ -104,9 +104,9 @@
    {
     "id": "p008",
     "rect": [
-     20,
+     8,
+     4,
      2,
-     1,
      1
     ],
     "tex": "sidewalk"
@@ -114,19 +114,19 @@
    {
     "id": "p009",
     "rect": [
+     19,
+     4,
      1,
-     3,
-     10,
      1
     ],
-    "tex": "grass"
+    "tex": "sidewalk"
    },
    {
     "id": "p010",
     "rect": [
-     11,
-     3,
-     1,
+     8,
+     5,
+     2,
      1
     ],
     "tex": "sidewalk"
@@ -134,8 +134,8 @@
    {
     "id": "p011",
     "rect": [
-     20,
-     3,
+     19,
+     5,
      1,
      1
     ],
@@ -144,18 +144,18 @@
    {
     "id": "p012",
     "rect": [
-     1,
-     4,
-     10,
+     8,
+     6,
+     2,
      1
     ],
-    "tex": "grass"
+    "tex": "sidewalk"
    },
    {
     "id": "p013",
     "rect": [
-     11,
-     4,
+     19,
+     6,
      1,
      1
     ],
@@ -164,9 +164,9 @@
    {
     "id": "p014",
     "rect": [
-     20,
-     4,
-     1,
+     8,
+     7,
+     2,
      1
     ],
     "tex": "sidewalk"
@@ -174,19 +174,19 @@
    {
     "id": "p015",
     "rect": [
-     1,
-     5,
-     10,
+     19,
+     7,
+     13,
      1
     ],
-    "tex": "grass"
+    "tex": "sidewalk"
    },
    {
     "id": "p016",
     "rect": [
-     11,
-     5,
-     1,
+     8,
+     8,
+     2,
      1
     ],
     "tex": "sidewalk"
@@ -194,9 +194,9 @@
    {
     "id": "p017",
     "rect": [
-     20,
-     5,
-     12,
+     8,
+     9,
+     2,
      1
     ],
     "tex": "sidewalk"
@@ -205,17 +205,17 @@
     "id": "p018",
     "rect": [
      1,
-     6,
      10,
+     9,
      1
     ],
-    "tex": "grass"
+    "tex": "sidewalk"
    },
    {
     "id": "p019",
     "rect": [
+     0,
      11,
-     6,
      1,
      1
     ],
@@ -225,17 +225,17 @@
     "id": "p020",
     "rect": [
      1,
-     7,
-     10,
+     11,
+     9,
      1
     ],
-    "tex": "grass"
+    "tex": "asphalt"
    },
    {
     "id": "p021",
     "rect": [
-     11,
-     7,
+     0,
+     12,
      1,
      1
     ],
@@ -245,57 +245,57 @@
     "id": "p022",
     "rect": [
      1,
-     8,
-     10,
+     12,
+     9,
      1
     ],
-    "tex": "grass"
+    "tex": "asphalt"
    },
    {
     "id": "p023",
     "rect": [
-     11,
-     8,
-     1,
+     20,
+     12,
+     12,
      1
     ],
-    "tex": "sidewalk"
+    "tex": "asphalt"
    },
    {
     "id": "p024",
     "rect": [
-     1,
-     9,
-     10,
-     1
-    ],
-    "tex": "grass"
-   },
-   {
-    "id": "p025",
-    "rect": [
-     11,
-     9,
+     0,
+     13,
      1,
      1
     ],
     "tex": "sidewalk"
    },
    {
-    "id": "p026",
+    "id": "p025",
     "rect": [
      1,
-     10,
-     10,
+     13,
+     9,
      1
     ],
-    "tex": "grass"
+    "tex": "asphalt"
+   },
+   {
+    "id": "p026",
+    "rect": [
+     20,
+     13,
+     12,
+     1
+    ],
+    "tex": "asphalt"
    },
    {
     "id": "p027",
     "rect": [
-     11,
-     10,
+     0,
+     14,
      1,
      1
     ],
@@ -305,17 +305,17 @@
     "id": "p028",
     "rect": [
      1,
-     11,
-     10,
+     14,
+     9,
      1
     ],
-    "tex": "grass"
+    "tex": "asphalt"
    },
    {
     "id": "p029",
     "rect": [
-     11,
-     11,
+     19,
+     14,
      1,
      1
     ],
@@ -324,18 +324,18 @@
    {
     "id": "p030",
     "rect": [
-     1,
+     20,
+     14,
      12,
-     10,
      1
     ],
-    "tex": "grass"
+    "tex": "asphalt"
    },
    {
     "id": "p031",
     "rect": [
-     11,
-     12,
+     0,
+     15,
      1,
      1
     ],
@@ -344,69 +344,69 @@
    {
     "id": "p032",
     "rect": [
-     20,
-     12,
      1,
-     1
-    ],
-    "tex": "sidewalk"
-   },
-   {
-    "id": "p033",
-    "rect": [
-     21,
-     12,
-     4,
+     15,
+     9,
      1
     ],
     "tex": "asphalt"
    },
    {
-    "id": "p034",
+    "id": "p033",
     "rect": [
-     25,
-     12,
-     7,
+     19,
+     15,
+     1,
      1
     ],
     "tex": "sidewalk"
+   },
+   {
+    "id": "p034",
+    "rect": [
+     20,
+     15,
+     12,
+     1
+    ],
+    "tex": "asphalt"
    },
    {
     "id": "p035",
     "rect": [
-     1,
-     13,
-     10,
-     1
-    ],
-    "tex": "grass"
-   },
-   {
-    "id": "p036",
-    "rect": [
-     11,
-     13,
+     0,
+     16,
      1,
      1
     ],
     "tex": "sidewalk"
    },
    {
+    "id": "p036",
+    "rect": [
+     1,
+     16,
+     9,
+     1
+    ],
+    "tex": "asphalt"
+   },
+   {
     "id": "p037",
     "rect": [
-     20,
-     13,
+     19,
+     16,
      1,
      1
     ],
-    "tex": "grass"
+    "tex": "sidewalk"
    },
    {
     "id": "p038",
     "rect": [
-     21,
-     13,
-     4,
+     20,
+     16,
+     12,
      1
     ],
     "tex": "asphalt"
@@ -414,28 +414,28 @@
    {
     "id": "p039",
     "rect": [
-     25,
-     13,
-     7,
+     0,
+     17,
+     1,
      1
     ],
-    "tex": "grass"
+    "tex": "sidewalk"
    },
    {
     "id": "p040",
     "rect": [
      1,
-     14,
-     10,
+     17,
+     9,
      1
     ],
-    "tex": "grass"
+    "tex": "asphalt"
    },
    {
     "id": "p041",
     "rect": [
-     11,
-     14,
+     19,
+     17,
      1,
      1
     ],
@@ -445,68 +445,68 @@
     "id": "p042",
     "rect": [
      20,
-     14,
-     1,
-     1
-    ],
-    "tex": "grass"
-   },
-   {
-    "id": "p043",
-    "rect": [
-     21,
-     14,
-     4,
+     17,
+     12,
      1
     ],
     "tex": "asphalt"
    },
    {
-    "id": "p044",
+    "id": "p043",
     "rect": [
-     25,
-     14,
-     7,
-     1
-    ],
-    "tex": "grass"
-   },
-   {
-    "id": "p045",
-    "rect": [
-     1,
-     15,
-     10,
-     1
-    ],
-    "tex": "grass"
-   },
-   {
-    "id": "p046",
-    "rect": [
-     11,
-     15,
+     0,
+     18,
      1,
      1
     ],
     "tex": "sidewalk"
    },
    {
-    "id": "p047",
+    "id": "p044",
     "rect": [
-     20,
-     15,
+     1,
+     18,
+     9,
+     1
+    ],
+    "tex": "asphalt"
+   },
+   {
+    "id": "p045",
+    "rect": [
+     19,
+     18,
      1,
      1
     ],
-    "tex": "grass"
+    "tex": "sidewalk"
+   },
+   {
+    "id": "p046",
+    "rect": [
+     20,
+     18,
+     12,
+     1
+    ],
+    "tex": "asphalt"
+   },
+   {
+    "id": "p047",
+    "rect": [
+     0,
+     19,
+     1,
+     1
+    ],
+    "tex": "sidewalk"
    },
    {
     "id": "p048",
     "rect": [
-     21,
-     15,
-     4,
+     1,
+     19,
+     9,
      1
     ],
     "tex": "asphalt"
@@ -514,28 +514,28 @@
    {
     "id": "p049",
     "rect": [
-     25,
-     15,
-     7,
+     19,
+     19,
+     1,
      1
     ],
-    "tex": "grass"
+    "tex": "sidewalk"
    },
    {
     "id": "p050",
     "rect": [
-     1,
-     16,
-     10,
+     20,
+     19,
+     12,
      1
     ],
-    "tex": "grass"
+    "tex": "asphalt"
    },
    {
     "id": "p051",
     "rect": [
-     11,
-     16,
+     0,
+     20,
      1,
      1
     ],
@@ -544,28 +544,28 @@
    {
     "id": "p052",
     "rect": [
-     20,
-     16,
      1,
+     20,
+     9,
      1
     ],
-    "tex": "sidewalk"
+    "tex": "asphalt"
    },
    {
     "id": "p053",
     "rect": [
-     1,
-     17,
-     10,
+     19,
+     20,
+     13,
      1
     ],
-    "tex": "grass"
+    "tex": "lot_ground"
    },
    {
     "id": "p054",
     "rect": [
-     11,
-     17,
+     0,
+     21,
      1,
      1
     ],
@@ -574,28 +574,28 @@
    {
     "id": "p055",
     "rect": [
-     20,
-     17,
      1,
+     21,
+     9,
      1
     ],
-    "tex": "sidewalk"
+    "tex": "asphalt"
    },
    {
     "id": "p056",
     "rect": [
-     1,
-     18,
-     10,
+     19,
+     21,
+     13,
      1
     ],
-    "tex": "grass"
+    "tex": "lot_ground"
    },
    {
     "id": "p057",
     "rect": [
-     11,
-     18,
+     0,
+     22,
      1,
      1
     ],
@@ -604,28 +604,28 @@
    {
     "id": "p058",
     "rect": [
-     20,
-     18,
      1,
+     22,
+     9,
      1
     ],
-    "tex": "sidewalk"
+    "tex": "asphalt"
    },
    {
     "id": "p059",
     "rect": [
-     1,
      19,
-     10,
+     22,
+     13,
      1
     ],
-    "tex": "grass"
+    "tex": "lot_ground"
    },
    {
     "id": "p060",
     "rect": [
-     11,
-     19,
+     0,
+     23,
      1,
      1
     ],
@@ -634,28 +634,28 @@
    {
     "id": "p061",
     "rect": [
-     20,
-     19,
      1,
+     23,
+     9,
      1
     ],
-    "tex": "sidewalk"
+    "tex": "asphalt"
    },
    {
     "id": "p062",
     "rect": [
-     1,
-     20,
-     10,
+     19,
+     23,
+     13,
      1
     ],
-    "tex": "grass"
+    "tex": "lot_ground"
    },
    {
     "id": "p063",
     "rect": [
-     11,
-     20,
+     0,
+     24,
      1,
      1
     ],
@@ -664,28 +664,28 @@
    {
     "id": "p064",
     "rect": [
-     20,
-     20,
      1,
+     24,
+     9,
      1
     ],
-    "tex": "sidewalk"
+    "tex": "asphalt"
    },
    {
     "id": "p065",
     "rect": [
-     1,
-     21,
-     10,
+     19,
+     24,
+     13,
      1
     ],
-    "tex": "grass"
+    "tex": "lot_ground"
    },
    {
     "id": "p066",
     "rect": [
-     11,
-     21,
+     0,
+     25,
      1,
      1
     ],
@@ -694,28 +694,28 @@
    {
     "id": "p067",
     "rect": [
-     20,
-     21,
      1,
+     25,
+     9,
      1
     ],
-    "tex": "sidewalk"
+    "tex": "asphalt"
    },
    {
     "id": "p068",
     "rect": [
-     1,
-     22,
-     10,
+     19,
+     25,
+     13,
      1
     ],
-    "tex": "grass"
+    "tex": "lot_ground"
    },
    {
     "id": "p069",
     "rect": [
-     11,
-     22,
+     0,
+     26,
      1,
      1
     ],
@@ -724,28 +724,28 @@
    {
     "id": "p070",
     "rect": [
-     20,
-     22,
      1,
+     26,
+     9,
      1
     ],
-    "tex": "sidewalk"
+    "tex": "asphalt"
    },
    {
     "id": "p071",
     "rect": [
-     1,
-     23,
-     10,
+     19,
+     26,
+     13,
      1
     ],
-    "tex": "grass"
+    "tex": "lot_ground"
    },
    {
     "id": "p072",
     "rect": [
-     11,
-     23,
+     0,
+     27,
      1,
      1
     ],
@@ -754,28 +754,28 @@
    {
     "id": "p073",
     "rect": [
-     20,
-     23,
      1,
+     27,
+     9,
      1
     ],
-    "tex": "sidewalk"
+    "tex": "asphalt"
    },
    {
     "id": "p074",
     "rect": [
-     1,
-     24,
-     10,
+     19,
+     27,
+     13,
      1
     ],
-    "tex": "grass"
+    "tex": "lot_ground"
    },
    {
     "id": "p075",
     "rect": [
-     11,
-     24,
+     0,
+     28,
      1,
      1
     ],
@@ -784,28 +784,28 @@
    {
     "id": "p076",
     "rect": [
-     20,
-     24,
      1,
+     28,
+     9,
      1
     ],
-    "tex": "sidewalk"
+    "tex": "asphalt"
    },
    {
     "id": "p077",
     "rect": [
-     1,
-     25,
-     10,
+     19,
+     28,
+     13,
      1
     ],
-    "tex": "grass"
+    "tex": "lot_ground"
    },
    {
     "id": "p078",
     "rect": [
-     11,
-     25,
+     0,
+     29,
      1,
      1
     ],
@@ -814,28 +814,28 @@
    {
     "id": "p079",
     "rect": [
-     20,
-     25,
      1,
+     29,
+     9,
      1
     ],
-    "tex": "sidewalk"
+    "tex": "asphalt"
    },
    {
     "id": "p080",
     "rect": [
-     1,
-     26,
-     10,
+     19,
+     29,
+     13,
      1
     ],
-    "tex": "grass"
+    "tex": "lot_ground"
    },
    {
     "id": "p081",
     "rect": [
-     11,
-     26,
+     0,
+     30,
      1,
      1
     ],
@@ -844,28 +844,28 @@
    {
     "id": "p082",
     "rect": [
-     20,
-     26,
      1,
+     30,
+     9,
      1
     ],
-    "tex": "sidewalk"
+    "tex": "asphalt"
    },
    {
     "id": "p083",
     "rect": [
-     1,
-     27,
-     10,
+     19,
+     30,
+     13,
      1
     ],
-    "tex": "grass"
+    "tex": "lot_ground"
    },
    {
     "id": "p084",
     "rect": [
-     11,
-     27,
+     0,
+     31,
      1,
      1
     ],
@@ -874,29 +874,29 @@
    {
     "id": "p085",
     "rect": [
-     20,
-     27,
      1,
+     31,
+     9,
      1
     ],
-    "tex": "sidewalk"
+    "tex": "asphalt"
    },
    {
     "id": "p086",
     "rect": [
-     1,
-     28,
-     10,
+     19,
+     31,
+     13,
      1
     ],
-    "tex": "grass"
+    "tex": "lot_ground"
    },
    {
     "id": "p087",
     "rect": [
-     11,
-     28,
      1,
+     32,
+     9,
      1
     ],
     "tex": "sidewalk"
@@ -904,29 +904,29 @@
    {
     "id": "p088",
     "rect": [
-     20,
-     28,
-     1,
+     19,
+     32,
+     13,
      1
     ],
-    "tex": "sidewalk"
+    "tex": "lot_ground"
    },
    {
     "id": "p089",
     "rect": [
      1,
-     29,
-     10,
+     33,
+     9,
      1
     ],
-    "tex": "grass"
+    "tex": "sidewalk"
    },
    {
     "id": "p090",
     "rect": [
-     11,
-     29,
-     1,
+     8,
+     34,
+     2,
      1
     ],
     "tex": "sidewalk"
@@ -934,9 +934,9 @@
    {
     "id": "p091",
     "rect": [
-     20,
-     29,
-     1,
+     8,
+     35,
+     2,
      1
     ],
     "tex": "sidewalk"
@@ -945,17 +945,17 @@
     "id": "p092",
     "rect": [
      1,
-     30,
-     10,
+     36,
+     9,
      1
     ],
-    "tex": "grass"
+    "tex": "sidewalk"
    },
    {
     "id": "p093",
     "rect": [
-     11,
-     30,
+     0,
+     37,
      1,
      1
     ],
@@ -964,38 +964,38 @@
    {
     "id": "p094",
     "rect": [
-     20,
-     30,
      1,
+     37,
+     9,
      1
     ],
-    "tex": "sidewalk"
+    "tex": "asphalt"
    },
    {
     "id": "p095",
     "rect": [
-     1,
-     31,
-     10,
-     1
-    ],
-    "tex": "grass"
-   },
-   {
-    "id": "p096",
-    "rect": [
-     11,
-     31,
+     0,
+     38,
      1,
      1
     ],
     "tex": "sidewalk"
    },
    {
+    "id": "p096",
+    "rect": [
+     1,
+     38,
+     9,
+     1
+    ],
+    "tex": "asphalt"
+   },
+   {
     "id": "p097",
     "rect": [
-     20,
-     31,
+     0,
+     39,
      1,
      1
     ],
@@ -1005,18 +1005,18 @@
     "id": "p098",
     "rect": [
      1,
-     32,
-     10,
+     39,
+     9,
      1
     ],
-    "tex": "grass"
+    "tex": "asphalt"
    },
    {
     "id": "p099",
     "rect": [
-     11,
-     32,
-     1,
+     19,
+     39,
+     13,
      1
     ],
     "tex": "sidewalk"
@@ -1024,8 +1024,8 @@
    {
     "id": "p100",
     "rect": [
-     20,
-     32,
+     0,
+     40,
      1,
      1
     ],
@@ -1035,18 +1035,18 @@
     "id": "p101",
     "rect": [
      1,
-     33,
-     10,
+     40,
+     9,
      1
     ],
-    "tex": "grass"
+    "tex": "asphalt"
    },
    {
     "id": "p102",
     "rect": [
-     11,
-     33,
-     1,
+     19,
+     40,
+     13,
      1
     ],
     "tex": "sidewalk"
@@ -1054,9 +1054,9 @@
    {
     "id": "p103",
     "rect": [
-     20,
-     33,
      1,
+     41,
+     9,
      1
     ],
     "tex": "sidewalk"
@@ -1064,19 +1064,19 @@
    {
     "id": "p104",
     "rect": [
+     19,
+     41,
      1,
-     34,
-     10,
      1
     ],
-    "tex": "grass"
+    "tex": "sidewalk"
    },
    {
     "id": "p105",
     "rect": [
-     11,
-     34,
      1,
+     42,
+     9,
      1
     ],
     "tex": "sidewalk"
@@ -1084,8 +1084,8 @@
    {
     "id": "p106",
     "rect": [
-     20,
-     34,
+     19,
+     42,
      1,
      1
     ],
@@ -1094,18 +1094,18 @@
    {
     "id": "p107",
     "rect": [
-     1,
-     35,
-     10,
+     8,
+     43,
+     2,
      1
     ],
-    "tex": "grass"
+    "tex": "sidewalk"
    },
    {
     "id": "p108",
     "rect": [
-     11,
-     35,
+     19,
+     43,
      1,
      1
     ],
@@ -1114,9 +1114,9 @@
    {
     "id": "p109",
     "rect": [
-     20,
-     35,
-     12,
+     1,
+     44,
+     9,
      1
     ],
     "tex": "sidewalk"
@@ -1124,18 +1124,18 @@
    {
     "id": "p110",
     "rect": [
+     19,
+     44,
      1,
-     36,
-     10,
      1
     ],
-    "tex": "grass"
+    "tex": "sidewalk"
    },
    {
     "id": "p111",
     "rect": [
-     11,
-     36,
+     0,
+     45,
      1,
      1
     ],
@@ -1145,17 +1145,17 @@
     "id": "p112",
     "rect": [
      1,
-     37,
-     10,
+     45,
+     9,
      1
     ],
-    "tex": "grass"
+    "tex": "asphalt"
    },
    {
     "id": "p113",
     "rect": [
-     11,
-     37,
+     19,
+     45,
      1,
      1
     ],
@@ -1164,38 +1164,38 @@
    {
     "id": "p114",
     "rect": [
-     1,
-     38,
-     10,
-     1
-    ],
-    "tex": "grass"
-   },
-   {
-    "id": "p115",
-    "rect": [
-     11,
-     38,
+     0,
+     46,
      1,
      1
     ],
     "tex": "sidewalk"
    },
    {
-    "id": "p116",
+    "id": "p115",
     "rect": [
      1,
-     39,
-     10,
+     46,
+     9,
      1
     ],
-    "tex": "grass"
+    "tex": "asphalt"
+   },
+   {
+    "id": "p116",
+    "rect": [
+     19,
+     46,
+     1,
+     1
+    ],
+    "tex": "sidewalk"
    },
    {
     "id": "p117",
     "rect": [
-     11,
-     39,
+     0,
+     47,
      1,
      1
     ],
@@ -1205,216 +1205,16 @@
     "id": "p118",
     "rect": [
      1,
-     40,
-     10,
+     47,
+     9,
      1
     ],
-    "tex": "grass"
+    "tex": "asphalt"
    },
    {
     "id": "p119",
     "rect": [
-     11,
-     40,
-     1,
-     1
-    ],
-    "tex": "sidewalk"
-   },
-   {
-    "id": "p120",
-    "rect": [
-     1,
-     41,
-     10,
-     1
-    ],
-    "tex": "grass"
-   },
-   {
-    "id": "p121",
-    "rect": [
-     11,
-     41,
-     1,
-     1
-    ],
-    "tex": "sidewalk"
-   },
-   {
-    "id": "p122",
-    "rect": [
-     1,
-     42,
-     10,
-     1
-    ],
-    "tex": "grass"
-   },
-   {
-    "id": "p123",
-    "rect": [
-     11,
-     42,
-     1,
-     1
-    ],
-    "tex": "sidewalk"
-   },
-   {
-    "id": "p124",
-    "rect": [
-     20,
-     42,
-     12,
-     1
-    ],
-    "tex": "sidewalk"
-   },
-   {
-    "id": "p125",
-    "rect": [
-     1,
-     43,
-     10,
-     1
-    ],
-    "tex": "grass"
-   },
-   {
-    "id": "p126",
-    "rect": [
-     11,
-     43,
-     1,
-     1
-    ],
-    "tex": "sidewalk"
-   },
-   {
-    "id": "p127",
-    "rect": [
-     20,
-     43,
-     12,
-     1
-    ],
-    "tex": "grass"
-   },
-   {
-    "id": "p128",
-    "rect": [
-     1,
-     44,
-     10,
-     1
-    ],
-    "tex": "grass"
-   },
-   {
-    "id": "p129",
-    "rect": [
-     11,
-     44,
-     1,
-     1
-    ],
-    "tex": "sidewalk"
-   },
-   {
-    "id": "p130",
-    "rect": [
-     20,
-     44,
-     12,
-     1
-    ],
-    "tex": "grass"
-   },
-   {
-    "id": "p131",
-    "rect": [
-     1,
-     45,
-     10,
-     1
-    ],
-    "tex": "grass"
-   },
-   {
-    "id": "p132",
-    "rect": [
-     11,
-     45,
-     1,
-     1
-    ],
-    "tex": "sidewalk"
-   },
-   {
-    "id": "p133",
-    "rect": [
-     20,
-     45,
-     12,
-     1
-    ],
-    "tex": "grass"
-   },
-   {
-    "id": "p134",
-    "rect": [
-     1,
-     46,
-     10,
-     1
-    ],
-    "tex": "grass"
-   },
-   {
-    "id": "p135",
-    "rect": [
-     11,
-     46,
-     1,
-     1
-    ],
-    "tex": "sidewalk"
-   },
-   {
-    "id": "p136",
-    "rect": [
-     20,
-     46,
-     1,
-     1
-    ],
-    "tex": "sidewalk"
-   },
-   {
-    "id": "p137",
-    "rect": [
-     1,
-     47,
-     10,
-     1
-    ],
-    "tex": "grass"
-   },
-   {
-    "id": "p138",
-    "rect": [
-     11,
-     47,
-     1,
-     1
-    ],
-    "tex": "sidewalk"
-   },
-   {
-    "id": "p139",
-    "rect": [
-     20,
+     19,
      47,
      1,
      1
@@ -1436,259 +1236,245 @@
  ],
  "buildings": [
   {
-   "id": "sushi",
-   "kind": "store",
-   "width": 6,
-   "floors": 1,
-   "wall": "concrete",
-   "near": [
-    21,
-    18
-   ],
-   "height_m": 4.6,
-   "roof": "flat",
-   "sign": "blue",
-   "depth": 5
-  },
-  {
    "id": "supermarket",
    "kind": "store",
-   "width": 7,
+   "width": 8,
    "floors": 1,
    "wall": "concrete",
    "near": [
-    21,
-    27
+    4,
+    10
    ],
    "height_m": 5.0,
    "roof": "flat",
    "sign": "red",
-   "depth": 5
+   "depth": 9,
+   "note": "いわとマート"
   },
   {
-   "id": "conbini",
+   "id": "sushi",
    "kind": "store",
-   "width": 5,
+   "width": 8,
    "floors": 1,
    "wall": "concrete",
    "near": [
-    23,
-    34
+    4,
+    36
    ],
-   "height_m": 4.2,
+   "height_m": 4.6,
    "roof": "flat",
-   "sign": "white",
-   "depth": 3
+   "sign": "blue",
+   "depth": 5,
+   "note": "回転寿司（正面は南の前庭）"
   },
   {
    "id": "drugstore",
    "kind": "store",
-   "width": 5,
+   "width": 8,
    "floors": 1,
    "wall": "concrete",
    "near": [
-    21,
-    2
+    4,
+    44
    ],
    "height_m": 4.6,
    "roof": "flat",
    "sign": "yellow",
-   "depth": 5
+   "depth": 4,
+   "note": "ドラッグストア（正面は南の前庭）"
   },
   {
-   "id": "b04",
-   "kind": "house",
-   "width": 4,
-   "floors": 2,
-   "wall": "mortar"
+   "id": "conbini",
+   "kind": "store",
+   "width": 10,
+   "floors": 1,
+   "wall": "concrete",
+   "near": [
+    24,
+    7
+   ],
+   "height_m": 4.2,
+   "roof": "flat",
+   "sign": "white",
+   "depth": 6,
+   "note": "深夜のコンビニ"
+  },
+  {
+   "id": "backstore",
+   "kind": "store",
+   "width": 8,
+   "floors": 1,
+   "wall": "concrete",
+   "near": [
+    25,
+    39
+   ],
+   "height_m": 3.0,
+   "roof": "flat",
+   "sign": "red",
+   "depth": 6,
+   "note": "裏口側の店舗（近景側なので平屋）"
   },
   {
    "id": "b05",
    "kind": "house",
-   "width": 3,
+   "width": 4,
    "floors": 2,
-   "wall": "weatherboard"
+   "wall": "mortar",
+   "depth": 2
   },
   {
    "id": "b06",
-   "kind": "shop_wood",
+   "kind": "house",
    "width": 3,
-   "floors": 1,
-   "wall": "namako"
+   "floors": 2,
+   "wall": "weatherboard",
+   "depth": 2
   },
   {
    "id": "b07",
-   "kind": "house",
+   "kind": "shop_wood",
    "width": 4,
    "floors": 2,
-   "wall": "mortar"
+   "wall": "namako",
+   "depth": 2
   },
   {
    "id": "b08",
-   "kind": "shop_shutter",
-   "width": 3,
+   "kind": "house",
+   "width": 4,
    "floors": 2,
-   "wall": "mortar"
+   "wall": "mortar",
+   "depth": 2
   },
   {
    "id": "b09",
-   "kind": "house",
+   "kind": "shop_shutter",
    "width": 3,
-   "floors": 1,
-   "wall": "weatherboard"
+   "floors": 2,
+   "wall": "mortar",
+   "depth": 2
   },
   {
    "id": "b10",
    "kind": "house",
    "width": 4,
    "floors": 2,
-   "wall": "namako"
+   "wall": "weatherboard",
+   "depth": 2
   },
   {
    "id": "b11",
    "kind": "house",
-   "width": 3,
+   "width": 4,
    "floors": 2,
-   "wall": "mortar"
+   "wall": "namako",
+   "depth": 2
   },
   {
    "id": "b12",
-   "kind": "shop_wood",
+   "kind": "house",
    "width": 3,
-   "floors": 1,
-   "wall": "mortar"
+   "floors": 2,
+   "wall": "mortar",
+   "depth": 2
   },
   {
    "id": "b13",
-   "kind": "house",
+   "kind": "shop_wood",
    "width": 4,
    "floors": 2,
-   "wall": "weatherboard"
+   "wall": "mortar",
+   "depth": 2
   },
   {
    "id": "b14",
-   "kind": "shop_shutter",
-   "width": 3,
-   "floors": 2,
-   "wall": "namako"
-  },
-  {
-   "id": "b15",
-   "kind": "house",
-   "width": 3,
-   "floors": 1,
-   "wall": "mortar"
-  },
-  {
-   "id": "b16",
    "kind": "house",
    "width": 4,
    "floors": 2,
-   "wall": "mortar"
-  },
-  {
-   "id": "b17",
-   "kind": "house",
-   "width": 3,
-   "floors": 2,
-   "wall": "weatherboard"
-  },
-  {
-   "id": "b18",
-   "kind": "shop_wood",
-   "width": 3,
-   "floors": 1,
-   "wall": "namako"
-  },
-  {
-   "id": "b19",
-   "kind": "house",
-   "width": 4,
-   "floors": 2,
-   "wall": "mortar"
-  },
-  {
-   "id": "b20",
-   "kind": "shop_shutter",
-   "width": 3,
-   "floors": 2,
-   "wall": "mortar"
-  },
-  {
-   "id": "b21",
-   "kind": "house",
-   "width": 3,
-   "floors": 1,
-   "wall": "weatherboard"
-  },
-  {
-   "id": "b22",
-   "kind": "house",
-   "width": 4,
-   "floors": 2,
-   "wall": "namako"
-  },
-  {
-   "id": "b23",
-   "kind": "house",
-   "width": 3,
-   "floors": 2,
-   "wall": "mortar"
-  },
-  {
-   "id": "b24",
-   "kind": "shop_wood",
-   "width": 3,
-   "floors": 1,
-   "wall": "mortar"
-  },
-  {
-   "id": "b25",
-   "kind": "house",
-   "width": 4,
-   "floors": 2,
-   "wall": "weatherboard"
-  },
-  {
-   "id": "b26",
-   "kind": "shop_shutter",
-   "width": 3,
-   "floors": 2,
-   "wall": "namako"
-  },
-  {
-   "id": "b27",
-   "kind": "house",
-   "width": 3,
-   "floors": 1,
-   "wall": "mortar"
+   "wall": "weatherboard",
+   "depth": 2
   }
  ],
  "barriers": [
   {
-   "kind": "hedge",
+   "kind": "wire_fence",
    "rect": [
-    10,
-    0,
+    19,
+    20,
+    13,
+    1
+   ]
+  },
+  {
+   "kind": "wire_fence",
+   "rect": [
+    19,
+    32,
+    13,
+    1
+   ]
+  },
+  {
+   "kind": "wire_fence",
+   "rect": [
+    19,
+    21,
     1,
-    48
+    11
+   ]
+  },
+  {
+   "kind": "overpass",
+   "rect": [
+    9,
+    21,
+    11,
+    2
    ]
   },
   {
    "kind": "guardrail",
    "rect": [
-    20,
-    43,
-    12,
+    1,
+    33,
+    8,
+    1
+   ]
+  },
+  {
+   "kind": "guardrail",
+   "rect": [
+    1,
+    42,
+    8,
     1
    ]
   },
   {
    "kind": "hedge",
    "rect": [
-    25,
+    8,
+    0,
+    1,
+    11
+   ]
+  },
+  {
+   "kind": "wire_fence",
+   "rect": [
+    8,
+    34,
+    1,
+    3
+   ]
+  },
+  {
+   "kind": "guardrail",
+   "rect": [
+    19,
+    40,
     13,
-    7,
     1
    ]
   }
@@ -1698,8 +1484,8 @@
    "id": "o000",
    "asset": "obj_kei_car",
    "at": [
-    22.0,
-    12.5
+    2.0,
+    15.5
    ],
    "facing": "N"
   },
@@ -1707,13 +1493,76 @@
    "id": "o001",
    "asset": "obj_kei_car",
    "at": [
-    24.0,
-    12.5
+    4.0,
+    15.5
    ],
    "facing": "N"
   },
   {
    "id": "o002",
+   "asset": "obj_kei_car",
+   "at": [
+    6.0,
+    15.5
+   ],
+   "facing": "N"
+  },
+  {
+   "id": "o003",
+   "asset": "obj_kei_car",
+   "at": [
+    2.0,
+    20.5
+   ],
+   "facing": "N"
+  },
+  {
+   "id": "o004",
+   "asset": "obj_kei_car",
+   "at": [
+    4.0,
+    20.5
+   ],
+   "facing": "N"
+  },
+  {
+   "id": "o005",
+   "asset": "obj_kei_car",
+   "at": [
+    6.0,
+    20.5
+   ],
+   "facing": "N"
+  },
+  {
+   "id": "o006",
+   "asset": "obj_kei_car",
+   "at": [
+    2.0,
+    25.5
+   ],
+   "facing": "N"
+  },
+  {
+   "id": "o007",
+   "asset": "obj_kei_car",
+   "at": [
+    4.0,
+    25.5
+   ],
+   "facing": "N"
+  },
+  {
+   "id": "o008",
+   "asset": "obj_kei_car",
+   "at": [
+    2.0,
+    29.5
+   ],
+   "facing": "N"
+  },
+  {
+   "id": "o009",
    "asset": "obj_kei_car",
    "at": [
     22.0,
@@ -1722,7 +1571,7 @@
    "facing": "N"
   },
   {
-   "id": "o003",
+   "id": "o010",
    "asset": "obj_kei_car",
    "at": [
     24.0,
@@ -1731,254 +1580,191 @@
    "facing": "N"
   },
   {
-   "id": "o004",
-   "asset": "obj_road_mirror",
-   "at": [
-    20.5,
-    12.5
-   ],
-   "facing": "W"
-  },
-  {
-   "id": "o005",
-   "asset": "obj_road_mirror",
-   "at": [
-    20.5,
-    42.5
-   ],
-   "facing": "W"
-  },
-  {
-   "id": "o006",
-   "asset": "obj_public_phone",
-   "at": [
-    19.5,
-    23.5
-   ],
-   "facing": "W"
-  },
-  {
-   "id": "o007",
-   "asset": "obj_bus_stop_pole",
-   "at": [
-    12.5,
-    20.5
-   ],
-   "facing": "E"
-  },
-  {
-   "id": "o008",
-   "asset": "obj_bus_stop_pole",
-   "at": [
-    19.5,
-    32.5
-   ],
-   "facing": "W"
-  },
-  {
-   "id": "o009",
-   "asset": "obj_bicycle_rack",
-   "at": [
-    8.5,
-    0.5
-   ],
-   "facing": "E"
-  },
-  {
-   "id": "o010",
-   "asset": "obj_utility_pole",
-   "at": [
-    11.5,
-    1.5
-   ],
-   "facing": "E"
-  },
-  {
    "id": "o011",
-   "asset": "obj_vending_machine",
+   "asset": "obj_kei_car",
    "at": [
-    20.5,
-    2.5
+    28.0,
+    17.5
    ],
-   "facing": "W"
+   "facing": "N"
   },
   {
    "id": "o012",
-   "asset": "obj_air_conditioner_outdoor",
+   "asset": "obj_kei_car",
    "at": [
-    5.5,
-    3.5
+    30.0,
+    17.5
    ],
-   "facing": "E"
+   "facing": "N"
   },
   {
-   "id": "o013",
-   "asset": "obj_planter_box",
+   "id": "vending_w",
+   "asset": "obj_vending_machine",
    "at": [
-    8.5,
-    4.5
-   ],
-   "facing": "E"
-  },
-  {
-   "id": "o014",
-   "asset": "obj_street_light_led",
-   "at": [
-    11.5,
-    4.5
-   ],
-   "facing": "E"
-  },
-  {
-   "id": "o015",
-   "asset": "obj_potted_plant",
-   "at": [
-    20.5,
-    5.5
+    19.5,
+    9.5
    ],
    "facing": "W"
   },
   {
-   "id": "o016",
-   "asset": "obj_signboard_shutter",
-   "at": [
-    23.5,
-    5.5
-   ],
-   "facing": "S"
-  },
-  {
-   "id": "o017",
-   "asset": "obj_bicycle_rack",
-   "at": [
-    26.5,
-    5.5
-   ],
-   "facing": "S"
-  },
-  {
-   "id": "o018",
-   "asset": "obj_planter_box",
+   "id": "vending_e",
+   "asset": "obj_vending_machine",
    "at": [
     29.5,
-    5.5
+    9.5
    ],
    "facing": "S"
+  },
+  {
+   "id": "bulletin",
+   "asset": "obj_bulletin_board",
+   "at": [
+    19.5,
+    7.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "trash",
+   "asset": "obj_water_tank",
+   "at": [
+    22.5,
+    9.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "cart1",
+   "asset": "obj_bicycle_rack",
+   "at": [
+    8.5,
+    14.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "cart2",
+   "asset": "obj_bicycle_rack",
+   "at": [
+    8.5,
+    16.5
+   ],
+   "facing": "E"
   },
   {
    "id": "o019",
-   "asset": "obj_water_tank",
+   "asset": "obj_traffic_cone",
    "at": [
-    5.5,
-    7.5
+    8.5,
+    12.5
    ],
    "facing": "E"
   },
   {
    "id": "o020",
-   "asset": "obj_mailbox",
+   "asset": "obj_bus_stop_pole",
    "at": [
-    11.5,
-    7.5
+    10.5,
+    18.5
    ],
    "facing": "E"
   },
   {
    "id": "o021",
-   "asset": "obj_laundry_pole",
+   "asset": "obj_bus_stop_pole",
    "at": [
-    8.5,
-    8.5
+    18.5,
+    26.5
    ],
-   "facing": "E"
+   "facing": "W"
   },
   {
    "id": "o022",
-   "asset": "obj_street_light_led",
+   "asset": "obj_public_phone",
    "at": [
-    11.5,
-    10.5
+    18.5,
+    30.5
    ],
-   "facing": "E"
+   "facing": "W"
   },
   {
    "id": "o023",
-   "asset": "obj_traffic_cone",
+   "asset": "obj_street_light_led",
    "at": [
-    5.5,
-    11.5
+    10.5,
+    3.5
    ],
    "facing": "E"
   },
   {
    "id": "o024",
-   "asset": "obj_potted_plant",
+   "asset": "obj_street_light_led",
    "at": [
-    8.5,
-    12.5
+    18.5,
+    6.5
+   ],
+   "facing": "W"
+  },
+  {
+   "id": "o025",
+   "asset": "obj_street_light_led",
+   "at": [
+    10.5,
+    9.5
    ],
    "facing": "E"
   },
   {
-   "id": "o025",
-   "asset": "obj_utility_pole",
-   "at": [
-    27.5,
-    12.5
-   ],
-   "facing": "N"
-  },
-  {
    "id": "o026",
-   "asset": "obj_bus_stop_pole",
+   "asset": "obj_street_light_led",
    "at": [
-    30.5,
+    18.5,
     12.5
    ],
-   "facing": "N"
+   "facing": "W"
   },
   {
    "id": "o027",
-   "asset": "obj_utility_pole",
+   "asset": "obj_street_light_led",
    "at": [
-    11.5,
-    13.5
+    10.5,
+    15.5
    ],
    "facing": "E"
   },
   {
    "id": "o028",
-   "asset": "obj_bicycle_rack",
+   "asset": "obj_street_light_led",
    "at": [
-    5.5,
-    15.5
+    18.5,
+    18.5
    ],
-   "facing": "E"
+   "facing": "W"
   },
   {
    "id": "o029",
-   "asset": "obj_air_conditioner_outdoor",
+   "asset": "obj_street_light_led",
    "at": [
-    25.5,
-    15.5
+    10.5,
+    21.5
    ],
    "facing": "E"
   },
   {
    "id": "o030",
-   "asset": "obj_planter_box",
+   "asset": "obj_street_light_led",
    "at": [
-    29.5,
-    15.5
+    18.5,
+    24.5
    ],
-   "facing": "E"
+   "facing": "W"
   },
   {
    "id": "o031",
-   "asset": "obj_water_tank",
+   "asset": "obj_street_light_led",
    "at": [
-    8.5,
-    16.5
+    10.5,
+    27.5
    ],
    "facing": "E"
   },
@@ -1986,95 +1772,122 @@
    "id": "o032",
    "asset": "obj_street_light_led",
    "at": [
-    11.5,
-    16.5
-   ],
-   "facing": "E"
-  },
-  {
-   "id": "o033",
-   "asset": "obj_flag_pole",
-   "at": [
-    20.5,
-    17.5
+    18.5,
+    30.5
    ],
    "facing": "W"
   },
   {
-   "id": "o034",
-   "asset": "obj_laundry_pole",
+   "id": "o033",
+   "asset": "obj_street_light_led",
    "at": [
-    5.5,
-    19.5
+    10.5,
+    33.5
    ],
    "facing": "E"
   },
   {
-   "id": "o035",
-   "asset": "obj_mailbox",
+   "id": "o034",
+   "asset": "obj_street_light_led",
    "at": [
-    11.5,
-    19.5
+    18.5,
+    36.5
+   ],
+   "facing": "W"
+  },
+  {
+   "id": "o035",
+   "asset": "obj_street_light_led",
+   "at": [
+    10.5,
+    39.5
    ],
    "facing": "E"
   },
   {
    "id": "o036",
-   "asset": "obj_traffic_cone",
+   "asset": "obj_street_light_led",
    "at": [
-    8.5,
-    20.5
+    18.5,
+    42.5
    ],
-   "facing": "E"
+   "facing": "W"
   },
   {
    "id": "o037",
-   "asset": "obj_air_conditioner_outdoor",
+   "asset": "obj_street_light_led",
    "at": [
-    20.5,
-    20.5
+    10.5,
+    45.5
    ],
-   "facing": "W"
+   "facing": "E"
   },
   {
    "id": "o038",
    "asset": "obj_street_light_led",
    "at": [
-    11.5,
-    22.5
+    18.5,
+    48.5
    ],
-   "facing": "E"
+   "facing": "W"
   },
   {
    "id": "o039",
-   "asset": "obj_potted_plant",
+   "asset": "obj_guardrail",
    "at": [
-    5.5,
-    23.5
+    11.5,
+    1.5
    ],
    "facing": "E"
   },
   {
    "id": "o040",
-   "asset": "obj_mailbox",
+   "asset": "obj_guardrail",
    "at": [
-    20.5,
-    23.5
+    17.5,
+    5.5
    ],
    "facing": "W"
   },
   {
    "id": "o041",
-   "asset": "obj_bicycle_rack",
+   "asset": "obj_guardrail",
    "at": [
-    8.5,
-    24.5
+    11.5,
+    9.5
    ],
    "facing": "E"
   },
   {
    "id": "o042",
-   "asset": "obj_utility_pole",
+   "asset": "obj_guardrail",
+   "at": [
+    17.5,
+    13.5
+   ],
+   "facing": "W"
+  },
+  {
+   "id": "o043",
+   "asset": "obj_guardrail",
+   "at": [
+    11.5,
+    17.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o044",
+   "asset": "obj_guardrail",
+   "at": [
+    17.5,
+    21.5
+   ],
+   "facing": "W"
+  },
+  {
+   "id": "o045",
+   "asset": "obj_guardrail",
    "at": [
     11.5,
     25.5
@@ -2082,227 +1895,200 @@
    "facing": "E"
   },
   {
-   "id": "o043",
-   "asset": "obj_signboard_pole",
-   "at": [
-    20.5,
-    26.5
-   ],
-   "facing": "W"
-  },
-  {
-   "id": "o044",
-   "asset": "obj_air_conditioner_outdoor",
-   "at": [
-    5.5,
-    27.5
-   ],
-   "facing": "E"
-  },
-  {
-   "id": "o045",
-   "asset": "obj_planter_box",
-   "at": [
-    8.5,
-    28.5
-   ],
-   "facing": "E"
-  },
-  {
    "id": "o046",
-   "asset": "obj_bus_stop_pole",
+   "asset": "obj_guardrail",
    "at": [
-    11.5,
-    28.5
-   ],
-   "facing": "E"
-  },
-  {
-   "id": "o047",
-   "asset": "obj_vending_machine",
-   "at": [
-    20.5,
+    17.5,
     29.5
    ],
    "facing": "W"
   },
   {
-   "id": "o048",
-   "asset": "obj_water_tank",
+   "id": "o047",
+   "asset": "obj_guardrail",
    "at": [
-    5.5,
-    31.5
+    11.5,
+    33.5
    ],
    "facing": "E"
   },
   {
+   "id": "o048",
+   "asset": "obj_guardrail",
+   "at": [
+    17.5,
+    37.5
+   ],
+   "facing": "W"
+  },
+  {
    "id": "o049",
-   "asset": "obj_utility_pole",
+   "asset": "obj_guardrail",
    "at": [
     11.5,
-    31.5
+    41.5
    ],
    "facing": "E"
   },
   {
    "id": "o050",
-   "asset": "obj_laundry_pole",
+   "asset": "obj_guardrail",
    "at": [
-    8.5,
-    32.5
-   ],
-   "facing": "E"
-  },
-  {
-   "id": "o051",
-   "asset": "obj_potted_plant",
-   "at": [
-    20.5,
-    32.5
+    17.5,
+    45.5
    ],
    "facing": "W"
   },
   {
-   "id": "o052",
-   "asset": "obj_street_light_led",
+   "id": "o051",
+   "asset": "obj_utility_pole",
    "at": [
-    11.5,
-    34.5
+    9.5,
+    0.5
    ],
    "facing": "E"
   },
   {
-   "id": "o053",
-   "asset": "obj_traffic_cone",
+   "id": "o052",
+   "asset": "obj_vending_machine",
    "at": [
-    5.5,
-    35.5
+    19.5,
+    0.5
+   ],
+   "facing": "W"
+  },
+  {
+   "id": "o053",
+   "asset": "obj_street_light_led",
+   "at": [
+    9.5,
+    3.5
    ],
    "facing": "E"
   },
   {
    "id": "o054",
-   "asset": "obj_signboard_shutter",
+   "asset": "obj_potted_plant",
    "at": [
-    20.5,
-    35.5
+    19.5,
+    3.5
    ],
    "facing": "W"
   },
   {
    "id": "o055",
-   "asset": "obj_bicycle_rack",
+   "asset": "obj_mailbox",
    "at": [
-    23.5,
-    35.5
+    9.5,
+    6.5
    ],
-   "facing": "S"
+   "facing": "E"
   },
   {
    "id": "o056",
-   "asset": "obj_planter_box",
+   "asset": "obj_signboard_shutter",
    "at": [
-    26.5,
-    35.5
+    19.5,
+    6.5
    ],
-   "facing": "S"
+   "facing": "W"
   },
   {
    "id": "o057",
-   "asset": "obj_flag_pole",
+   "asset": "obj_bicycle_rack",
    "at": [
-    29.5,
-    35.5
+    21.5,
+    7.5
    ],
    "facing": "S"
   },
   {
    "id": "o058",
-   "asset": "obj_potted_plant",
+   "asset": "obj_planter_box",
    "at": [
-    8.5,
-    36.5
+    24.5,
+    7.5
    ],
-   "facing": "E"
+   "facing": "S"
   },
   {
    "id": "o059",
-   "asset": "obj_mailbox",
+   "asset": "obj_flag_pole",
    "at": [
-    11.5,
-    37.5
+    27.5,
+    7.5
    ],
-   "facing": "E"
+   "facing": "S"
   },
   {
    "id": "o060",
-   "asset": "obj_bicycle_rack",
+   "asset": "obj_air_conditioner_outdoor",
    "at": [
-    5.5,
-    39.5
+    30.5,
+    7.5
    ],
-   "facing": "E"
+   "facing": "S"
   },
   {
    "id": "o061",
-   "asset": "obj_air_conditioner_outdoor",
+   "asset": "obj_street_light_led",
    "at": [
-    8.5,
-    40.5
+    9.5,
+    9.5
    ],
    "facing": "E"
   },
   {
    "id": "o062",
-   "asset": "obj_street_light_led",
+   "asset": "obj_mailbox",
    "at": [
-    11.5,
-    40.5
+    3.5,
+    10.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o063",
+   "asset": "obj_signboard_pole",
+   "at": [
+    6.5,
+    10.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o064",
+   "asset": "obj_utility_pole",
+   "at": [
+    0.5,
+    12.5
    ],
    "facing": "E"
   },
   {
-   "id": "o063",
-   "asset": "obj_utility_pole",
-   "at": [
-    21.5,
-    42.5
-   ],
-   "facing": "N"
-  },
-  {
-   "id": "o064",
-   "asset": "obj_bus_stop_pole",
-   "at": [
-    24.5,
-    42.5
-   ],
-   "facing": "N"
-  },
-  {
    "id": "o065",
-   "asset": "obj_utility_pole",
+   "asset": "obj_road_mirror",
    "at": [
-    27.5,
-    42.5
+    19.5,
+    14.5
    ],
-   "facing": "N"
+   "facing": "E"
   },
   {
    "id": "o066",
-   "asset": "obj_street_light_led",
+   "asset": "obj_utility_pole",
    "at": [
-    30.5,
-    42.5
+    0.5,
+    15.5
    ],
-   "facing": "N"
+   "facing": "E"
   },
   {
    "id": "o067",
-   "asset": "obj_planter_box",
+   "asset": "obj_street_light_led",
    "at": [
-    5.5,
-    43.5
+    19.5,
+    17.5
    ],
    "facing": "E"
   },
@@ -2310,44 +2096,44 @@
    "id": "o068",
    "asset": "obj_mailbox",
    "at": [
-    11.5,
-    43.5
+    0.5,
+    18.5
    ],
    "facing": "E"
   },
   {
    "id": "o069",
-   "asset": "obj_water_tank",
+   "asset": "obj_street_light_led",
    "at": [
-    8.5,
-    44.5
+    0.5,
+    21.5
    ],
    "facing": "E"
   },
   {
    "id": "o070",
-   "asset": "obj_laundry_pole",
+   "asset": "obj_utility_pole",
    "at": [
-    23.5,
-    45.5
+    0.5,
+    24.5
    ],
    "facing": "E"
   },
   {
    "id": "o071",
-   "asset": "obj_traffic_cone",
+   "asset": "obj_road_mirror",
    "at": [
-    27.5,
-    45.5
+    0.5,
+    27.5
    ],
    "facing": "E"
   },
   {
    "id": "o072",
-   "asset": "obj_potted_plant",
+   "asset": "obj_utility_pole",
    "at": [
-    31.5,
-    45.5
+    0.5,
+    30.5
    ],
    "facing": "E"
   },
@@ -2355,26 +2141,197 @@
    "id": "o073",
    "asset": "obj_street_light_led",
    "at": [
-    11.5,
-    46.5
+    1.5,
+    32.5
    ],
-   "facing": "E"
+   "facing": "N"
   },
   {
    "id": "o074",
-   "asset": "obj_bicycle_rack",
+   "asset": "obj_mailbox",
    "at": [
-    5.5,
-    47.5
+    4.5,
+    32.5
+   ],
+   "facing": "N"
+  },
+  {
+   "id": "o075",
+   "asset": "obj_street_light_led",
+   "at": [
+    7.5,
+    32.5
+   ],
+   "facing": "N"
+  },
+  {
+   "id": "o076",
+   "asset": "obj_utility_pole",
+   "at": [
+    9.5,
+    33.5
    ],
    "facing": "E"
   },
   {
-   "id": "o075",
+   "id": "o077",
+   "asset": "obj_vending_machine",
+   "at": [
+    1.5,
+    36.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o078",
+   "asset": "obj_potted_plant",
+   "at": [
+    4.5,
+    36.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o079",
+   "asset": "obj_signboard_shutter",
+   "at": [
+    7.5,
+    36.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o080",
+   "asset": "obj_road_mirror",
+   "at": [
+    9.5,
+    36.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o081",
+   "asset": "obj_utility_pole",
+   "at": [
+    0.5,
+    39.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o082",
+   "asset": "obj_street_light_led",
+   "at": [
+    21.5,
+    39.5
+   ],
+   "facing": "N"
+  },
+  {
+   "id": "o083",
+   "asset": "obj_mailbox",
+   "at": [
+    24.5,
+    39.5
+   ],
+   "facing": "N"
+  },
+  {
+   "id": "o084",
+   "asset": "obj_street_light_led",
+   "at": [
+    27.5,
+    39.5
+   ],
+   "facing": "N"
+  },
+  {
+   "id": "o085",
+   "asset": "obj_utility_pole",
+   "at": [
+    30.5,
+    39.5
+   ],
+   "facing": "N"
+  },
+  {
+   "id": "o086",
+   "asset": "obj_road_mirror",
+   "at": [
+    1.5,
+    41.5
+   ],
+   "facing": "N"
+  },
+  {
+   "id": "o087",
+   "asset": "obj_utility_pole",
+   "at": [
+    4.5,
+    41.5
+   ],
+   "facing": "N"
+  },
+  {
+   "id": "o088",
+   "asset": "obj_street_light_led",
+   "at": [
+    7.5,
+    41.5
+   ],
+   "facing": "N"
+  },
+  {
+   "id": "o089",
+   "asset": "obj_mailbox",
+   "at": [
+    9.5,
+    42.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o090",
+   "asset": "obj_bicycle_rack",
+   "at": [
+    19.5,
+    42.5
+   ],
+   "facing": "W"
+  },
+  {
+   "id": "o091",
+   "asset": "obj_planter_box",
+   "at": [
+    2.5,
+    44.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o092",
+   "asset": "obj_flag_pole",
+   "at": [
+    5.5,
+    44.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o093",
+   "asset": "obj_street_light_led",
+   "at": [
+    0.5,
+    45.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o094",
    "asset": "obj_air_conditioner_outdoor",
    "at": [
-    20.5,
-    47.5
+    19.5,
+    45.5
    ],
    "facing": "W"
   }
@@ -2385,175 +2342,176 @@
  },
  "points": [
   {
-   "id": "pt00",
+   "id": "store_door",
    "at": [
-    19,
-    18
+    23,
+    8
    ],
    "kind": "door",
-   "label": "調べ物（仮）1"
+   "label": "コンビニ"
   },
   {
-   "id": "pt01",
+   "id": "vending_w",
    "at": [
     19,
-    27
-   ],
-   "kind": "door",
-   "label": "調べ物（仮）2"
-  },
-  {
-   "id": "pt02",
-   "at": [
-    19,
-    2
-   ],
-   "kind": "door",
-   "label": "調べ物（仮）3"
-  },
-  {
-   "id": "pt03",
-   "at": [
-    25,
-    36
-   ],
-   "kind": "door",
-   "label": "調べ物（仮）4"
-  },
-  {
-   "id": "pt04",
-   "at": [
-    12,
-    20
-   ],
-   "kind": "sign",
-   "label": "調べ物（仮）5"
-  },
-  {
-   "id": "pt05",
-   "at": [
-    19,
-    32
-   ],
-   "kind": "sign",
-   "label": "調べ物（仮）6"
-  },
-  {
-   "id": "pt06",
-   "at": [
-    19,
-    23
+    9
    ],
    "kind": "item",
-   "label": "調べ物（仮）7"
+   "label": "自販機"
   },
   {
-   "id": "pt07",
+   "id": "vending_e",
    "at": [
-    20,
-    13
+    29,
+    9
    ],
    "kind": "item",
-   "label": "調べ物（仮）8"
+   "label": "自販機"
   },
   {
-   "id": "pt08",
+   "id": "bulletin",
    "at": [
-    13,
-    4
-   ],
-   "kind": "board",
-   "label": "調べ物（仮）9"
-  },
-  {
-   "id": "pt09",
-   "at": [
-    25,
+    19,
     7
    ],
    "kind": "board",
-   "label": "調べ物（仮）10"
+   "label": "店先の掲示板"
   },
   {
-   "id": "pt10",
+   "id": "receipt_box",
    "at": [
     25,
-    37
+    9
+   ],
+   "kind": "item",
+   "label": "レシート箱"
+  },
+  {
+   "id": "trash",
+   "at": [
+    22,
+    9
+   ],
+   "kind": "item",
+   "label": "ゴミ箱"
+  },
+  {
+   "id": "car_lot",
+   "at": [
+    2,
+    21
+   ],
+   "kind": "item",
+   "label": "駐車場の車"
+  },
+  {
+   "id": "cart",
+   "at": [
+    8,
+    14
+   ],
+   "kind": "item",
+   "label": "カート置き場"
+  },
+  {
+   "id": "bridge_w",
+   "at": [
+    10,
+    22
    ],
    "kind": "board",
-   "label": "調べ物（仮）11"
+   "label": "歩道橋の落書き"
   },
   {
-   "id": "pt11",
+   "id": "super_door",
    "at": [
-    13,
-    44
+    6,
+    10
    ],
-   "kind": "item",
-   "label": "調べ物（仮）12"
+   "kind": "door",
+   "label": "スーパー"
   },
   {
-   "id": "pt12",
+   "id": "sushi_door",
    "at": [
-    19,
-    12
+    4,
+    38
    ],
-   "kind": "item",
-   "label": "調べ物（仮）13"
+   "kind": "door",
+   "label": "回転寿司"
+  },
+  {
+   "id": "drug_door",
+   "at": [
+    4,
+    45
+   ],
+   "kind": "door",
+   "label": "ドラッグストア"
+  },
+  {
+   "id": "mio_npc",
+   "at": [
+    21,
+    10
+   ],
+   "kind": "npc",
+   "label": "澪",
+   "when": "mio_present"
   }
  ],
  "exits": [
   {
    "dir": "N",
    "at": [
-    16,
+    13,
     0
    ],
    "to": "F02",
    "spawn": [
-    16,
+    13,
     1
    ],
-   "label": "国道を北へ（於御所住宅地）"
-  },
-  {
-   "dir": "S",
-   "at": [
-    16,
-    47
-   ],
-   "to": "F12",
-   "spawn": [
-    16,
-    46
-   ],
-   "label": "国道を南へ（木平団地）"
+   "label": "国道の歩道をそのまま北へ"
   },
   {
    "dir": "E",
    "at": [
     31,
-    8
+    10
    ],
    "to": "F06",
    "spawn": [
     30,
-    8
+    10
    ],
-   "label": "市民センターへ"
+   "label": "ドラッグストア脇の路地→市民センター前"
   },
   {
    "dir": "E",
    "at": [
     31,
-    38
+    34
    ],
    "to": "F05",
    "spawn": [
     30,
-    38
+    34
    ],
-   "label": "旧街道の商店街へ"
+   "label": "駐車場の裏口→旧街道の商店街"
+  },
+  {
+   "dir": "S",
+   "at": [
+    13,
+    47
+   ],
+   "to": "F12",
+   "spawn": [
+    13,
+    46
+   ],
+   "label": "国道の歩道を南へ→木平団地"
   }
  ],
  "areas": []

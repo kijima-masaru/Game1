@@ -1,20 +1,17 @@
 # -*- coding: utf-8 -*-
-"""A 群 5 枚（F01, F06, F12, F13, F02）の生成器 v2（フェーズ 11 P-4）。
-規則を自動化する:
-  - 道（walk）を置くと、近景側（西・南、カメラ = 西南西）に 6 タイル、遠景側（東・北）に 1 タイルの帯（128）が自動で付く
-  - 近景の帯: 1 列目は歩道、2 列目に生垣/塀、3 列目以降は草地と配置物。屋根は帯の外（≥ 8 タイル ≒ 9 m）にしか来ない
-  - 遠景の帯の裏に 2 階建てを隙間なく並べる（正面が画面に出る側）
-  - 配置物は帯と正面の前に自動で寄せる。調べ物は仕様 md 未受領のため個数だけ合わせた仮の点
+"""A 群 5 枚（F01, F06, F12, F13, F02）の歩行可能マスクと JSON を生成する（フェーズ 12 Q-5）。
+座標は refs/field/<ID>.png と docs/field/<ID>_spec.md（調べ物・出入口はそのまま）。道は 6 タイル以上に広げる。
+規則（Q-1）: 道（walk）を置くと、近景側（西・南）に 2 タイル、遠景側（東・北）に 1 タイルの帯（128）が自動で付く。
+帯の 1 列目は歩道、2 列目に生垣・ブロック塀・ガードレール。建物は両側に置き、手前側は遮蔽の式で平屋に落ちる。
+地面は市街地なので舗装（Q-2）。実行: python tools/gen_fields_a.py
 """
 import json, os
 from PIL import Image
-os.chdir(r"C:\Users\PC_User\Desktop\Game1")
+os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 
-NEAR_BAND = 11     # 西側（視線に沿う）。画面下 1/3 に屋根が入らない距離
-NEAR_BAND_S = 4    # 南側（視線に対して斜め）
-FAR_BAND = 1
+NEAR_BAND = 2
 NEAR_ITEMS = ["obj_bicycle_rack", "obj_air_conditioner_outdoor", "obj_planter_box", "obj_water_tank", "obj_laundry_pole", "obj_traffic_cone", "obj_potted_plant"]
-WALK_EDGE = ["obj_utility_pole", "obj_street_light_led", "obj_mailbox", "obj_street_light_led", "obj_utility_pole", "obj_bus_stop_pole"]
+WALK_EDGE = ["obj_utility_pole", "obj_street_light_led", "obj_mailbox", "obj_street_light_led", "obj_utility_pole", "obj_road_mirror"]
 FRONT_ITEMS = ["obj_vending_machine", "obj_potted_plant", "obj_signboard_shutter", "obj_bicycle_rack", "obj_planter_box", "obj_flag_pole", "obj_air_conditioner_outdoor", "obj_mailbox", "obj_signboard_pole"]
 
 class F:
@@ -22,11 +19,11 @@ class F:
         self.fid, self.name, self.w, self.h = fid, name, w, h
         self.biome, self.elevation, self.scene_name = biome, elevation, scene_name
         self.g = [[0] * w for _ in range(h)]          # 0 blocked / 255 walk / 192 narrow / 128 open
-        self.tex = {}                                  # (x,y) -> patch tex（open の質感）
+        self.tex = {}
         self.patches, self.buildings, self.barriers, self.props, self.points, self.exits, self.areas = [], [], [], [], [], [], []
         self.edge_fill = [{"rect": [0, 0, w, h], "kind": "fence_block"}]
-        self.ground = {"walk": "asphalt", "narrow": "alley", "open": "grass", "default": "lot_ground"}
-        self.keep_open = set()                          # 手動の open（駐車場など）
+        self.ground = {"walk": "asphalt", "narrow": "alley", "open": "lot_ground", "default": "lot_ground"}
+        self.manual = set()
     def inb(self, x, y): return 0 <= x < self.w and 0 <= y < self.h
     def fill(self, x0, y0, w, h, v, tex=None):
         for y in range(y0, y0 + h):
@@ -34,85 +31,78 @@ class F:
                 if self.inb(x, y):
                     self.g[y][x] = v
                     if tex: self.tex[(x, y)] = tex
-                    if v == 128: self.keep_open.add((x, y))
-    def walk(self, x0, y0, w, h): self.fill(x0, y0, w, h, 255)
+                    self.manual.add((x, y))
+    def walk(self, x0, y0, w, h, tex=None): self.fill(x0, y0, w, h, 255, tex)
     def narrow(self, x0, y0, w, h): self.fill(x0, y0, w, h, 192)
     def open(self, x0, y0, w, h, tex="asphalt"): self.fill(x0, y0, w, h, 128, tex)
     def is_walk(self, x, y): return self.inb(x, y) and self.g[y][x] in (255, 192)
-    # ---- 自動の帯・塀・配置物 ----
     def auto_bands(self):
-        """歩けるタイルの西・南に 6、東・北に 1 の帯（open）を付ける。既に歩ける/手動 open のタイルは触らない"""
+        """歩けるタイルの西・南に 2、東・北に 1 の帯（open）。手動で置いたタイルは触らない"""
         add = {}
         for y in range(self.h):
             for x in range(self.w):
-                if self.g[y][x] != 0: continue
+                if self.g[y][x] != 0 or (x, y) in self.manual: continue
                 d = None
                 for k in range(1, NEAR_BAND + 1):
-                    if self.is_walk(x + k, y) or (k <= NEAR_BAND_S and self.is_walk(x, y - k)):
-                        d = k if d is None else min(d, k); break
-                far = self.is_walk(x - FAR_BAND, y) or self.is_walk(x, y + FAR_BAND)
-                if d is not None:
-                    add[(x, y)] = ("sidewalk" if d == 1 else "grass", d)
-                elif far:
-                    add[(x, y)] = ("sidewalk", 0)
+                    if self.is_walk(x + k, y) or self.is_walk(x, y - k):
+                        d = k; break
+                far = self.is_walk(x - 1, y) or self.is_walk(x, y + 1)
+                if d is not None: add[(x, y)] = ("sidewalk", d)
+                elif far: add[(x, y)] = ("sidewalk", 0)
         for (x, y), (tex, d) in add.items():
-            self.g[y][x] = 128
-            self.tex[(x, y)] = tex
-            self.band_d = getattr(self, "band_d", {})
-            self.band_d[(x, y)] = d
-        # 塀・生垣: 近景の帯の 2 列目（d == 2）の連続区間
-        cells = sorted([c for c, (t, d) in add.items() if d == 2])
-        used = set()
+            self.g[y][x] = 128; self.tex[(x, y)] = tex
+        # 塀・生垣: 近景の帯の 2 列目の連続区間
+        cells = sorted([c for c, (t, d) in add.items() if d == 2]); used = set()
         for (x, y) in cells:
             if (x, y) in used: continue
-            # 縦の連続（西側の帯）
             if self.is_walk(x + 2, y):
                 y1 = y
                 while (x, y1 + 1) in add and add[(x, y1 + 1)][1] == 2 and self.is_walk(x + 2, y1 + 1): y1 += 1
                 if y1 - y >= 2:
-                    self.barriers.append({"kind": "hedge" if (y // 8) % 2 == 0 else "fence_block", "rect": [x, y, 1, y1 - y + 1]})
+                    self.barriers.append({"kind": ["hedge", "fence_block", "wire_fence"][(y // 6) % 3], "rect": [x, y, 1, y1 - y + 1]})
                     for yy in range(y, y1 + 1): used.add((x, yy))
                     continue
             if self.is_walk(x, y - 2):
                 x1 = x
                 while (x1 + 1, y) in add and add[(x1 + 1, y)][1] == 2 and self.is_walk(x1 + 1, y - 2): x1 += 1
                 if x1 - x >= 2:
-                    self.barriers.append({"kind": "guardrail" if (x // 8) % 2 == 0 else "hedge", "rect": [x, y, x1 - x + 1, 1]})
+                    self.barriers.append({"kind": ["guardrail", "hedge", "fence_block"][(x // 6) % 3], "rect": [x, y, x1 - x + 1, 1]})
                     for xx in range(x, x1 + 1): used.add((xx, y))
-        # 配置物: 歩道（d == 1）の縁に 3 タイルごと、草地（d == 4）に 4 タイルごと、遠景の帯（d == 0）に 3 タイルごと
-        n = [0, 0, 0]
+        # 配置物: 歩道（d == 1）に 3 タイルごと、遠景の帯（d == 0）に 3 タイルごと
+        n = [0, 0]
         for (x, y), (tex, d) in sorted(add.items(), key=lambda c: (c[0][1], c[0][0])):
             if d == 1 and (x + y) % 3 == 0:
                 self.prop(WALK_EDGE[n[0] % len(WALK_EDGE)], x + 0.5, y + 0.5, "E" if self.is_walk(x + 1, y) else "N"); n[0] += 1
-            elif d in (4, 7) and (x + y) % 4 == 0:
-                self.prop(NEAR_ITEMS[n[1] % len(NEAR_ITEMS)], x + 0.5, y + 0.5, "E"); n[1] += 1
             elif d == 0 and (x + y) % 3 == 1:
-                self.prop(FRONT_ITEMS[n[2] % len(FRONT_ITEMS)], x + 0.5, y + 0.5, "W" if self.is_walk(x - 1, y) else "S"); n[2] += 1
+                self.prop(FRONT_ITEMS[n[1] % len(FRONT_ITEMS)], x + 0.5, y + 0.5, "W" if self.is_walk(x - 1, y) else "S"); n[1] += 1
     def b(self, kind, width, floors=2, wall="mortar", near=None, **kw):
         e = {"id": kw.pop("id", "b%02d" % len(self.buildings)), "kind": kind, "width": width, "floors": floors, "wall": wall}
         if near: e["near"] = near
         e.update(kw); self.buildings.append(e)
-    def houses(self, n, kinds=("house", "house", "shop_wood", "house", "shop_shutter", "house"), floors=(2, 2, 1, 2, 2, 1)):
+    def houses(self, n, kinds=("house", "house", "shop_wood", "house", "shop_shutter", "house"), floors=(2, 2, 2, 2, 2, 2), widths=(4, 3, 4, 4, 3, 4)):
         for i in range(n):
-            self.b(kinds[i % len(kinds)], 3 if i % 3 else 4, floors[i % len(floors)], ["mortar", "weatherboard", "namako", "mortar"][i % 4])
-    def prop(self, asset, x, y, facing=None, blocking=None):
-        e = {"id": "o%03d" % len(self.props), "asset": asset, "at": [x, y]}
+            self.b(kinds[i % len(kinds)], widths[i % len(widths)], floors[i % len(floors)], ["mortar", "weatherboard", "namako", "mortar"][i % 4], depth=2)
+    def bar(self, kind, x0, y0, w, h): self.barriers.append({"kind": kind, "rect": [x0, y0, w, h]})
+    def prop(self, asset, x, y, facing=None, blocking=None, pid=None):
+        e = {"id": pid or "o%03d" % len(self.props), "asset": asset, "at": [x, y]}
         if facing: e["facing"] = facing
         if blocking is not None: e["blocking"] = blocking
         self.props.append(e)
     def cars(self, cells):
         for (x, y) in cells: self.prop("obj_kei_car", x + 1.0, y + 0.5, "N")
-    def point(self, x, y, kind, label): self.points.append({"id": "pt%02d" % len(self.points), "at": [x, y], "kind": kind, "label": label})
+    def point(self, pid, x, y, kind, label, when=None):
+        e = {"id": pid, "at": [x, y], "kind": kind, "label": label}
+        if when: e["when"] = when
+        self.points.append(e)
     def exit(self, d, x, y, to, label):
         sp = {"N": (x, y + 1), "S": (x, y - 1), "W": (x + 1, y), "E": (x - 1, y)}[d]
         self.exits.append({"dir": d, "at": [x, y], "to": to, "spawn": [sp[0], sp[1]], "label": label})
-    def save(self, field_yaw=50, sun_evening=235):
+    def save(self, field_yaw=50, sun_evening=145):
         self.auto_bands()
         m = Image.new("L", (self.w, self.h), 0); px = m.load()
         for y in range(self.h):
             for x in range(self.w): px[x, y] = self.g[y][x]
         m.save("data/fields/%s_walkable.png" % self.fid)
-        # 質感: 同じ tex の行の連続区間を patch に
         pid = 0
         for y in range(self.h):
             x = 0
@@ -125,7 +115,7 @@ class F:
                 x = x1 + 1
         d = {"format": 2, "id": self.fid, "name": self.name, "size": [self.w, self.h], "elevation": self.elevation, "biome": self.biome,
              "scene": "res://scenes/fields/%s.tscn" % self.scene_name, "field_yaw": field_yaw, "sun_az": {"evening": sun_evening},
-             "note": "歩ける範囲は %s_walkable.png（唯一の真実）。帯・塀・配置物は生成器 v2 が規則から自動配置。仕様 md 未受領のため調べ物は個数だけ合わせた仮の点（フェーズ 11 P-4）。" % self.fid,
+             "note": "歩ける範囲は %s_walkable.png（唯一の真実）。座標は refs/field/%s.png と docs/field/%s_spec.md（調べ物・出入口はそのまま）。道は 6 タイル以上に広げた。帯・塀・配置物は tools/gen_fields_a.py が規則から自動配置（フェーズ 12）。" % (self.fid, self.fid, self.fid),
              "walkable": "res://data/fields/%s_walkable.png" % self.fid, "ground": dict(self.ground, patches=self.patches),
              "edge_fill": self.edge_fill, "buildings": self.buildings, "barriers": self.barriers, "props": self.props,
              "collision": {"extra_blocked": [], "extra_open": []}, "points": self.points, "exits": self.exits, "areas": self.areas}
@@ -134,85 +124,140 @@ class F:
         open("scenes/fields/%s.tscn" % self.scene_name, "w", encoding="utf-8").write(tscn)
         print(self.fid, "buildings", len(self.buildings), "barriers", len(self.barriers), "props", len(self.props), "points", len(self.points), "exits", len(self.exits))
 
+# =============================================================== F01 国道281号 沿道商業地区 32×48（refs/field/F01.png）
+f = F("F01", "国道281号 沿道商業地区", 32, 48, "roadside_commercial", 1, "f01_kokudo")   # 南北の国道: 夕方の太陽方位 235
+f.walk(10, 0, 9, 48)                                   # 国道 + 両側の歩道（x 10..18）。出入口 N (13,0) / S (13,47)
+f.walk(1, 11, 9, 21, "asphalt")                        # 西の巨大駐車場（歩ける。x 9 で国道の歩道につながる）
+f.walk(1, 37, 9, 4, "asphalt"); f.walk(1, 45, 9, 3, "asphalt")   # 回転寿司・ドラッグストアの前庭（歩ける）
+f.walk(19, 8, 13, 6)                                   # コンビニ前の路地（→ F06 E (31,10)）
+f.walk(20, 12, 12, 8, "asphalt")                       # 東の駐車場
+f.walk(19, 33, 13, 6)                                  # 駐車場の裏口の路地（→ F05 E (31,34)）
+f.open(19, 20, 13, 13, "lot_ground")                   # 空き地（草地ではなく土。金網で囲む）
+f.bar("wire_fence", 19, 20, 13, 1); f.bar("wire_fence", 19, 32, 13, 1); f.bar("wire_fence", 19, 21, 1, 11)
+f.bar("overpass", 9, 21, 11, 2)                        # 歩道橋（国道をまたぐ）
+f.b("store", 8, 1, "concrete", near=[4, 10], id="supermarket", height_m=5.0, roof="flat", sign="red", depth=9, note="いわとマート")
+f.b("store", 8, 1, "concrete", near=[4, 36], id="sushi", height_m=4.6, roof="flat", sign="blue", depth=5, note="回転寿司（正面は南の前庭）")
+f.b("store", 8, 1, "concrete", near=[4, 44], id="drugstore", height_m=4.6, roof="flat", sign="yellow", depth=4, note="ドラッグストア（正面は南の前庭）")
+f.b("store", 10, 1, "concrete", near=[24, 7], id="conbini", height_m=4.2, roof="flat", sign="white", depth=6, note="深夜のコンビニ")
+f.b("store", 8, 1, "concrete", near=[25, 39], id="backstore", height_m=3.0, roof="flat", sign="red", depth=6, note="裏口側の店舗（近景側なので平屋）")
+f.houses(10)
+f.cars([(1, 15), (3, 15), (5, 15), (1, 20), (3, 20), (5, 20), (1, 25), (3, 25), (1, 29), (21, 14), (23, 14), (27, 17), (29, 17)])
+f.prop("obj_vending_machine", 19.5, 9.5, "W", pid="vending_w"); f.prop("obj_vending_machine", 29.5, 9.5, "S", pid="vending_e")
+f.prop("obj_bulletin_board", 19.5, 7.5, "S", pid="bulletin"); f.prop("obj_water_tank", 22.5, 9.5, "S", pid="trash")
+f.prop("obj_bicycle_rack", 8.5, 14.5, "E", pid="cart1"); f.prop("obj_bicycle_rack", 8.5, 16.5, "E", pid="cart2"); f.prop("obj_traffic_cone", 8.5, 12.5, "E")
+f.prop("obj_bus_stop_pole", 10.5, 18.5, "E"); f.prop("obj_bus_stop_pole", 18.5, 26.5, "W"); f.prop("obj_public_phone", 18.5, 30.5, "W")
+for y in range(3, 46, 6): f.prop("obj_street_light_led", 10.5, y + 0.5, "E"); f.prop("obj_street_light_led", 18.5, y + 3.5, "W")
+for y in range(1, 47, 8): f.prop("obj_guardrail", 11.5, y + 0.5, "E"); f.prop("obj_guardrail", 17.5, y + 4.5, "W")
+f.exit("N", 13, 0, "F02", "国道の歩道をそのまま北へ"); f.exit("E", 31, 10, "F06", "ドラッグストア脇の路地→市民センター前")
+f.exit("E", 31, 34, "F05", "駐車場の裏口→旧街道の商店街"); f.exit("S", 13, 47, "F12", "国道の歩道を南へ→木平団地")
+for pid, x, y, kd, lab in [("store_door", 23, 8, "door", "コンビニ"), ("vending_w", 19, 9, "item", "自販機"), ("vending_e", 29, 9, "item", "自販機"), ("bulletin", 19, 7, "board", "店先の掲示板"),
+                            ("receipt_box", 25, 9, "item", "レシート箱"), ("trash", 22, 9, "item", "ゴミ箱"), ("car_lot", 2, 21, "item", "駐車場の車"), ("cart", 8, 14, "item", "カート置き場"),
+                            ("bridge_w", 10, 22, "board", "歩道橋の落書き"), ("super_door", 6, 10, "door", "スーパー"), ("sushi_door", 4, 38, "door", "回転寿司"), ("drug_door", 4, 45, "door", "ドラッグストア")]:
+    f.point(pid, x, y, kd, lab)
+f.point("mio_npc", 21, 10, "npc", "澪", when="mio_present")
+f.save(sun_evening=235)
 
-# =============================================================== F01 国道281号 沿道商業地区 32×48
-f = F("F01", "国道281号 沿道商業地区", 32, 48, "roadside_commercial", 1, "f01_kokudo")
-f.walk(12, 0, 8, 48)                                   # 国道（8 タイル）。西側は帯（町の西端）
-f.walk(20, 6, 12, 6); f.walk(20, 36, 12, 6)            # 東へ抜ける道（→ F06 / → F05）
-f.open(21, 12, 4, 4, "asphalt"); f.cars([(21, 12), (23, 12), (21, 14), (23, 14)])   # 側道の南の駐車場
-f.b("store", 6, 1, "concrete", near=[21, 18], id="sushi", height_m=4.6, roof="flat", sign="blue", depth=5)
-f.b("store", 7, 1, "concrete", near=[21, 27], id="supermarket", height_m=5.0, roof="flat", sign="red", depth=5)
-f.b("store", 5, 1, "concrete", near=[23, 34], id="conbini", height_m=4.2, roof="flat", sign="white", depth=3)
-f.b("store", 5, 1, "concrete", near=[21, 2], id="drugstore", height_m=4.6, roof="flat", sign="yellow", depth=5)
-f.houses(24)
-f.prop("obj_road_mirror", 20.5, 12.5, "W"); f.prop("obj_road_mirror", 20.5, 42.5, "W"); f.prop("obj_public_phone", 19.5, 23.5, "W")
-f.prop("obj_bus_stop_pole", 12.5, 20.5, "E"); f.prop("obj_bus_stop_pole", 19.5, 32.5, "W")
-f.exit("N", 16, 0, "F02", "国道を北へ（於御所住宅地）"); f.exit("S", 16, 47, "F12", "国道を南へ（木平団地）")
-f.exit("E", 31, 8, "F06", "市民センターへ"); f.exit("E", 31, 38, "F05", "旧街道の商店街へ")
-for k, (x, y, kd) in enumerate([(19, 18, "door"), (19, 27, "door"), (19, 2, "door"), (25, 36, "door"), (12, 20, "sign"), (19, 32, "sign"), (19, 23, "item"),
-                                (20, 13, "item"), (13, 4, "board"), (25, 7, "board"), (25, 37, "board"), (13, 44, "item"), (19, 12, "item")]):
-    f.point(x, y, kd, "調べ物（仮）%d" % (k + 1))
+# =============================================================== F06 磐戸市民センター・交番前広場 40×32（refs/field/F06.png）
+f = F("F06", "磐戸市民センター・交番前広場", 40, 32, "civic_plaza", 2, "f06_civic_center")
+f.walk(8, 11, 27, 13, "tile")                          # 交番前広場（タイル舗装、x 8..34）
+f.walk(0, 11, 8, 6)                                    # 西の路地（→ F01 W (0,13)）
+f.walk(6, 0, 6, 11)                                    # 旧街道を北へ（→ F02 N (10,0)）
+f.walk(24, 0, 6, 11)                                   # 法面の階段へ（→ F03 N (27,0)）
+f.walk(4, 24, 6, 8); f.walk(28, 24, 6, 8)              # 南へ（→ F05 S (5,31)、→ F07 S (30,31)）
+f.fill(20, 15, 1, 2, 0)                                # 時計塔の区画（広場の中、塞ぐ）
+f.b("civic", 12, 2, "concrete", near=[18, 9], id="civic_center", height_m=7.0, roof="flat", depth=7, note="市民センター（図書室・遺失物箱）")
+f.b("civic", 5, 1, "concrete", near=[31, 9], id="koban", height_m=3.6, roof="flat", depth=4, note="交番（無人）")
+f.b("civic", 1, 1, "concrete", near=[20, 16], id="clock_tower", height_m=9.0, roof="flat", depth=2, note="広場の時計塔")
+f.houses(30)
+f.prop("obj_bulletin_board", 14.5, 12.5, "S", pid="bulletin_board"); f.prop("obj_signboard_pole", 8.5, 15.5, "E", pid="map_sign"); f.prop("obj_public_phone", 34.5, 12.5, "W", pid="phone_box")
+for (x, y) in [(13.5, 12.5), (22.5, 12.5), (11.5, 20.5), (11.5, 22.5), (24.5, 20.5), (24.5, 22.5), (28.5, 16.5), (30.5, 12.5)]: f.prop("obj_potted_plant", x, y, "S")
+for (x, y) in [(15.5, 20.5), (19.5, 21.5), (23.5, 20.5), (17.5, 17.5)]: f.prop("obj_bench", x, y, "S")
+for (x, y) in [(10.5, 12.5), (26.5, 12.5), (10.5, 20.5), (26.5, 20.5), (33.5, 20.5)]: f.prop("obj_street_light_led", x, y, "S")
+f.prop("obj_bicycle_rack", 30.5, 20.5, "W"); f.prop("obj_bicycle_rack", 30.5, 21.5, "W"); f.prop("obj_signboard_shutter", 28.5, 2.5, "S", pid="slope_notice_board"); f.prop("obj_vending_machine", 33.5, 15.5, "W")
+f.exit("W", 0, 13, "F01", "路地→国道"); f.exit("N", 10, 0, "F02", "旧街道を北へ→住宅地"); f.exit("N", 27, 0, "F03", "法面の階段を上ってバスストップ")
+f.exit("S", 5, 31, "F05", "旧街道を南へ→商店街"); f.exit("S", 30, 31, "F07", "寺町の路地→光明院")
+for pid, x, y, kd, lab in [("library", 18, 10, "door", "図書室"), ("lost_and_found", 22, 10, "door", "遺失物箱"), ("police_log", 30, 10, "door", "交番"), ("bulletin", 14, 12, "board", "掲示板"),
+                            ("map_sign", 8, 15, "board", "町の地図"), ("phone", 34, 12, "save", "公衆電話"), ("clock", 20, 16, "item", "時計塔"), ("slope_notice", 28, 2, "board", "法面階段の張り紙")]:
+    f.point(pid, x, y, kd, lab)
 f.save()
 
-# =============================================================== F06 磐戸市民センター・交番前広場 40×32
-f = F("F06", "磐戸市民センター・交番前広場", 40, 32, "civic_plaza", 2, "f06_civic")
-f.walk(0, 24, 40, 6)                                   # 東西の主道路（→ F01 は西端 (0,26)）
-f.walk(6, 0, 6, 24); f.walk(30, 0, 6, 24)              # 北へ（→ F02、→ F03）
-f.walk(6, 30, 6, 2); f.walk(30, 30, 6, 2)              # 南へ（→ F05、→ F07）
-f.walk(12, 14, 18, 10)                                 # 交番前広場（主道路と両方の道に接続）
-f.b("civic", 9, 2, "concrete", near=[19, 12], id="civic_center", height_m=7.0, roof="flat", depth=5)
-f.b("civic", 3, 1, "concrete", near=[12, 12], id="koban", height_m=3.6, roof="flat", depth=2)
-f.b("civic", 4, 1, "concrete", near=[37, 10], id="post_office", height_m=4.0, roof="flat", depth=3)
-f.houses(22)
-f.prop("obj_bench", 15.5, 15.5, "S"); f.prop("obj_bench", 21.5, 15.5, "S"); f.prop("obj_bulletin_board", 18.5, 14.5, "S"); f.prop("obj_flag_pole", 24.5, 14.5, "S")
-f.prop("obj_vending_machine", 13.5, 14.5, "S"); f.prop("obj_public_phone", 27.5, 22.5, "S"); f.prop("obj_bus_stop_pole", 13.5, 24.5, "S")
-f.prop("obj_road_mirror", 12.5, 23.5, "W"); f.prop("obj_road_mirror", 36.5, 23.5, "W")
-f.exit("W", 0, 26, "F01", "国道へ"); f.exit("N", 8, 0, "F02", "於御所住宅地へ"); f.exit("N", 32, 0, "F03", "バスストップ・高架下へ")
-f.exit("S", 8, 31, "F05", "旧街道の商店街へ"); f.exit("S", 32, 31, "F07", "光明院 門前へ")
-for k, (x, y, kd) in enumerate([(19, 14, "door"), (13, 14, "door"), (18, 15, "board"), (27, 22, "item"), (13, 24, "sign"), (36, 10, "door"), (8, 4, "sign"), (32, 28, "item")]):
-    f.point(x, y, kd, "調べ物（仮）%d" % (k + 1))
+# =============================================================== F12 木平団地・支所前 40×32（refs/field/F12.png）
+f = F("F12", "木平団地・支所前", 40, 32, "housing_estate", 1, "f12_kihira")
+f.walk(6, 0, 6, 19)                                    # 国道の歩道から（→ F01 N (8,0)）
+f.walk(23, 0, 6, 19)                                   # 旧街道から（→ F05 N (25,0)）
+f.walk(0, 19, 40, 6)                                   # 東西の道
+f.walk(28, 12, 12, 6)                                  # 西門へ（→ F11 E (39,14)）
+f.walk(28, 25, 6, 7)                                   # 南へ（→ F13 S (30,31)）
+f.walk(12, 0, 11, 19, "lot_ground")                    # 団地の敷地（歩ける）。A 棟・B 棟の区画だけ塞ぐ
+f.fill(12, 2, 10, 4, 0); f.fill(12, 9, 10, 4, 0)
+f.walk(0, 25, 28, 7, "lot_ground")                     # 南の敷地。C 棟・D 棟
+f.fill(3, 25, 10, 4, 0); f.fill(17, 25, 10, 4, 0)
+f.walk(29, 0, 11, 12, "lot_ground"); f.fill(29, 1, 10, 9, 0)   # 支所とその周り
+f.walk(1, 0, 5, 10, "lot_ground"); f.fill(2, 2, 3, 3, 0)       # 給水塔
+f.walk(1, 10, 6, 9, "lot_ground")                      # 小さな公園（象の滑り台）
+f.open(34, 25, 5, 6, "asphalt"); f.cars([(34, 25), (36, 25), (34, 28), (36, 28)])   # 駐車場
+f.b("apartment", 10, 4, "concrete", near=[16, 5], id="danchi_a", roof="flat", depth=4, note="A 棟（式で階数が落ちる）")
+f.b("apartment", 10, 4, "concrete", near=[16, 12], id="danchi_b", roof="flat", depth=4, note="B 棟")
+f.b("apartment", 10, 4, "concrete", near=[8, 28], id="danchi_c", roof="flat", depth=4, note="C 棟")
+f.b("apartment", 10, 4, "concrete", near=[21, 28], id="danchi_d", roof="flat", depth=4, note="D 棟")
+f.b("civic", 10, 2, "concrete", near=[33, 9], id="shisho", roof="flat", depth=9, note="市役所支所")
+f.b("civic", 3, 3, "concrete", near=[3, 4], id="water_tower", roof="flat", depth=3, note="給水塔（仮）")
+f.houses(12)
+f.prop("obj_mailbox", 4.5, 28.5, "N", pid="post"); f.prop("obj_bulletin_board", 12.5, 17.5, "S", pid="estate_board")
+f.prop("obj_bicycle_rack", 19.5, 29.5, "N", pid="bike1"); f.prop("obj_bicycle_rack", 21.5, 29.5, "N", pid="bike2"); f.prop("obj_bench", 3.5, 12.5, "S"); f.prop("obj_bench", 4.5, 16.5, "S")
+for (x, y) in [(10.5, 8.5), (10.5, 15.5), (19.5, 8.5), (19.5, 15.5), (26.5, 20.5), (30.5, 22.5), (13.5, 26.5)]: f.prop("obj_potted_plant", x, y, "S")
+for (x, y) in [(7.5, 3.5), (26.5, 13.5), (30.5, 5.5), (12.5, 20.5), (24.5, 20.5), (35.5, 20.5)]: f.prop("obj_street_light_led", x, y, "S")
+f.exit("N", 8, 0, "F01", "国道の歩道"); f.exit("N", 25, 0, "F05", "旧街道を北へ→商店街"); f.exit("E", 39, 14, "F11", "西門→小学校"); f.exit("S", 30, 31, "F13", "旧街道を南へ→ニュータウン")
+for pid, x, y, kd, lab in [("home_door", 8, 27, "door", "自宅（C 棟 3 階）"), ("stairwell_c_notice", 9, 27, "board", "C 棟 階段室の掲示"), ("stairwell_a", 16, 5, "door", "A 棟 階段室"), ("stairwell_b", 16, 12, "door", "B 棟 階段室"),
+                            ("stairwell_d", 21, 27, "door", "D 棟 階段室"), ("mailbox", 4, 28, "item", "集合ポスト"), ("office_desk", 32, 10, "door", "支所の受付"), ("office_board", 36, 9, "board", "支所の掲示板"),
+                            ("slide_inside", 3, 13, "item", "象の滑り台"), ("tower_hatch", 3, 5, "door", "給水塔の点検扉"), ("estate_board", 12, 17, "board", "団地の案内板"), ("bike_shed", 19, 29, "item", "駐輪場")]:
+    f.point(pid, x, y, kd, lab)
 f.save()
 
-# =============================================================== F12 木平団地・支所前 40×32
-f = F("F12", "木平団地・支所前", 40, 32, "housing_estate", 1, "f12_danchi")
-f.walk(0, 18, 40, 6)                                   # 東西の道（→ F11 は東端 (39,20)）
-f.walk(6, 0, 6, 18); f.walk(24, 0, 6, 18)              # 北へ（→ F01、→ F05）
-f.walk(18, 24, 6, 8)                                   # 南へ（→ F13）
-f.open(31, 11, 9, 3, "asphalt"); f.cars([(32, 11), (34, 11), (36, 11), (32, 12), (35, 12)])   # 団地の駐車場（奥側）
-f.b("apartment", 8, 4, "concrete", near=[31, 6], id="danchi_a", height_m=11.5, roof="flat", depth=3)
-f.b("apartment", 5, 4, "concrete", near=[32, 17], id="danchi_b", height_m=11.5, roof="flat", depth=3)
-f.b("civic", 4, 2, "concrete", near=[38, 17], id="shisho", height_m=6.8, roof="flat", depth=3)
-f.b("store", 4, 1, "concrete", near=[25, 25], id="shop_front", height_m=4.0, roof="flat", sign="white", depth=3)
-f.houses(20)
-f.prop("obj_public_phone", 13.5, 18.5, "S"); f.prop("obj_bus_stop_pole", 31.5, 18.5, "S"); f.prop("obj_road_mirror", 12.5, 17.5, "W"); f.prop("obj_road_mirror", 24.5, 23.5, "W")
-f.exit("N", 8, 0, "F01", "国道へ"); f.exit("N", 26, 0, "F05", "旧街道の商店街へ"); f.exit("E", 39, 20, "F11", "小学校へ"); f.exit("S", 20, 31, "F13", "倉ノ前ニュータウンへ")
-for k, (x, y, kd) in enumerate([(37, 18, "door"), (29, 6, "door"), (33, 18, "door"), (24, 26, "door"), (8, 3, "sign"), (26, 3, "sign"), (13, 19, "board"),
-                                (30, 18, "item"), (20, 26, "sign"), (16, 19, "item"), (2, 20, "item"), (36, 19, "board")]):
-    f.point(x, y, kd, "調べ物（仮）%d" % (k + 1))
-f.save()
-
-# =============================================================== F13 倉ノ前ニュータウン 48×32
+# =============================================================== F13 倉ノ前ニュータウン 48×32（refs/field/F13.png）
+# 街区は「道 6 + 街区 10」。街区の北側 2 タイルが手前の帯、その奥に平屋の列、1 タイル空けて 2 階建ての列（次の道の奥側）
 f = F("F13", "倉ノ前ニュータウン", 48, 32, "newtown_residential", 1, "f13_newtown")
-f.walk(0, 24, 48, 6)                                   # 東西の主道路（→ F10 は東端 (47,26)）
-f.walk(8, 0, 6, 24); f.walk(8, 30, 6, 2)               # 南北の道（→ F12 / F15）
-f.walk(34, 0, 6, 24)                                   # 北へ（→ F11）
-f.open(24, 14, 8, 3, "grass"); f.prop("obj_bench", 26.5, 15.5, "S"); f.prop("obj_bench", 29.5, 15.5, "S")   # 小公園（帯の中）
-f.houses(44, kinds=("house", "house", "house", "shop_wood", "house", "house"), floors=(2, 2, 1, 2, 2, 2))
-f.prop("obj_bus_stop_pole", 15.5, 24.5, "S"); f.prop("obj_road_mirror", 14.5, 23.5, "W"); f.prop("obj_road_mirror", 40.5, 23.5, "W"); f.prop("obj_public_phone", 15.5, 4.5, "W")
-f.exit("N", 10, 0, "F12", "木平団地へ"); f.exit("N", 36, 0, "F11", "小学校へ"); f.exit("E", 47, 26, "F10", "運動広場・河川敷へ"); f.exit("S", 10, 31, "F15", "蒼籠川の河畔へ")
-for k, (x, y, kd) in enumerate([(9, 3, "sign"), (15, 24, "board"), (30, 25, "item"), (25, 23, "item"), (13, 15, "door"), (40, 8, "door"), (25, 25, "item"), (9, 30, "sign"), (44, 25, "board"), (36, 3, "item")]):
-    f.point(x, y, kd, "調べ物（仮）%d" % (k + 1))
+f.walk(0, 5, 48, 6)                                    # 東西の道（北、y 5..10）
+f.walk(0, 21, 48, 6)                                   # 東西の道（南、y 21..26）
+f.walk(9, 0, 6, 32)                                    # 南北の道（→ F12 N (12,0)）
+f.walk(4, 27, 6, 5)                                    # → F15 S (6,31)
+f.walk(34, 0, 6, 11)                                   # → F11 N (36,0)
+f.walk(40, 11, 8, 7)                                   # 堤防道路へ（→ F10 E (47,14)）
+f.walk(15, 27, 17, 5)                                  # 袋小路（行き止まり）。調べ物があるので narrow にせず道
+f.open(38, 27, 9, 5, "water"); f.bar("wire_fence", 38, 27, 9, 1); f.bar("wire_fence", 38, 28, 1, 4)   # 調整池と柵
+f.b("house", 4, 1, "namako", near=[26, 12], id="odd_house", note="瓦屋根の家（一軒だけ違う）")
+f.b("house", 4, 2, "weatherboard", near=[32, 29], id="deadend_house", note="袋小路の奥の家")
+f.houses(56, kinds=("house", "house", "house", "house"), floors=(2, 2, 2, 2), widths=(4, 4, 4, 4))
+f.prop("obj_stone_marker", 9.5, 10.5, "E", pid="monument"); f.prop("obj_block_wall", 14.5, 10.5, "S", pid="trash_station"); f.prop("obj_signboard_pole", 41.5, 17.5, "S", pid="sale_sign")
+for (x, y) in [(12.5, 2.5), (12.5, 16.5), (12.5, 30.5), (36.5, 2.5), (20.5, 6.5), (30.5, 6.5), (40.5, 6.5), (20.5, 22.5), (30.5, 22.5), (40.5, 22.5)]: f.prop("obj_street_light_led", x, y, "S")
+f.exit("N", 12, 0, "F12", "旧街道を北へ→団地"); f.exit("N", 36, 0, "F11", "南門→小学校"); f.exit("E", 47, 14, "F10", "堤防道路→運動広場"); f.exit("S", 6, 31, "F15", "旧街道の末端→渡し場跡・河畔")
+for pid, x, y, kd, lab in [("monument", 9, 10, "board", "区画整理記念碑"), ("nameplate_a", 3, 6, "board", "表札"), ("nameplate_b", 16, 6, "board", "表札"), ("nameplate_c", 21, 6, "board", "表札"),
+                            ("odd_house", 26, 11, "door", "瓦屋根の家"), ("sale_sign", 41, 17, "board", "売地の看板"), ("pond_fence", 38, 25, "item", "調整池の柵"), ("deadend_window", 31, 26, "item", "袋小路の奥の家"),
+                            ("trash_station", 14, 10, "item", "ゴミステーション")]:
+    f.point(pid, x, y, kd, lab)
+f.point("extra_nameplate", 30, 28, "board", "表札（空欄）", when="extra_house")
 f.save()
 
-# =============================================================== F02 於御所住宅地 48×32
-f = F("F02", "於御所住宅地", 48, 32, "suburban_residential", 2, "f02_ogosho")
-f.walk(0, 24, 48, 6)                                   # 東西の主道路（→ F03 は東端 (47,26)）
-f.walk(6, 0, 6, 24); f.walk(6, 30, 6, 2)               # 南北の住宅街の道（→ F01）
-f.walk(28, 12, 6, 12); f.walk(28, 30, 6, 2)            # 南北の道（→ F06）
-f.narrow(13, 2, 11, 2)                                 # 裏路地（袋小路）
-f.houses(44, kinds=("house", "house", "shop_wood", "house", "house", "house", "house", "shop_shutter"), floors=(2, 1, 2, 2, 2, 1, 2, 2))
-f.prop("obj_public_phone", 27.5, 24.5, "S"); f.prop("obj_road_mirror", 12.5, 23.5, "W"); f.prop("obj_road_mirror", 34.5, 23.5, "W"); f.prop("obj_bus_stop_pole", 13.5, 24.5, "S")
-f.exit("S", 8, 31, "F01", "国道へ"); f.exit("S", 30, 31, "F06", "市民センターへ"); f.exit("E", 47, 26, "F03", "バスストップ・高架下へ")
-for k, (x, y, kd) in enumerate([(8, 3, "sign"), (13, 25, "door"), (30, 14, "item"), (36, 25, "board"), (13, 15, "door"), (30, 20, "item"), (20, 25, "item"), (40, 25, "door"), (8, 22, "sign"), (27, 24, "item"), (13, 5, "board")]):
-    f.point(x, y, kd, "調べ物（仮）%d" % (k + 1))
+# =============================================================== F02 於御所住宅地 48×32（refs/field/F02.png）
+f = F("F02", "於御所住宅地", 48, 32, "suburban_residential", 2, "f02_ogoso")
+f.walk(0, 12, 48, 6)                                   # 東西の道（中央、y 12..17）。北側は 2 階建ての列（y 8..10）
+f.walk(0, 24, 48, 6)                                   # 東西の道（南、y 24..29）
+f.walk(8, 0, 6, 32)                                    # 南北の道（→ F01 S (10,31)）
+f.walk(34, 0, 6, 32)                                   # 南北の道（→ F06 S (36,31)）
+f.walk(40, 18, 8, 6)                                   # 法面沿いの生活道路（→ F03 E (47,20)）
+f.walk(20, 3, 3, 9, "alley")                           # 蓮の家の脇の細道（歩ける）
+f.walk(13, 19, 9, 4, "lot_ground")                     # 児童公園（歩ける。周りの生垣は帯に自動で付く）
+f.open(38, 0, 10, 4, "gravel"); f.bar("wire_fence", 38, 3, 10, 1)   # 高速の法面（北東角）
+f.b("house", 5, 2, "weatherboard", near=[17, 10], id="ren_house", note="蓮の家")
+f.b("house", 5, 2, "mortar", near=[5, 10], id="nameplate_house", note="表札の名前が消えている家")
+f.b("temple_hall", 4, 1, "plaster", near=[42, 10], id="hermitage", height_m=3.6, depth=4, note="浄土宗の小さな庵")
+f.houses(56, kinds=("house", "house", "house", "shop_wood", "house", "house"), floors=(2, 2, 2, 2, 2, 2), widths=(4, 4, 3, 4, 4, 4))
+f.prop("obj_laundry_pole", 22.5, 7.5, "S", pid="laundry"); f.prop("obj_mailbox", 16.5, 11.5, "S", pid="mailbox_ren"); f.prop("obj_mailbox", 3.5, 11.5, "S", pid="mailbox_a")
+f.prop("obj_bench", 15.5, 20.5, "S", pid="swing"); f.prop("obj_water_tank", 24.5, 19.5, "S", pid="trash_net"); f.prop("obj_bulletin_board", 12.5, 19.5, "S", pid="kairanban")
+for (x, y) in [(7.5, 5.5), (7.5, 21.5), (33.5, 5.5), (33.5, 21.5), (20.5, 13.5), (28.5, 13.5), (44.5, 13.5), (20.5, 25.5), (28.5, 25.5)]: f.prop("obj_street_light_led", x, y, "S")
+f.exit("S", 10, 31, "F01", "国道へ下る"); f.exit("S", 36, 31, "F06", "旧街道を南へ→市民センター"); f.exit("E", 47, 20, "F03", "法面沿いの生活道路→バスストップ")
+for pid, x, y, kd, lab in [("ren_door", 17, 13, "door", "蓮の家"), ("ren_window", 19, 13, "item", "蓮の部屋の窓"), ("laundry", 22, 7, "item", "物干し"), ("mailbox_ren", 16, 13, "item", "郵便受け"),
+                            ("nameplate", 5, 13, "board", "表札"), ("mailbox_a", 3, 13, "item", "郵便受け"), ("hermitage", 42, 12, "door", "庵"), ("park_swing", 15, 20, "item", "ブランコ"),
+                            ("trash_net", 24, 17, "item", "ゴミ集積所"), ("kairanban", 12, 17, "board", "回覧板"), ("slope", 39, 3, "item", "高速の法面")]:
+    f.point(pid, x, y, kd, lab)
 f.save()

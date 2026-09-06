@@ -237,6 +237,8 @@ func _move(dir_world: Vector3, delta: float) -> void:
 		return
 	var local_dir := field_root.global_transform.basis.inverse() * dir_world
 	local_dir.y = 0.0
+	if minimap != null:
+		minimap.heading = Vector2(local_dir.x, local_dir.z)
 	var step := local_dir.normalized() * MOVE_SPEED * delta
 	var p := player.position
 	var nx := Vector3(p.x + step.x, p.y, p.z)
@@ -552,8 +554,15 @@ func _apply_areamask() -> void:
 		m.albedo_color = cols[kind]
 		m.cull_mode = BaseMaterial3D.CULL_DISABLED
 		mi.material_override = m
+	# 配置物はシアンの無陰影で残す（画面下 1/3 の空白率の計測用。地面 = 青、配置物 = シアン）
 	for p in builder.billboards:
-		p.visible = false
+		if p == player:
+			p.visible = false
+			continue
+		for sp in p.get_children():
+			if sp is Sprite3D:
+				sp.shaded = false
+				sp.modulate = Color(0, 1, 1)
 	if minimap != null:
 		minimap.visible = false
 	if vignette_rect != null:
