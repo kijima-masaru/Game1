@@ -21,3 +21,6 @@ Thumbs.db
 *.swp
 .idea/
 .vscode/
+
+# 参考画像（リポジトリには含めない）
+/refs/
