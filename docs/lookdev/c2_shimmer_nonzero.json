@@ -1,0 +1,74 @@
+{
+ "tex_a_nearest": {
+  "frames": 60,
+  "zero_frames": 0,
+  "mean_all": 7.97,
+  "mean_nonzero": 7.97,
+  "median": 7.96,
+  "max": 8.03,
+  "crop_mean_nonzero": 9.73
+ },
+ "tex_b_mipmap": {
+  "frames": 60,
+  "zero_frames": 0,
+  "mean_all": 5.58,
+  "mean_nonzero": 5.58,
+  "median": 5.58,
+  "max": 5.72,
+  "crop_mean_nonzero": 7.36
+ },
+ "tex_c_mipmap_snap": {
+  "frames": 60,
+  "zero_frames": 4,
+  "mean_all": 5.49,
+  "mean_nonzero": 5.88,
+  "median": 5.87,
+  "max": 6.02,
+  "crop_mean_nonzero": 7.79
+ },
+ "tex_d_mipmap_snap_fxaa": {
+  "frames": 60,
+  "zero_frames": 4,
+  "mean_all": 4.71,
+  "mean_nonzero": 5.05,
+  "median": 5.04,
+  "max": 5.19,
+  "crop_mean_nonzero": 6.92
+ },
+ "flat_a_nearest": {
+  "frames": 60,
+  "zero_frames": 0,
+  "mean_all": 1.54,
+  "mean_nonzero": 1.54,
+  "median": 1.54,
+  "max": 1.57,
+  "crop_mean_nonzero": 1.44
+ },
+ "flat_b_mipmap": {
+  "frames": 60,
+  "zero_frames": 0,
+  "mean_all": 1.54,
+  "mean_nonzero": 1.54,
+  "median": 1.54,
+  "max": 1.57,
+  "crop_mean_nonzero": 1.44
+ },
+ "flat_c_mipmap_snap": {
+  "frames": 60,
+  "zero_frames": 4,
+  "mean_all": 1.53,
+  "mean_nonzero": 1.64,
+  "median": 1.64,
+  "max": 1.67,
+  "crop_mean_nonzero": 1.52
+ },
+ "flat_d_mipmap_snap_fxaa": {
+  "frames": 60,
+  "zero_frames": 4,
+  "mean_all": 1.43,
+  "mean_nonzero": 1.53,
+  "median": 1.53,
+  "max": 1.56,
+  "crop_mean_nonzero": 1.51
+ }
+}

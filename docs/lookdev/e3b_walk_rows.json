@@ -1,0 +1,30 @@
+{
+ "A": {
+  "frames": 90,
+  "irregular_row_frames": 27,
+  "pattern_lost_frames": 62,
+  "irregular_runs": 47,
+  "runs": 700
+ },
+ "B": {
+  "frames": 90,
+  "irregular_row_frames": 3,
+  "pattern_lost_frames": 86,
+  "irregular_runs": 6,
+  "runs": 19
+ },
+ "C": {
+  "frames": 90,
+  "irregular_row_frames": 0,
+  "pattern_lost_frames": 66,
+  "irregular_runs": 0,
+  "runs": 600
+ },
+ "D": {
+  "frames": 90,
+  "irregular_row_frames": 0,
+  "pattern_lost_frames": 63,
+  "irregular_runs": 0,
+  "runs": 675
+ }
+}

@@ -11,51 +11,51 @@
  "results": {
   "tex_a_nearest": {
    "frames": 60,
-   "mad_full_mean": 3.264,
-   "mad_crop_mean": 4.651,
-   "mad_full_max": 3.521
+   "mad_full_mean": 7.965,
+   "mad_crop_mean": 9.733,
+   "mad_full_max": 8.035
   },
   "tex_b_mipmap": {
    "frames": 60,
-   "mad_full_mean": 2.243,
-   "mad_crop_mean": 2.774,
-   "mad_full_max": 2.385
+   "mad_full_mean": 5.58,
+   "mad_crop_mean": 7.356,
+   "mad_full_max": 5.718
   },
   "tex_c_mipmap_snap": {
    "frames": 60,
-   "mad_full_mean": 2.199,
-   "mad_crop_mean": 2.715,
-   "mad_full_max": 2.506
+   "mad_full_mean": 5.485,
+   "mad_crop_mean": 7.26,
+   "mad_full_max": 6.023
   },
   "tex_d_mipmap_snap_fxaa": {
    "frames": 60,
-   "mad_full_mean": 2.226,
-   "mad_crop_mean": 2.827,
-   "mad_full_max": 2.498
+   "mad_full_mean": 4.712,
+   "mad_crop_mean": 6.454,
+   "mad_full_max": 5.186
   },
   "flat_a_nearest": {
    "frames": 60,
-   "mad_full_mean": 0.501,
-   "mad_crop_mean": 0.661,
-   "mad_full_max": 0.544
+   "mad_full_mean": 1.538,
+   "mad_crop_mean": 1.438,
+   "mad_full_max": 1.57
   },
   "flat_b_mipmap": {
    "frames": 60,
-   "mad_full_mean": 0.501,
-   "mad_crop_mean": 0.661,
-   "mad_full_max": 0.544
+   "mad_full_mean": 1.538,
+   "mad_crop_mean": 1.438,
+   "mad_full_max": 1.57
   },
   "flat_c_mipmap_snap": {
    "frames": 60,
-   "mad_full_mean": 0.497,
-   "mad_crop_mean": 0.661,
-   "mad_full_max": 0.576
+   "mad_full_mean": 1.528,
+   "mad_crop_mean": 1.421,
+   "mad_full_max": 1.672
   },
   "flat_d_mipmap_snap_fxaa": {
    "frames": 60,
-   "mad_full_mean": 0.482,
-   "mad_crop_mean": 0.662,
-   "mad_full_max": 0.553
+   "mad_full_mean": 1.428,
+   "mad_crop_mean": 1.412,
+   "mad_full_max": 1.563
   }
  }
 }

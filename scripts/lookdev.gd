@@ -22,6 +22,8 @@ extends Node3D
 ##   c1=1（投影検証: 平地と画面上端/中央/下端の同一サイズ板）
 ##   seq=<dir> seq_frames=60 pan=2.0（等速パンの連番撮影）  snap=0|1（カメラを texel 格子へスナップ）
 ##   fxaa=0|1  flat=0|1（世界テクスチャを単色にして影のエッジだけを見る）
+##   walk=A|B|C|D walk_from=x,z walk_to=x,z seq=<dir> seq_frames=90（E-3b: テストスプライトを奥→手前に歩かせて連番撮影）
+##   ao=0|1 ao_power=<f> ao_ray_len=<m> ao_rays=<n> ao_debug=0|1（街区スケールの AO ベイク。E-2）
 ##   yaw=<deg>（カメラのヨー）  layout=v1|v2（建物配置）  sun_desat=<0-1>（太陽色の彩度を輝度一定で落とす）
 ##   skylight=0|1 skylight_energy=<f> skylight_angle=<deg> skylight_pitch=<deg> skylight_yaw=<deg>（疑似スカイライト）  sun_elev=<deg>  sun_az=<deg>  exposure=<f>
 ##   shot=<PNGの絶対パス>   指定フレーム後に撮影して終了
@@ -79,7 +81,7 @@ const TIMES := {
 		"sun_elev": 13.0, "sun_az": 165.0, "sun_color": Color(0.905, 0.833, 0.815), "sun_energy": 4.2,   # (1.0,0.84,0.70) を輝度一定で彩度 0.3 倍（D-3: 明部彩度 0.29→0.19、参考 0.17）。   # 方位 165: v2 レイアウトで奥の路面に日が差し、見える壁面は全て日陰（フェーズ3 D-2/D-4）
 		"sky_top": Color(0.20, 0.18, 0.34), "sky_horizon": Color(0.85, 0.45, 0.30),
 		"ground_horizon": Color(0.30, 0.22, 0.26), "ground_bottom": Color(0.08, 0.07, 0.10),
-		"ambient": Color(0.327, 0.345, 0.429), "ambient_energy": 0.234,   # 輝度は (0.28,0.34,0.62) と同じ、彩度を 0.3 倍（影の彩度 0.80→0.54、参考 0.43）。0.18 x 1.30 で路面の影比 0.120
+		"ambient": Color(0.327, 0.345, 0.429), "ambient_energy": 0.386,   # フェーズ4: 焼き込み AO（路面で 0.54〜0.71）を入れた分 x1.65。P_core/P_sun 0.12 を維持   # 輝度は (0.28,0.34,0.62) と同じ、彩度を 0.3 倍（影の彩度 0.80→0.54、参考 0.43）。0.18 x 1.30 で路面の影比 0.120
 		"fog_color": Color(0.55, 0.32, 0.30), "fog_density": 0.0015, "fog_energy": 0.7,
 		"exposure": 1.15, "lamps": false, "sky_energy": 0.7,   # 夕方は街灯を点けない（街灯が路面の大半を照らして較正を狂わせる）
 	},
@@ -98,7 +100,7 @@ const TIME_ORDER := ["morning", "noon", "evening", "night"]
 var time_name := "evening"
 var ortho := false
 var tonemap := "filmic"
-var dof_on := true
+var dof_on := false            # ドット絵に光学ボケは掛けない（フェーズ4 E-0b）。参考画像のボケ再現は F キーで
 var glow_on := true
 var fog_on := false           # Fog は黒を浮かせる。参考画像に霞は無い
 var ssao_on := false
@@ -109,11 +111,24 @@ var shadow_res := 4096
 var omni_shadows := true
 var billboard_full := true      # true: カメラ正対、false: Y 軸回転のみ
 var sprites_shaded := true
-var mipmaps := false            # true: Nearest + ミップマップ（斜めの面のモアレを抑える）
+var mipmaps := true             # 世界テクスチャは Nearest + ミップマップ（C-2/C-3。スプライトは常に Nearest）
 var hud_on := true
 var glow_intensity := 1.0
 var glow_threshold := 0.9
 var tonemap_white := 1.0
+var walk_mode := ""             # E-3b: "A" Nearest / "B" 線形+ミップマップ / "C" 整数 texel 比スナップ / "D" C + 画面位置を整数 px にスナップ。空で無効
+var walk_from := Vector3(-13.0, 0.0, 0.5)
+var walk_to := Vector3(2.0, 0.0, 0.5)
+var walk_pivot: Node3D
+var walk_sprite: Sprite3D
+const WALK_TEX_H := 56          # 28x56 texel = 1x2 m
+var ao_on := true               # 街区スケールの空の遮蔽を焼いた AO（E-2）。ao_light_affect=0 で環境光にのみ効く
+var ao_power := 1.0             # 焼いた AO に掛ける指数（芯を深くする較正ノブ）
+var ao_ray_len := 18.0          # 遮蔽レイの最大距離 (m)。建物高さの 2〜3 倍
+var ao_rays := 24               # 半球サンプル数（コサイン重み、決定的）
+var ao_texel := 2.0             # ベイク解像度 (texel/m)。表示時に 4 倍へバイリニア拡大
+var ao_debug := false           # AO だけを白地に表示（確認用）
+var ground_ao_img: Image
 var layout := "v2"              # v1: フェーズ1/2 の配置（手前に大きな箱）。v2: 両側に建物、街路が奥へ抜ける
 var sun_desat := 0.0            # 太陽色の彩度を輝度一定で落とす割合
 var skylight_on := false        # 疑似スカイライト（2 本目の DirectionalLight3D、影あり）
@@ -243,6 +258,26 @@ func _parse_args() -> void:
 				fov_deg = float(v)
 			"yaw":
 				cam_yaw_deg = float(v)
+			"walk":
+				walk_mode = v.to_upper()
+			"walk_from":
+				var wf := v.split(",")
+				if wf.size() == 2:
+					walk_from = Vector3(float(wf[0]), 0.0, float(wf[1]))
+			"walk_to":
+				var wt := v.split(",")
+				if wt.size() == 2:
+					walk_to = Vector3(float(wt[0]), 0.0, float(wt[1]))
+			"ao":
+				ao_on = _b(v)
+			"ao_power":
+				ao_power = float(v)
+			"ao_ray_len":
+				ao_ray_len = float(v)
+			"ao_rays":
+				ao_rays = maxi(int(v), 4)
+			"ao_debug":
+				ao_debug = _b(v)
 			"layout":
 				layout = v
 				if v == "v1":
@@ -376,9 +411,10 @@ func _grass_image() -> Image:
 	for y in s:
 		for x in s:
 			var t := _rng.randf()
-			var c := Color(0.42, 0.44, 0.28).lerp(Color(0.55, 0.48, 0.30), t)
+			# 路面と同系の低彩度（オリーブ色は明部の色相・彩度統計を汚した。E-0c）
+			var c := Color(0.40, 0.38, 0.40).lerp(Color(0.47, 0.44, 0.44), t)
 			if _rng.randf() < 0.08:
-				c = Color(0.30, 0.33, 0.20)
+				c = Color(0.33, 0.32, 0.33)
 			img.set_pixel(x, y, c)
 	return img
 
@@ -431,15 +467,8 @@ func _wall_base(preset: Color) -> Color:
 
 
 func _build_world() -> void:
-	# 地面（路面）。街路は X 軸方向、幅 7m。
+	# 地面（路面）。街路は X 軸方向、幅 7m。AO は建物の配置後に焼くので、ここでは材質だけ作る
 	var asphalt := _mat(_asphalt_image(64, Color(0.42, 0.39, 0.47), 0.06))
-	var ground := MeshInstance3D.new()
-	var pm := PlaneMesh.new()
-	pm.size = Vector2(120, 120)
-	ground.mesh = pm
-	ground.material_override = asphalt
-	ground.name = "Ground"
-	add_child(ground)
 
 	# 歩道（少し明るい帯）
 	var sidewalk := _mat(_asphalt_image(32, Color(0.50, 0.47, 0.52), 0.04))
@@ -509,10 +538,13 @@ func _build_world() -> void:
 		var d: float = s[4]
 		var m: Material = s[5]
 		var z := side * (3.5 + 1.8 + 1.0 + d * 0.5)
-		_box(Vector3(w, h, d), Vector3(x, h * 0.5, z), m, "Bldg%d" % idx)
 		_box(Vector3(w + 0.8, 0.35, d + 0.8), Vector3(x, h + 0.175, z), roof, "Roof%d" % idx)
 		bldg_aabbs.append(AABB(Vector3(x - w * 0.5, 0.0, z - d * 0.5), Vector3(w, h, d)))
 		bldg_aabbs.append(AABB(Vector3(x - (w + 0.8) * 0.5, h, z - (d + 0.8) * 0.5), Vector3(w + 0.8, 0.35, d + 0.8)))
+		if ao_on:
+			_building_with_ao(Vector3(w, h, d), Vector3(x, h * 0.5, z), m as StandardMaterial3D, "Bldg%d" % idx)
+		else:
+			_box(Vector3(w, h, d), Vector3(x, h * 0.5, z), m, "Bldg%d" % idx)
 		if bands_on:
 			# 白い細帯（幅 0.1m・albedo 0.85）。街路に面した壁に数本。日陰で「線」として読めるかを見る
 			var face_z := z - side * (d * 0.5 + 0.02)
@@ -522,6 +554,186 @@ func _build_world() -> void:
 				bb.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 				band_y += 1.2
 		idx += 1
+
+	# 地面。UV2 に街区スケールの AO を焼いて貼る（ao_light_affect = 0: 環境光にのみ効く）
+	_build_ground(asphalt)
+
+
+# ============================================================================
+# AO ベイク（E-2）。半球のコサイン重みサンプルを建物 AABB と地面に当て、遮蔽率を焼く。
+# SSAO とは目的が違う: 数十 cm ではなく 15〜20 m 先の建物による空の遮蔽を焼く。
+# ============================================================================
+func _hemi_dirs(n: int) -> Array[Vector3]:
+	# 接空間（z = 法線）でのコサイン重みサンプル。Hammersley 列で決定的に。
+	var out: Array[Vector3] = []
+	for i in n:
+		var u := (float(i) + 0.5) / float(n)
+		var v := 0.0
+		var f := 0.5
+		var k := i
+		while k > 0:
+			if k & 1:
+				v += f
+			f *= 0.5
+			k >>= 1
+		var r := sqrt(u)
+		var th := TAU * v
+		out.append(Vector3(r * cos(th), r * sin(th), sqrt(maxf(1.0 - u, 0.0))))
+	return out
+
+
+## 点 p・法線 n の空の可視率（0..1）。建物 AABB と地面（y=0）を遮蔽物にする。
+func _sky_visibility(p: Vector3, n: Vector3, dirs: Array[Vector3], tangent: Vector3, bitangent: Vector3, skip_ground: bool) -> float:
+	var open := 0
+	for dl in dirs:
+		var d := (tangent * dl.x + bitangent * dl.y + n * dl.z).normalized()
+		var blocked := false
+		if not skip_ground and d.y < -1e-4:
+			var t := -p.y / d.y
+			if t <= ao_ray_len:
+				blocked = true
+		if not blocked:
+			for bb in bldg_aabbs:
+				var hit = bb.intersects_ray(p, d)
+				if hit != null and (hit as Vector3).distance_to(p) <= ao_ray_len:
+					blocked = true
+					break
+		if not blocked:
+			open += 1
+	return float(open) / float(dirs.size())
+
+
+func _ao_to_texture(img: Image, upscale: int) -> ImageTexture:
+	# ao_power を掛け、バイリニアで拡大（材質の Nearest フィルタでもブロックが見えないように）
+	var out := Image.create(img.get_width(), img.get_height(), false, Image.FORMAT_RGBA8)
+	for y in img.get_height():
+		for x in img.get_width():
+			var a := pow(img.get_pixel(x, y).r, ao_power)
+			out.set_pixel(x, y, Color(a, a, a, 1.0))
+	out.resize(out.get_width() * upscale, out.get_height() * upscale, Image.INTERPOLATE_BILINEAR)
+	return ImageTexture.create_from_image(out)
+
+
+func _apply_ao(m: StandardMaterial3D, tex: ImageTexture) -> StandardMaterial3D:
+	var mm := m.duplicate() as StandardMaterial3D
+	mm.ao_enabled = true
+	mm.ao_texture = tex
+	mm.ao_on_uv2 = true
+	mm.ao_light_affect = 0.0          # 直接光には効かせない（明示）
+	mm.ao_texture_channel = BaseMaterial3D.TEXTURE_CHANNEL_RED
+	mm.cull_mode = BaseMaterial3D.CULL_DISABLED
+	if ao_debug:
+		mm.albedo_texture = null
+		mm.albedo_color = Color(1, 1, 1)
+		mm.uv1_triplanar = false
+	return mm
+
+
+## 四角形メッシュ（UV と UV2 が 0..1）。origin から u 軸・v 軸に沿って張る。
+func _quad(origin: Vector3, u_axis: Vector3, v_axis: Vector3, normal: Vector3) -> ArrayMesh:
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var corners := [Vector2(0, 0), Vector2(1, 0), Vector2(1, 1), Vector2(0, 1)]
+	for c in corners:
+		st.set_normal(normal)
+		st.set_uv(c)
+		st.set_uv2(c)
+		st.add_vertex(origin + u_axis * c.x + v_axis * c.y)
+	st.add_index(0); st.add_index(1); st.add_index(2)
+	st.add_index(0); st.add_index(2); st.add_index(3)
+	return st.commit()
+
+
+func _build_ground(asphalt: StandardMaterial3D) -> void:
+	var half := 60.0
+	var mesh := _quad(Vector3(-half, 0, -half), Vector3(2 * half, 0, 0), Vector3(0, 0, 2 * half), Vector3.UP)
+	var mi := MeshInstance3D.new()
+	mi.mesh = mesh
+	mi.name = "Ground"
+	if ao_on:
+		var t0 := Time.get_ticks_msec()
+		var n := int(2 * half * ao_texel)
+		var img := Image.create(n, n, false, Image.FORMAT_RF)
+		img.fill(Color(1, 1, 1))
+		var dirs := _hemi_dirs(ao_rays)
+		# 建物のある範囲だけ焼く（外は 1.0）
+		var x0 := -42.0
+		var x1 := 42.0
+		var z0 := -24.0
+		var z1 := 24.0
+		for iy in n:
+			var wz := -half + (float(iy) + 0.5) / ao_texel
+			if wz < z0 or wz > z1:
+				continue
+			for ix in n:
+				var wx := -half + (float(ix) + 0.5) / ao_texel
+				if wx < x0 or wx > x1:
+					continue
+				var a := _sky_visibility(Vector3(wx, 0.02, wz), Vector3.UP, dirs, Vector3.RIGHT, Vector3.BACK, true)
+				img.set_pixel(ix, iy, Color(a, a, a))
+		ground_ao_img = img
+		mi.material_override = _apply_ao(asphalt, _ao_to_texture(img, 4))
+		print("lookdev: ground AO baked %dx%d, %d rays, %.1f s" % [n, n, ao_rays, (Time.get_ticks_msec() - t0) / 1000.0])
+	else:
+		asphalt.cull_mode = BaseMaterial3D.CULL_DISABLED
+		mi.material_override = asphalt
+	add_child(mi)
+
+
+## 建物を 4 面の壁（UV2 に AO）+ 天面で作る。
+func _building_with_ao(size: Vector3, pos: Vector3, wall: StandardMaterial3D, name_: String) -> void:
+	var dirs := _hemi_dirs(ao_rays)
+	var hx := size.x * 0.5
+	var hz := size.z * 0.5
+	var y0 := pos.y - size.y * 0.5
+	# 面: [origin, u_axis, v_axis, normal]
+	var faces := [
+		[Vector3(pos.x - hx, y0, pos.z + hz), Vector3(size.x, 0, 0), Vector3(0, size.y, 0), Vector3.BACK],     # +Z
+		[Vector3(pos.x + hx, y0, pos.z - hz), Vector3(-size.x, 0, 0), Vector3(0, size.y, 0), Vector3.FORWARD], # -Z
+		[Vector3(pos.x + hx, y0, pos.z + hz), Vector3(0, 0, -size.z), Vector3(0, size.y, 0), Vector3.RIGHT],   # +X
+		[Vector3(pos.x - hx, y0, pos.z - hz), Vector3(0, 0, size.z), Vector3(0, size.y, 0), Vector3.LEFT],     # -X
+	]
+	var fi := 0
+	for f in faces:
+		var origin: Vector3 = f[0]
+		var ua: Vector3 = f[1]
+		var va: Vector3 = f[2]
+		var nrm: Vector3 = f[3]
+		var nu := maxi(int(ceil(ua.length() * ao_texel)), 2)
+		var nv := maxi(int(ceil(va.length() * ao_texel)), 2)
+		var img := Image.create(nu, nv, false, Image.FORMAT_RF)
+		var tangent := ua.normalized()
+		var bitangent := va.normalized()
+		for iy in nv:
+			for ix in nu:
+				var p := origin + ua * ((float(ix) + 0.5) / nu) + va * ((float(iy) + 0.5) / nv) + nrm * 0.02
+				var a := _sky_visibility(p, nrm, dirs, tangent, bitangent, false)
+				img.set_pixel(ix, iy, Color(a, a, a))
+		var mi := MeshInstance3D.new()
+		mi.mesh = _quad(origin, ua, va, nrm)
+		mi.material_override = _apply_ao(wall, _ao_to_texture(img, 4))
+		mi.name = "%s_f%d" % [name_, fi]
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+		add_child(mi)
+		fi += 1
+	# 天面（AO なし）
+	var top := MeshInstance3D.new()
+	top.mesh = _quad(Vector3(pos.x - hx, y0 + size.y, pos.z - hz), Vector3(size.x, 0, 0), Vector3(0, 0, size.z), Vector3.UP)
+	var tm := wall.duplicate() as StandardMaterial3D
+	tm.cull_mode = BaseMaterial3D.CULL_DISABLED
+	top.material_override = tm
+	top.name = name_ + "_top"
+	add_child(top)
+
+
+## 路面上の点の焼き込み AO 値（ao_power 適用後）。PROBE 行の "ao" に出す。
+func _ground_ao_at(p: Vector3) -> float:
+	if ground_ao_img == null:
+		return 1.0
+	var n := ground_ao_img.get_width()
+	var ix := clampi(int((p.x + 60.0) * ao_texel), 0, n - 1)
+	var iy := clampi(int((p.z + 60.0) * ao_texel), 0, n - 1)
+	return pow(ground_ao_img.get_pixel(ix, iy).r, ao_power)
 
 
 ## Sprite3D 用の板。ドット絵のつもりの仮画像（自販機・街灯・電柱）。
@@ -616,7 +828,60 @@ func _add_emissive(pivot: Node3D, size: Vector2i, rect: Rect2i, color: Color, en
 	emissives.append(mi)
 
 
+## E-3b: 行の間引きが見えるテスト用スプライト（28x56 texel = 1x2 m）。
+## 上半分は 1 texel おきの横縞、下半分は 2 texel の市松。輪郭は白。
+func _walk_sprite_image() -> Image:
+	var img := Image.create(28, WALK_TEX_H, false, Image.FORMAT_RGBA8)
+	img.fill(Color(0, 0, 0, 0))
+	for y in WALK_TEX_H:
+		for x in 28:
+			var c: Color
+			if x == 0 or x == 27 or y == 0 or y == WALK_TEX_H - 1:
+				c = Color(1, 1, 1)
+			elif y < WALK_TEX_H / 2:
+				c = Color(0.95, 0.25, 0.20) if (y % 2 == 0) else Color(0.10, 0.10, 0.12)
+			else:
+				c = Color(0.20, 0.55, 0.95) if (((x / 2) + (y / 2)) % 2 == 0) else Color(0.95, 0.90, 0.30)
+			img.set_pixel(x, y, c)
+	return img
+
+
+func _build_walk_sprite() -> void:
+	walk_pivot = Node3D.new()
+	walk_pivot.name = "WalkPivot"
+	walk_pivot.position = walk_from
+	add_child(walk_pivot)
+	walk_sprite = Sprite3D.new()
+	walk_sprite.texture = _tex(_walk_sprite_image())
+	walk_sprite.pixel_size = pixel_size
+	walk_sprite.billboard = BaseMaterial3D.BILLBOARD_DISABLED
+	walk_sprite.alpha_cut = SpriteBase3D.ALPHA_CUT_DISCARD
+	walk_sprite.alpha_scissor_threshold = 0.5
+	walk_sprite.shaded = false                     # 判定対象は標本化なので照明の影響を外す
+	walk_sprite.double_sided = true
+	walk_sprite.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS if walk_mode == "B" else BaseMaterial3D.TEXTURE_FILTER_NEAREST
+	walk_sprite.position = Vector3(0, WALK_TEX_H * pixel_size * 0.5, 0)
+	walk_pivot.add_child(walk_sprite)
+	billboards.append(walk_pivot)
+
+
+## C 条件: 画面上の高さが texel 数の整数倍になるようスケールを毎フレーム丸める。
+## 透視では距離に応じて見かけの texel/px 比が変わる（FOV 18 で 0.86〜1.14）。
+## 比を最も近い整数（この範囲ではすべて 1）に丸めるので、サイズは距離に依らず 56 px になる。
+func _walk_snap_scale() -> float:
+	if walk_mode != "C" and walk_mode != "D":
+		return 1.0
+	var base := walk_pivot.global_position
+	var top := base + cam.global_transform.basis.y * 1.0     # 板はカメラ正対なので、カメラの上方向に 1 m
+	var h_px := absf(cam.unproject_position(base).y - cam.unproject_position(top).y)   # 1 m の見かけ px
+	var ratio := h_px / base_texel_per_meter                                              # px / texel
+	var snapped := maxf(round(ratio), 1.0)
+	return snapped / ratio
+
+
 func _build_sprites() -> void:
+	if walk_mode != "":
+		_build_walk_sprite()
 	if layout != "v1":
 		_add_billboard("vending", Vector3(-2.0, 0.12, -4.9))
 		_add_emissive(billboards[-1], Vector2i(16, 30), Rect2i(3, 2, 8, 12), Color(0.75, 0.95, 0.90), 1.8)
@@ -908,6 +1173,33 @@ func _apply_sprites() -> void:
 
 func _process(_delta: float) -> void:
 	_face_billboards()
+	if seq_dir != "" and walk_mode != "":
+		_frame += 1
+		if _frame > shot_frames:
+			var t := float(_seq_i) / float(seq_frames)
+			walk_pivot.position = walk_from.lerp(walk_to, t)
+			_face_billboards()
+			var sc := _walk_snap_scale()
+			walk_sprite.scale = Vector3(sc, sc, sc)
+			walk_sprite.position = Vector3(0, WALK_TEX_H * pixel_size * 0.5 * sc, 0)
+			if walk_mode == "D":
+				# 足元の画面位置を整数ピクセルへ。同じ奥行きで、丸めた画面座標に対応するワールド位置に置き直す
+				var b0 := walk_pivot.global_position
+				var sp0 := cam.unproject_position(b0)
+				var depth := (b0 - cam.global_position).dot(-cam.global_transform.basis.z)
+				walk_pivot.global_position = cam.project_position(Vector2(round(sp0.x), round(sp0.y)), depth)
+			if _seq_i >= 1:
+				var img := get_viewport().get_texture().get_image()
+				img.save_png("%s/f%03d.png" % [seq_dir, _seq_i - 1])
+				var base := walk_pivot.global_position
+				var sp := cam.unproject_position(base)
+				var h_px := absf(cam.unproject_position(base).y - cam.unproject_position(base + cam.global_transform.basis.y * (WALK_TEX_H * pixel_size * sc)).y)
+				print("WALK {\"i\":%d,\"px\":%.1f,\"py\":%.1f,\"h_px\":%.2f,\"scale\":%.3f}" % [_seq_i - 1, sp.x, sp.y, h_px, sc])
+			_seq_i += 1
+			if _seq_i > seq_frames:
+				print("lookdev: walk seq done %d frames -> %s" % [seq_frames, seq_dir])
+				get_tree().quit()
+		return
 	if seq_dir != "":
 		_frame += 1
 		if _frame > shot_frames:
@@ -1056,8 +1348,8 @@ func _report_probes(img: Image) -> void:
 				break
 			margin = r
 		var wall_dist := _dist_to_buildings(p)
-		print("PROBE {\"x\":%.2f,\"z\":%.2f,\"px\":%d,\"py\":%d,\"rgb\":[%.4f,%.4f,%.4f],\"shadow\":%s,\"sky_shadow\":%s,\"margin\":%.1f,\"wall\":%.2f}" % [
-			p.x, p.z, px, py, acc.x, acc.y, acc.z, "true" if shadow else "false", "true" if sky_shadow else "false", margin, wall_dist])
+		print("PROBE {\"x\":%.2f,\"z\":%.2f,\"px\":%d,\"py\":%d,\"rgb\":[%.4f,%.4f,%.4f],\"shadow\":%s,\"sky_shadow\":%s,\"margin\":%.1f,\"wall\":%.2f,\"ao\":%.3f}" % [
+			p.x, p.z, px, py, acc.x, acc.y, acc.z, "true" if shadow else "false", "true" if sky_shadow else "false", margin, wall_dist, _ground_ao_at(p)])
 
 
 func _in_sun_shadow(p: Vector3, sun_dir: Vector3) -> bool:
