@@ -1,0 +1,1250 @@
+{
+ "format": 2,
+ "id": "F15",
+ "name": "蒼籠川 河畔・御渡橋",
+ "size": [
+  64,
+  24
+ ],
+ "elevation": 0,
+ "biome": "riverbank_bridge",
+ "scene": "res://scenes/fields/f15_riverbank.tscn",
+ "field_yaw": 50,
+ "sun_az": {
+  "evening": 145
+ },
+ "note": "歩ける範囲は F15_walkable.png（唯一の真実）。座標は refs/field/F15.png と docs/field/F15_spec.md（調べ物・出入口はそのまま）。道は 6 タイル以上に広げた。 高さは F15_height.png（1 階調 = 0.15 m）。 tools/gen_fields_*.py が生成（フェーズ 12〜14）。川面 0、河原 1.2 m、堤防と橋 3.6 m（資料に高さの記載なし）。橋はバリケードで中ほどまで。対岸は歩けない。",
+ "walkable": "res://data/fields/F15_walkable.png",
+ "height": "res://data/fields/F15_height.png",
+ "terrain": {
+  "wall": "concrete_slab",
+  "rects": [
+   {
+    "kind": "slope",
+    "rect": [
+     0,
+     4,
+     64,
+     3
+    ]
+   },
+   {
+    "kind": "stairs",
+    "rect": [
+     8,
+     4,
+     4,
+     3
+    ],
+    "wall": "concrete_slab"
+   },
+   {
+    "kind": "stairs",
+    "rect": [
+     44,
+     4,
+     4,
+     3
+    ],
+    "wall": "concrete_slab"
+   },
+   {
+    "kind": "bridge",
+    "rect": [
+     31,
+     4,
+     5,
+     19
+    ],
+    "deck": "concrete_slab",
+    "bottom": 0
+   }
+  ]
+ },
+ "ground": {
+  "walk": "sand",
+  "narrow": "alley",
+  "open": "grass",
+  "default": "grass",
+  "patches": [
+   {
+    "id": "p000",
+    "rect": [
+     3,
+     0,
+     6,
+     1
+    ],
+    "tex": "asphalt"
+   },
+   {
+    "id": "p001",
+    "rect": [
+     51,
+     0,
+     6,
+     1
+    ],
+    "tex": "asphalt"
+   },
+   {
+    "id": "p002",
+    "rect": [
+     0,
+     1,
+     64,
+     1
+    ],
+    "tex": "asphalt"
+   },
+   {
+    "id": "p003",
+    "rect": [
+     0,
+     2,
+     64,
+     1
+    ],
+    "tex": "asphalt"
+   },
+   {
+    "id": "p004",
+    "rect": [
+     0,
+     3,
+     64,
+     1
+    ],
+    "tex": "asphalt"
+   },
+   {
+    "id": "p005",
+    "rect": [
+     0,
+     4,
+     8,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p006",
+    "rect": [
+     8,
+     4,
+     4,
+     1
+    ],
+    "tex": "stone_step"
+   },
+   {
+    "id": "p007",
+    "rect": [
+     12,
+     4,
+     19,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p008",
+    "rect": [
+     31,
+     4,
+     5,
+     1
+    ],
+    "tex": "concrete_slab"
+   },
+   {
+    "id": "p009",
+    "rect": [
+     36,
+     4,
+     8,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p010",
+    "rect": [
+     44,
+     4,
+     4,
+     1
+    ],
+    "tex": "stone_step"
+   },
+   {
+    "id": "p011",
+    "rect": [
+     48,
+     4,
+     16,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p012",
+    "rect": [
+     0,
+     5,
+     8,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p013",
+    "rect": [
+     8,
+     5,
+     4,
+     1
+    ],
+    "tex": "stone_step"
+   },
+   {
+    "id": "p014",
+    "rect": [
+     12,
+     5,
+     19,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p015",
+    "rect": [
+     31,
+     5,
+     5,
+     1
+    ],
+    "tex": "concrete_slab"
+   },
+   {
+    "id": "p016",
+    "rect": [
+     36,
+     5,
+     8,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p017",
+    "rect": [
+     44,
+     5,
+     4,
+     1
+    ],
+    "tex": "stone_step"
+   },
+   {
+    "id": "p018",
+    "rect": [
+     48,
+     5,
+     16,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p019",
+    "rect": [
+     0,
+     6,
+     8,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p020",
+    "rect": [
+     8,
+     6,
+     4,
+     1
+    ],
+    "tex": "stone_step"
+   },
+   {
+    "id": "p021",
+    "rect": [
+     12,
+     6,
+     19,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p022",
+    "rect": [
+     31,
+     6,
+     5,
+     1
+    ],
+    "tex": "concrete_slab"
+   },
+   {
+    "id": "p023",
+    "rect": [
+     36,
+     6,
+     8,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p024",
+    "rect": [
+     44,
+     6,
+     4,
+     1
+    ],
+    "tex": "stone_step"
+   },
+   {
+    "id": "p025",
+    "rect": [
+     48,
+     6,
+     16,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p026",
+    "rect": [
+     0,
+     7,
+     31,
+     1
+    ],
+    "tex": "sand"
+   },
+   {
+    "id": "p027",
+    "rect": [
+     31,
+     7,
+     5,
+     1
+    ],
+    "tex": "concrete_slab"
+   },
+   {
+    "id": "p028",
+    "rect": [
+     36,
+     7,
+     28,
+     1
+    ],
+    "tex": "sand"
+   },
+   {
+    "id": "p029",
+    "rect": [
+     0,
+     8,
+     31,
+     1
+    ],
+    "tex": "sand"
+   },
+   {
+    "id": "p030",
+    "rect": [
+     31,
+     8,
+     5,
+     1
+    ],
+    "tex": "concrete_slab"
+   },
+   {
+    "id": "p031",
+    "rect": [
+     36,
+     8,
+     28,
+     1
+    ],
+    "tex": "sand"
+   },
+   {
+    "id": "p032",
+    "rect": [
+     0,
+     9,
+     31,
+     1
+    ],
+    "tex": "sand"
+   },
+   {
+    "id": "p033",
+    "rect": [
+     31,
+     9,
+     5,
+     1
+    ],
+    "tex": "concrete_slab"
+   },
+   {
+    "id": "p034",
+    "rect": [
+     36,
+     9,
+     28,
+     1
+    ],
+    "tex": "sand"
+   },
+   {
+    "id": "p035",
+    "rect": [
+     0,
+     10,
+     31,
+     1
+    ],
+    "tex": "sand"
+   },
+   {
+    "id": "p036",
+    "rect": [
+     31,
+     10,
+     5,
+     1
+    ],
+    "tex": "concrete_slab"
+   },
+   {
+    "id": "p037",
+    "rect": [
+     36,
+     10,
+     28,
+     1
+    ],
+    "tex": "sand"
+   },
+   {
+    "id": "p038",
+    "rect": [
+     0,
+     11,
+     31,
+     1
+    ],
+    "tex": "sand"
+   },
+   {
+    "id": "p039",
+    "rect": [
+     31,
+     11,
+     5,
+     1
+    ],
+    "tex": "concrete_slab"
+   },
+   {
+    "id": "p040",
+    "rect": [
+     36,
+     11,
+     28,
+     1
+    ],
+    "tex": "sand"
+   },
+   {
+    "id": "p041",
+    "rect": [
+     0,
+     12,
+     31,
+     1
+    ],
+    "tex": "sand"
+   },
+   {
+    "id": "p042",
+    "rect": [
+     31,
+     12,
+     5,
+     1
+    ],
+    "tex": "concrete_slab"
+   },
+   {
+    "id": "p043",
+    "rect": [
+     36,
+     12,
+     28,
+     1
+    ],
+    "tex": "sand"
+   },
+   {
+    "id": "p044",
+    "rect": [
+     0,
+     13,
+     31,
+     1
+    ],
+    "tex": "water"
+   },
+   {
+    "id": "p045",
+    "rect": [
+     31,
+     13,
+     5,
+     1
+    ],
+    "tex": "concrete_slab"
+   },
+   {
+    "id": "p046",
+    "rect": [
+     36,
+     13,
+     28,
+     1
+    ],
+    "tex": "water"
+   },
+   {
+    "id": "p047",
+    "rect": [
+     0,
+     14,
+     31,
+     1
+    ],
+    "tex": "water"
+   },
+   {
+    "id": "p048",
+    "rect": [
+     31,
+     14,
+     5,
+     1
+    ],
+    "tex": "concrete_slab"
+   },
+   {
+    "id": "p049",
+    "rect": [
+     36,
+     14,
+     28,
+     1
+    ],
+    "tex": "water"
+   },
+   {
+    "id": "p050",
+    "rect": [
+     0,
+     15,
+     31,
+     1
+    ],
+    "tex": "water"
+   },
+   {
+    "id": "p051",
+    "rect": [
+     31,
+     15,
+     5,
+     1
+    ],
+    "tex": "concrete_slab"
+   },
+   {
+    "id": "p052",
+    "rect": [
+     36,
+     15,
+     28,
+     1
+    ],
+    "tex": "water"
+   },
+   {
+    "id": "p053",
+    "rect": [
+     0,
+     16,
+     31,
+     1
+    ],
+    "tex": "water"
+   },
+   {
+    "id": "p054",
+    "rect": [
+     31,
+     16,
+     5,
+     1
+    ],
+    "tex": "concrete_slab"
+   },
+   {
+    "id": "p055",
+    "rect": [
+     36,
+     16,
+     28,
+     1
+    ],
+    "tex": "water"
+   },
+   {
+    "id": "p056",
+    "rect": [
+     0,
+     17,
+     31,
+     1
+    ],
+    "tex": "water"
+   },
+   {
+    "id": "p057",
+    "rect": [
+     31,
+     17,
+     5,
+     1
+    ],
+    "tex": "concrete_slab"
+   },
+   {
+    "id": "p058",
+    "rect": [
+     36,
+     17,
+     28,
+     1
+    ],
+    "tex": "water"
+   },
+   {
+    "id": "p059",
+    "rect": [
+     0,
+     18,
+     31,
+     1
+    ],
+    "tex": "water"
+   },
+   {
+    "id": "p060",
+    "rect": [
+     31,
+     18,
+     5,
+     1
+    ],
+    "tex": "concrete_slab"
+   },
+   {
+    "id": "p061",
+    "rect": [
+     36,
+     18,
+     28,
+     1
+    ],
+    "tex": "water"
+   },
+   {
+    "id": "p062",
+    "rect": [
+     0,
+     19,
+     31,
+     1
+    ],
+    "tex": "sand"
+   },
+   {
+    "id": "p063",
+    "rect": [
+     31,
+     19,
+     5,
+     1
+    ],
+    "tex": "concrete_slab"
+   },
+   {
+    "id": "p064",
+    "rect": [
+     36,
+     19,
+     28,
+     1
+    ],
+    "tex": "sand"
+   },
+   {
+    "id": "p065",
+    "rect": [
+     0,
+     20,
+     31,
+     1
+    ],
+    "tex": "sand"
+   },
+   {
+    "id": "p066",
+    "rect": [
+     31,
+     20,
+     5,
+     1
+    ],
+    "tex": "concrete_slab"
+   },
+   {
+    "id": "p067",
+    "rect": [
+     36,
+     20,
+     28,
+     1
+    ],
+    "tex": "sand"
+   },
+   {
+    "id": "p068",
+    "rect": [
+     0,
+     21,
+     31,
+     1
+    ],
+    "tex": "sand"
+   },
+   {
+    "id": "p069",
+    "rect": [
+     31,
+     21,
+     5,
+     1
+    ],
+    "tex": "concrete_slab"
+   },
+   {
+    "id": "p070",
+    "rect": [
+     36,
+     21,
+     28,
+     1
+    ],
+    "tex": "sand"
+   },
+   {
+    "id": "p071",
+    "rect": [
+     0,
+     22,
+     31,
+     1
+    ],
+    "tex": "sand"
+   },
+   {
+    "id": "p072",
+    "rect": [
+     31,
+     22,
+     5,
+     1
+    ],
+    "tex": "concrete_slab"
+   },
+   {
+    "id": "p073",
+    "rect": [
+     36,
+     22,
+     28,
+     1
+    ],
+    "tex": "sand"
+   }
+  ]
+ },
+ "edge_fill": [
+  {
+   "rect": [
+    0,
+    0,
+    64,
+    24
+   ],
+   "kind": "none"
+  }
+ ],
+ "buildings": [],
+ "barriers": [],
+ "props": [
+  {
+   "id": "barricade1",
+   "asset": "obj_road_closure_sign",
+   "at": [
+    31.5,
+    16.5
+   ],
+   "facing": "N"
+  },
+  {
+   "id": "barricade2",
+   "asset": "obj_road_closure_sign",
+   "at": [
+    33.5,
+    16.5
+   ],
+   "facing": "N"
+  },
+  {
+   "id": "barricade3",
+   "asset": "obj_road_closure_sign",
+   "at": [
+    35.5,
+    16.5
+   ],
+   "facing": "N"
+  },
+  {
+   "id": "bridge_lamp_w",
+   "asset": "obj_street_light_mercury",
+   "at": [
+    31.5,
+    9.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "bridge_lamp_e",
+   "asset": "obj_street_light_mercury",
+   "at": [
+    35.5,
+    9.5
+   ],
+   "facing": "W"
+  },
+  {
+   "id": "stele",
+   "asset": "obj_stone_marker",
+   "at": [
+    12.5,
+    8.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "gauge",
+   "asset": "obj_signboard_pole",
+   "at": [
+    40.5,
+    12.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "driftwood",
+   "asset": "ph_rock",
+   "at": [
+    48.5,
+    11.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "bench",
+   "asset": "obj_bench",
+   "at": [
+    20.5,
+    2.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o009",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    1.5,
+    0.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o010",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    9.5,
+    0.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o011",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    13.5,
+    0.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o012",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    17.5,
+    0.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o013",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    21.5,
+    0.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o014",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    25.5,
+    0.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o015",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    29.5,
+    0.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o016",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    33.5,
+    0.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o017",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    37.5,
+    0.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o018",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    41.5,
+    0.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o019",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    45.5,
+    0.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o020",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    49.5,
+    0.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o021",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    57.5,
+    0.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o022",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    61.5,
+    0.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o023",
+   "asset": "ph_tree_conifer",
+   "at": [
+    3.5,
+    23.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o024",
+   "asset": "ph_tree_conifer",
+   "at": [
+    4.5,
+    23.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o025",
+   "asset": "ph_tree_conifer",
+   "at": [
+    11.5,
+    23.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o026",
+   "asset": "ph_tree_conifer",
+   "at": [
+    12.5,
+    23.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o027",
+   "asset": "ph_tree_conifer",
+   "at": [
+    15.5,
+    23.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o028",
+   "asset": "ph_tree_conifer",
+   "at": [
+    19.5,
+    23.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o029",
+   "asset": "ph_tree_conifer",
+   "at": [
+    25.5,
+    23.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o030",
+   "asset": "ph_tree_conifer",
+   "at": [
+    27.5,
+    23.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o031",
+   "asset": "ph_tree_conifer",
+   "at": [
+    28.5,
+    23.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o032",
+   "asset": "ph_tree_conifer",
+   "at": [
+    32.5,
+    23.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o033",
+   "asset": "ph_tree_conifer",
+   "at": [
+    38.5,
+    23.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o034",
+   "asset": "ph_tree_conifer",
+   "at": [
+    45.5,
+    23.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o035",
+   "asset": "ph_tree_conifer",
+   "at": [
+    57.5,
+    23.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o036",
+   "asset": "ph_tree_conifer",
+   "at": [
+    58.5,
+    23.5
+   ],
+   "facing": "E"
+  }
+ ],
+ "collision": {
+  "extra_blocked": [],
+  "extra_open": []
+ },
+ "points": [
+  {
+   "id": "stele",
+   "at": [
+    12,
+    8
+   ],
+   "kind": "board",
+   "label": "渡し場跡の石碑"
+  },
+  {
+   "id": "barricade",
+   "at": [
+    31,
+    16
+   ],
+   "kind": "item",
+   "label": "橋のバリケード"
+  },
+  {
+   "id": "gauge",
+   "at": [
+    40,
+    12
+   ],
+   "kind": "item",
+   "label": "水位標"
+  },
+  {
+   "id": "driftwood",
+   "at": [
+    48,
+    11
+   ],
+   "kind": "item",
+   "label": "流れ着いた物"
+  },
+  {
+   "id": "bench",
+   "at": [
+    20,
+    2
+   ],
+   "kind": "item",
+   "label": "桜並木のベンチ"
+  },
+  {
+   "id": "yu_npc",
+   "at": [
+    31,
+    20
+   ],
+   "kind": "npc",
+   "label": "悠",
+   "when": "yu_present"
+  }
+ ],
+ "exits": [
+  {
+   "dir": "N",
+   "at": [
+    5,
+    0
+   ],
+   "to": "F13",
+   "spawn": [
+    5,
+    1
+   ],
+   "label": "旧街道の渡し場跡→ニュータウン"
+  },
+  {
+   "dir": "N",
+   "at": [
+    53,
+    0
+   ],
+   "to": "F10",
+   "spawn": [
+    53,
+    1
+   ],
+   "label": "堤防→運動広場"
+  }
+ ],
+ "areas": []
+}

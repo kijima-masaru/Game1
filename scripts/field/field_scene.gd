@@ -47,6 +47,8 @@ var seq_frames := 60
 var pan_m := 0.05
 var _seq_i := 0
 var _seq_warm := 0
+var _cam_y := 0.0             # T-2b: 注視点の高さ（主人公の足元に 0.2 秒で追従）
+var _terrain_occl_frames := 0 # T-2b: 地形の垂直面が主人公とカメラの間に入ったフレーム（診断。フェードはしない）
 
 
 func _ready() -> void:
@@ -125,7 +127,9 @@ func _ready() -> void:
 		spawn = player_tile
 	_build_player(spawn)
 	if target_tile.x >= 0:
-		lookdev.cam_target = field_root.to_global(FieldData.tile_to_world(target_tile.x, target_tile.y))
+		var tw := FieldData.tile_to_world(target_tile.x, target_tile.y)
+		tw.y = fd.ground_y(tw.x, tw.z)
+		lookdev.cam_target = field_root.to_global(tw)
 		lookdev._apply_camera()
 		fixed_target = true
 	_build_ui()
@@ -140,9 +144,15 @@ func _ready() -> void:
 				if _spawn_of(e) != b:
 					a = _spawn_of(e)
 					break
+		if a == b:
+			# 出入口が 1 つだけ（F04・F08・F09・F16）: 出入口から最も遠い歩けるタイルまで
+			var far := fd.farthest_from(Vector2i(a))
+			b = Vector2(float(far.x) + 0.5, float(far.y) + 0.5)
 		var path := fd.find_path(Vector2i(a), Vector2i(b))
 		_demo_state = {"from": a, "to": b, "path": path, "i": 0, "done": path.is_empty(), "start_ms": Time.get_ticks_msec()}
 		player.position = FieldData.tile_to_world(a.x, a.y) + Vector3(0, 0.02, 0)   # 自動歩行は始点から
+		player.position.y = fd.ground_y(player.position.x, player.position.z) + 0.02
+		_cam_y = player.position.y - 0.02
 		if path.is_empty():
 			printerr("walk_demo: 経路が無い %s(passable %s) → %s(passable %s)" % [str(Vector2i(a)), str(fd.is_passable(int(a.x), int(a.y))), str(Vector2i(b)), str(fd.is_passable(int(b.x), int(b.y)))])
 	print("FIELD %s built in %.2fs (AO %.2fs, cache %s), faces=%d, passable=%d/%d, world_mats=%d filter=%d" % [field_id, (Time.get_ticks_msec() - t0) / 1000.0, builder.bake_seconds, "hit" if builder.cache_hit else "baked", builder.gen.faces.size(), fd.reachable_count(), fd.size.x * fd.size.y, PixelTextures.world_material_count(), int(PixelTextures.world_filter)])
@@ -229,6 +239,8 @@ func _build_player(tile: Vector2) -> void:
 	player.name = "Player"
 	field_root.add_child(player)
 	player.position = FieldData.tile_to_world(tile.x, tile.y) + Vector3(0, 0.02, 0)
+	player.position.y = fd.ground_y(player.position.x, player.position.z) + 0.02
+	_cam_y = player.position.y - 0.02
 	var img := _figure_image()
 	player_sprite = Sprite3D.new()
 	player_sprite.texture = ImageTexture.create_from_image(img)
@@ -260,12 +272,22 @@ func _move(dir_world: Vector3, delta: float) -> void:
 	var step := local_dir.normalized() * MOVE_SPEED * delta
 	var p := player.position
 	var nx := Vector3(p.x + step.x, p.y, p.z)
-	if fd.is_passable_world(nx + Vector3(0.25 * signf(step.x), 0, 0)):
+	if _can_enter(p, nx + Vector3(0.25 * signf(step.x), 0, 0)):
 		p = nx
 	var nz := Vector3(p.x, p.y, p.z + step.z)
-	if fd.is_passable_world(nz + Vector3(0, 0, 0.25 * signf(step.z))):
+	if _can_enter(p, nz + Vector3(0, 0, 0.25 * signf(step.z))):
 		p = nz
+	p.y = fd.ground_y(p.x, p.z) + 0.02   # T-2b: 足元は地面の高さ（坂・階段は補間）
 	player.position = p
+
+
+## T-2b 段差の当たり: 別のタイルへ入るときは高さの差を見る（0〜1 階調は登れる、2 以上は坂・階段の中だけ）
+func _can_enter(from: Vector3, probe: Vector3) -> bool:
+	var a := FieldData.world_to_tile(from)
+	var b := FieldData.world_to_tile(probe)
+	if a == b:
+		return fd.is_passable(b.x, b.y)
+	return fd.can_step(a, b)
 
 
 # ============================================================================
@@ -408,8 +430,9 @@ func _process(delta: float) -> void:
 		_move(dir, delta)
 	# カメラ追従
 	if not fixed_target:
+		_cam_y += (player.position.y - 0.02 - _cam_y) * clampf(delta / 0.2, 0.0, 1.0)   # 注視点の高さは 0.2 秒で追従
 		lookdev.cam_target = player.global_position
-		lookdev.cam_target.y = 0.0
+		lookdev.cam_target.y = _cam_y
 		lookdev._apply_camera()
 	builder.update_billboards(cam, float(lookdev.base_texel_per_meter))
 	_update_near()
@@ -471,18 +494,21 @@ var _fade_alpha := {}      # id -> 現在の α
 func _apply_occlusion(cam: Camera3D) -> void:
 	var from := field_root.to_local(cam.global_position)
 	var targets := [player.position + Vector3(0, 1.6, 0), player.position + Vector3(0, 0.9, 0)]
+	var targets_t := targets + [player.position + Vector3(0, 0.2, 0)]   # 地形の面は足元も見る（岩壁の上面が体の下半分だけ隠す）
 	var delta := get_process_delta_time()
 	var any := false
 	for id in builder.lot_aabbs:
 		var bb: AABB = builder.lot_aabbs[id]
 		var hit := false
-		for to in targets:
+		for to in (targets_t if String(id).begins_with("t") else targets):
 			if bb.intersects_segment(from, to) != null and not bb.has_point(to) and _segment_hits_quads(from, to, builder.lot_quads.get(id, [])):
 				hit = true
 				break
 		if hit:
 			any = true
 			_fade_ids[id] = int(_fade_ids.get(id, 0)) + 1
+			if _measure_frame == 30 and OS.get_cmdline_user_args().has("occl_debug=1"):
+				print("OCCL_DEBUG frame30 hit %s aabb=%s from=%s head=%s" % [id, str(bb), str(from), str(targets[0])])
 		var target := FADE_ALPHA_BUILDING if hit else 1.0
 		var cur: float = _fade_alpha.get(id, 1.0)
 		var rate := (1.0 - FADE_ALPHA_BUILDING) / (FADE_IN_S if hit else FADE_OUT_S)
@@ -503,6 +529,12 @@ func _apply_occlusion(cam: Camera3D) -> void:
 				m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 				m.albedo_color = Color(1, 1, 1, nxt)
 				m.cull_mode = BaseMaterial3D.CULL_BACK
+	# 地形の垂直面（3 階調以上）: 診断として数えるだけ（フェーズ 14 T-2b。薄くするかは絵を見て決める）
+	if not builder.terrain_quads.is_empty():
+		for to in targets:
+			if _segment_hits_quads(from, to, builder.terrain_quads):
+				_terrain_occl_frames += 1
+				break
 	# 配置物（ビルボード）: カメラと主人公の間の帯（線分から 0.6 m 以内）に立つものを薄くする
 	for pv in builder.billboards:
 		if pv == player:
@@ -558,7 +590,7 @@ static func _segment_hits_quads(from: Vector3, to: Vector3, quads: Array) -> boo
 func _update_debug() -> void:
 	var t := _player_tile()
 	var lines := ["field %s  yaw %d  flags %s" % [field_id, int(fd.d.get("field_yaw", 0)), str(flags.keys())]]
-	lines.append("tile (%.2f, %.2f)  passable %s" % [t.x, t.y, fd.is_passable_world(player.position)])
+	lines.append("tile (%.2f, %.2f)  passable %s  ground %.2f m  terrain occl %d" % [t.x, t.y, fd.is_passable_world(player.position), player.position.y - 0.02, _terrain_occl_frames])
 	lines.append("faces %d  AO %.2fs (%s)  lights %d" % [builder.gen.faces.size(), builder.bake_seconds, "cache" if builder.cache_hit else "baked", builder.lights.size()])
 	lines.append("frame %.2f ms  fps %d  fade frames %d  (process %.2f ms)" % [_frame_ms(), int(round(1000.0 / maxf(_frame_ms(), 0.01))), _fade_frames, Performance.get_monitor(Performance.TIME_PROCESS) * 1000.0])
 	lines.append("[WASD] 移動（画面基準）  [E] 調べる  [F2] 通行判定  [Esc] 終了")
@@ -594,7 +626,7 @@ func _demo_step(delta: float) -> void:
 			avg += v
 			mx = maxf(mx, v)
 		avg /= maxf(ft.size(), 1)
-		print("WALK_DEMO {\"seconds\":%.1f,\"frames\":%d,\"frame_ms_avg\":%.2f,\"frame_ms_max\":%.2f,\"fade_frames\":%d,\"distance_m\":%.1f}" % [secs, ft.size(), avg, mx, _fade_frames, FieldData.tile_to_world(_demo_state["from"].x, _demo_state["from"].y).distance_to(target)])
+		print("WALK_DEMO {\"seconds\":%.1f,\"frames\":%d,\"frame_ms_avg\":%.2f,\"frame_ms_max\":%.2f,\"fade_frames\":%d,\"terrain_occl_frames\":%d,\"distance_m\":%.1f}" % [secs, ft.size(), avg, mx, _fade_frames, _terrain_occl_frames, FieldData.tile_to_world(_demo_state["from"].x, _demo_state["from"].y).distance_to(target)])
 		var rel := field_root.to_local(get_viewport().get_camera_3d().global_position) - player.position
 		print("WALK_DEMO_DEBUG toward_cam_measured=(%.2f, %.2f) toward_cam_layout=%s faded=%s" % [Vector2(rel.x, rel.z).normalized().x, Vector2(rel.x, rel.z).normalized().y, str(fd.layout.toward_cam), str(_fade_ids)])
 		if OS.get_cmdline_user_args().has("quit_after_demo=1"):
@@ -613,7 +645,7 @@ func _apply_areamask() -> void:
 		var kind := "wall"
 		if n.begins_with("margin_"):
 			kind = "margin"
-		elif n == "ground" or n.begins_with("walk_") or n.begins_with("narrow_") or n.begins_with("open_") or n.begins_with("patch_"):
+		elif n == "ground" or n.begins_with("walk_") or n.begins_with("narrow_") or n.begins_with("open_") or n.begins_with("patch_") or n.begins_with("tflat") or n.begins_with("tslope") or n.begins_with("ttread"):
 			kind = "ground"
 		elif "_roof" in n or n.ends_with("_top") or "_soffit" in n or "_gable" in n or n.ends_with("_cap"):
 			kind = "roof"

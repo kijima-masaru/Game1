@@ -1,0 +1,1563 @@
+{
+ "format": 2,
+ "id": "F04",
+ "name": "八柱の谷戸",
+ "size": [
+  48,
+  32
+ ],
+ "elevation": 4,
+ "biome": "orchard_valley",
+ "scene": "res://scenes/fields/f04_yahashira.tscn",
+ "field_yaw": 50,
+ "sun_az": {
+  "evening": 145
+ },
+ "note": "歩ける範囲は F04_walkable.png（唯一の真実）。座標は refs/field/F04.png と docs/field/F04_spec.md（調べ物・出入口はそのまま）。道は 6 タイル以上に広げた。 高さは F04_height.png（1 階調 = 0.15 m）。 tools/gen_fields_*.py が生成（フェーズ 12〜14）。谷戸の坂と崖の高さは資料に無いので仮（西 0.6 m → 東 3.6 m、南の崖は最大 3.6 m）。",
+ "walkable": "res://data/fields/F04_walkable.png",
+ "height": "res://data/fields/F04_height.png",
+ "terrain": {
+  "wall": "rock",
+  "rects": [
+   {
+    "kind": "slope",
+    "rect": [
+     0,
+     0,
+     48,
+     30
+    ]
+   }
+  ]
+ },
+ "ground": {
+  "walk": "grass",
+  "narrow": "dirt",
+  "open": "grass",
+  "default": "grass",
+  "patches": [
+   {
+    "id": "p000",
+    "rect": [
+     0,
+     4,
+     31,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p001",
+    "rect": [
+     0,
+     5,
+     31,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p002",
+    "rect": [
+     0,
+     6,
+     31,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p003",
+    "rect": [
+     0,
+     7,
+     31,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p004",
+    "rect": [
+     0,
+     8,
+     31,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p005",
+    "rect": [
+     0,
+     9,
+     31,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p006",
+    "rect": [
+     4,
+     10,
+     26,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p007",
+    "rect": [
+     30,
+     10,
+     12,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p008",
+    "rect": [
+     42,
+     10,
+     5,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p009",
+    "rect": [
+     4,
+     11,
+     36,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p010",
+    "rect": [
+     40,
+     11,
+     2,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p011",
+    "rect": [
+     42,
+     11,
+     5,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p012",
+    "rect": [
+     4,
+     12,
+     23,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p013",
+    "rect": [
+     33,
+     12,
+     7,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p014",
+    "rect": [
+     40,
+     12,
+     2,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p015",
+    "rect": [
+     42,
+     12,
+     5,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p016",
+    "rect": [
+     4,
+     13,
+     23,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p017",
+    "rect": [
+     33,
+     13,
+     7,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p018",
+    "rect": [
+     40,
+     13,
+     2,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p019",
+    "rect": [
+     42,
+     13,
+     5,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p020",
+    "rect": [
+     4,
+     14,
+     23,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p021",
+    "rect": [
+     33,
+     14,
+     7,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p022",
+    "rect": [
+     40,
+     14,
+     2,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p023",
+    "rect": [
+     42,
+     14,
+     5,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p024",
+    "rect": [
+     4,
+     15,
+     23,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p025",
+    "rect": [
+     33,
+     15,
+     7,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p026",
+    "rect": [
+     40,
+     15,
+     2,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p027",
+    "rect": [
+     42,
+     15,
+     5,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p028",
+    "rect": [
+     4,
+     16,
+     23,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p029",
+    "rect": [
+     33,
+     16,
+     7,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p030",
+    "rect": [
+     40,
+     16,
+     2,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p031",
+    "rect": [
+     42,
+     16,
+     5,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p032",
+    "rect": [
+     4,
+     17,
+     36,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p033",
+    "rect": [
+     40,
+     17,
+     2,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p034",
+    "rect": [
+     42,
+     17,
+     5,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p035",
+    "rect": [
+     4,
+     18,
+     36,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p036",
+    "rect": [
+     40,
+     18,
+     2,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p037",
+    "rect": [
+     42,
+     18,
+     5,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p038",
+    "rect": [
+     4,
+     19,
+     36,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p039",
+    "rect": [
+     40,
+     19,
+     2,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p040",
+    "rect": [
+     42,
+     19,
+     5,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p041",
+    "rect": [
+     4,
+     20,
+     36,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p042",
+    "rect": [
+     40,
+     20,
+     2,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p043",
+    "rect": [
+     42,
+     20,
+     5,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p044",
+    "rect": [
+     4,
+     21,
+     36,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p045",
+    "rect": [
+     40,
+     21,
+     2,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p046",
+    "rect": [
+     42,
+     21,
+     5,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p047",
+    "rect": [
+     4,
+     22,
+     36,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p048",
+    "rect": [
+     40,
+     22,
+     2,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p049",
+    "rect": [
+     42,
+     22,
+     5,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p050",
+    "rect": [
+     4,
+     23,
+     36,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p051",
+    "rect": [
+     40,
+     23,
+     2,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p052",
+    "rect": [
+     42,
+     23,
+     5,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p053",
+    "rect": [
+     4,
+     24,
+     36,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p054",
+    "rect": [
+     40,
+     24,
+     2,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p055",
+    "rect": [
+     42,
+     24,
+     5,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p056",
+    "rect": [
+     4,
+     25,
+     30,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p057",
+    "rect": [
+     34,
+     25,
+     8,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p058",
+    "rect": [
+     42,
+     25,
+     5,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p059",
+    "rect": [
+     25,
+     26,
+     9,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p060",
+    "rect": [
+     34,
+     26,
+     8,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p061",
+    "rect": [
+     42,
+     26,
+     5,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p062",
+    "rect": [
+     25,
+     27,
+     9,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p063",
+    "rect": [
+     34,
+     27,
+     8,
+     1
+    ],
+    "tex": "dirt"
+   },
+   {
+    "id": "p064",
+    "rect": [
+     42,
+     27,
+     5,
+     1
+    ],
+    "tex": "grass"
+   }
+  ]
+ },
+ "edge_fill": [
+  {
+   "rect": [
+    0,
+    0,
+    48,
+    32
+   ],
+   "kind": "none"
+  }
+ ],
+ "buildings": [
+  {
+   "id": "shed",
+   "kind": "house",
+   "width": 5,
+   "floors": 1,
+   "wall": "weatherboard",
+   "near": [
+    29,
+    17
+   ],
+   "depth": 5,
+   "height_m": 3.0,
+   "note": "放棄された農機具小屋（裸電球）"
+  }
+ ],
+ "barriers": [
+  {
+   "kind": "wire_fence",
+   "rect": [
+    24,
+    10,
+    1,
+    16
+   ]
+  }
+ ],
+ "props": [
+  {
+   "id": "o000",
+   "asset": "ph_tree_kaki",
+   "at": [
+    6.5,
+    12.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o001",
+   "asset": "ph_tree_kaki",
+   "at": [
+    10.5,
+    12.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o002",
+   "asset": "ph_tree_kaki",
+   "at": [
+    14.5,
+    12.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o003",
+   "asset": "ph_tree_kaki",
+   "at": [
+    18.5,
+    12.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o004",
+   "asset": "ph_tree_kaki",
+   "at": [
+    22.5,
+    12.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o005",
+   "asset": "ph_tree_kaki",
+   "at": [
+    6.5,
+    16.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o006",
+   "asset": "ph_tree_kaki",
+   "at": [
+    10.5,
+    16.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o007",
+   "asset": "ph_tree_kaki",
+   "at": [
+    14.5,
+    16.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o008",
+   "asset": "ph_tree_kaki",
+   "at": [
+    18.5,
+    16.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o009",
+   "asset": "ph_tree_kaki",
+   "at": [
+    22.5,
+    16.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o010",
+   "asset": "ph_tree_kaki",
+   "at": [
+    6.5,
+    20.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o011",
+   "asset": "ph_tree_kaki",
+   "at": [
+    10.5,
+    20.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o012",
+   "asset": "ph_tree_kaki",
+   "at": [
+    14.5,
+    20.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o013",
+   "asset": "ph_tree_kaki",
+   "at": [
+    18.5,
+    20.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o014",
+   "asset": "ph_tree_kaki",
+   "at": [
+    22.5,
+    20.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o015",
+   "asset": "ph_tree_kaki",
+   "at": [
+    6.5,
+    24.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o016",
+   "asset": "ph_tree_kaki",
+   "at": [
+    10.5,
+    24.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o017",
+   "asset": "ph_tree_kaki",
+   "at": [
+    14.5,
+    24.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o018",
+   "asset": "ph_tree_kaki",
+   "at": [
+    18.5,
+    24.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o019",
+   "asset": "ph_tree_kaki",
+   "at": [
+    22.5,
+    24.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "battery",
+   "asset": "obj_water_tank",
+   "at": [
+    23.5,
+    10.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o021",
+   "asset": "ph_stone_pillar",
+   "at": [
+    39.5,
+    20.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o022",
+   "asset": "ph_stone_pillar",
+   "at": [
+    34.5,
+    16.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o023",
+   "asset": "ph_stone_pillar",
+   "at": [
+    36.5,
+    18.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o024",
+   "asset": "ph_stone_pillar",
+   "at": [
+    38.5,
+    22.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o025",
+   "asset": "ph_stone_pillar",
+   "at": [
+    40.5,
+    24.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o026",
+   "asset": "ph_stone_pillar",
+   "at": [
+    33.5,
+    24.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o027",
+   "asset": "ph_stone_pillar",
+   "at": [
+    36.5,
+    21.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o028",
+   "asset": "ph_stone_pillar",
+   "at": [
+    42.5,
+    18.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "trail_sign",
+   "asset": "obj_signboard_pole",
+   "at": [
+    41.5,
+    26.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o030",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    28.5,
+    2.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o031",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    31.5,
+    2.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o032",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    36.5,
+    2.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o033",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    37.5,
+    0.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o034",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    40.5,
+    2.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o035",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    31.5,
+    3.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o036",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    34.5,
+    4.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o037",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    37.5,
+    3.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o038",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    42.5,
+    3.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o039",
+   "asset": "ph_tree_conifer",
+   "at": [
+    0.5,
+    29.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o040",
+   "asset": "ph_tree_conifer",
+   "at": [
+    3.5,
+    28.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o041",
+   "asset": "ph_tree_conifer",
+   "at": [
+    5.5,
+    29.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o042",
+   "asset": "ph_tree_conifer",
+   "at": [
+    7.5,
+    28.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o043",
+   "asset": "ph_tree_conifer",
+   "at": [
+    8.5,
+    28.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o044",
+   "asset": "ph_tree_conifer",
+   "at": [
+    11.5,
+    28.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o045",
+   "asset": "ph_tree_conifer",
+   "at": [
+    13.5,
+    28.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o046",
+   "asset": "ph_tree_conifer",
+   "at": [
+    15.5,
+    29.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o047",
+   "asset": "ph_tree_conifer",
+   "at": [
+    17.5,
+    28.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o048",
+   "asset": "ph_tree_conifer",
+   "at": [
+    19.5,
+    28.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o049",
+   "asset": "ph_tree_conifer",
+   "at": [
+    20.5,
+    29.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o050",
+   "asset": "ph_tree_conifer",
+   "at": [
+    23.5,
+    28.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o051",
+   "asset": "ph_tree_conifer",
+   "at": [
+    25.5,
+    29.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o052",
+   "asset": "ph_tree_conifer",
+   "at": [
+    27.5,
+    28.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o053",
+   "asset": "ph_tree_conifer",
+   "at": [
+    29.5,
+    29.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o054",
+   "asset": "ph_tree_conifer",
+   "at": [
+    30.5,
+    29.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o055",
+   "asset": "ph_tree_conifer",
+   "at": [
+    33.5,
+    29.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o056",
+   "asset": "ph_tree_conifer",
+   "at": [
+    35.5,
+    28.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o057",
+   "asset": "ph_tree_conifer",
+   "at": [
+    37.5,
+    28.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o058",
+   "asset": "ph_tree_conifer",
+   "at": [
+    39.5,
+    28.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o059",
+   "asset": "ph_tree_conifer",
+   "at": [
+    41.5,
+    28.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o060",
+   "asset": "ph_tree_conifer",
+   "at": [
+    43.5,
+    28.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o061",
+   "asset": "ph_tree_conifer",
+   "at": [
+    45.5,
+    29.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o062",
+   "asset": "ph_tree_conifer",
+   "at": [
+    47.5,
+    29.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o063",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    4.5,
+    2.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o064",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    10.5,
+    0.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o065",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    19.5,
+    2.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o066",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    24.5,
+    3.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o067",
+   "asset": "ph_tree_conifer",
+   "at": [
+    0.5,
+    11.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o068",
+   "asset": "ph_tree_conifer",
+   "at": [
+    3.5,
+    11.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o069",
+   "asset": "ph_tree_conifer",
+   "at": [
+    0.5,
+    15.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o070",
+   "asset": "ph_tree_conifer",
+   "at": [
+    3.5,
+    13.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o071",
+   "asset": "ph_tree_conifer",
+   "at": [
+    0.5,
+    18.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o072",
+   "asset": "ph_tree_conifer",
+   "at": [
+    3.5,
+    18.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o073",
+   "asset": "ph_tree_conifer",
+   "at": [
+    0.5,
+    19.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o074",
+   "asset": "ph_tree_conifer",
+   "at": [
+    2.5,
+    22.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o075",
+   "asset": "ph_tree_conifer",
+   "at": [
+    3.5,
+    22.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o076",
+   "asset": "ph_tree_conifer",
+   "at": [
+    2.5,
+    27.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o077",
+   "asset": "ph_tree_conifer",
+   "at": [
+    4.5,
+    27.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o078",
+   "asset": "ph_tree_conifer",
+   "at": [
+    42.5,
+    0.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o079",
+   "asset": "ph_tree_conifer",
+   "at": [
+    45.5,
+    1.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o080",
+   "asset": "ph_tree_conifer",
+   "at": [
+    44.5,
+    3.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o081",
+   "asset": "ph_tree_conifer",
+   "at": [
+    46.5,
+    3.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o082",
+   "asset": "ph_tree_conifer",
+   "at": [
+    44.5,
+    6.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o083",
+   "asset": "ph_tree_conifer",
+   "at": [
+    45.5,
+    7.5
+   ],
+   "facing": "E"
+  }
+ ],
+ "collision": {
+  "extra_blocked": [],
+  "extra_open": []
+ },
+ "points": [
+  {
+   "id": "shed_door",
+   "at": [
+    28,
+    15
+   ],
+   "kind": "door",
+   "label": "農機具小屋の日誌"
+  },
+  {
+   "id": "battery",
+   "at": [
+    24,
+    10
+   ],
+   "kind": "item",
+   "label": "電気柵のバッテリー"
+  },
+  {
+   "id": "cloth_tree",
+   "at": [
+    14,
+    15
+   ],
+   "kind": "item",
+   "label": "柿の木に結ばれた布"
+  },
+  {
+   "id": "footprints",
+   "at": [
+    36,
+    12
+   ],
+   "kind": "item",
+   "label": "獣の足跡"
+  },
+  {
+   "id": "pillar",
+   "at": [
+    39,
+    20
+   ],
+   "kind": "item",
+   "label": "石柱の刻字"
+  },
+  {
+   "id": "trail_sign",
+   "at": [
+    41,
+    26
+   ],
+   "kind": "board",
+   "label": "獣道の行き止まり"
+  }
+ ],
+ "exits": [
+  {
+   "dir": "W",
+   "at": [
+    0,
+    7
+   ],
+   "to": "F03",
+   "spawn": [
+    1,
+    7
+   ],
+   "label": "農道→隧道の北口へ"
+  }
+ ],
+ "areas": []
+}

@@ -482,3 +482,92 @@ static func warm_window(size: int = 16, seed: int = 65) -> Image:
 				c = Color(0.35, 0.28, 0.15)
 			img.set_pixel(x, y, c)
 	return img
+
+
+# ============================================================================
+# 地形（フェーズ 14 T-2）。規則的な縞の明暗差は抑え、不規則な粒で情報量を出す（ART_SPEC 第 3 節 T-1b）
+# ============================================================================
+## 擁壁（コンクリート。16 texel ごとに薄い目地）
+static func retaining_wall(size: int = 32, seed: int = 81) -> Image:
+	_seed(seed)
+	var base := _at_lum(Color(0.66, 0.66, 0.64), 0.42)
+	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
+	for y in size:
+		for x in size:
+			var c := base.darkened(_rng.randf() * 0.08)
+			if y % 16 == 0:
+				c = base.darkened(0.16)
+			elif _rng.randf() < 0.04:
+				c = base.darkened(0.18)
+			img.set_pixel(x, y, c)
+	return img
+
+
+## 石垣（不揃いの石。目地は薄く）
+static func stone_wall(size: int = 32, seed: int = 83) -> Image:
+	_seed(seed)
+	var base := _at_lum(Color(0.58, 0.57, 0.55), 0.36)
+	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
+	for y in size:
+		var row := y / 8
+		for x in size:
+			var xx := (x + (5 if row % 2 == 1 else 0)) % 11
+			var c := base.darkened(_rng.randf() * 0.12)
+			if y % 8 == 0 or xx == 0:
+				c = base.darkened(0.22)
+			elif _rng.randf() < 0.06:
+				c = base.lightened(0.08)
+			img.set_pixel(x, y, c)
+	return img
+
+
+## 岩（周期なしの粒。青灰）
+static func rock(size: int = 32, seed: int = 85) -> Image:
+	_seed(seed)
+	var base := Color(0.40, 0.42, 0.46)
+	var pal := [base, base.darkened(0.18), base.darkened(0.32), base.lightened(0.10), Color(0.44, 0.42, 0.40)]
+	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
+	for y in size:
+		for x in size:
+			img.set_pixel(x, y, _pick(pal, [0.4, 0.22, 0.12, 0.14, 0.12]))
+	return img
+
+
+## 土（土塁・法面・畦。黄褐色、彩度は路面程度）
+static func earth(size: int = 32, seed: int = 87) -> Image:
+	_seed(seed)
+	var base := Color(0.42, 0.36, 0.28)
+	var pal := [base, base.darkened(0.15), base.darkened(0.3), base.lightened(0.08), Color(0.38, 0.38, 0.28)]
+	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
+	for y in size:
+		for x in size:
+			img.set_pixel(x, y, _pick(pal, [0.45, 0.2, 0.1, 0.15, 0.1]))
+	return img
+
+
+## 石段の踏面（stone_path より目地を薄く、粒を粗く）
+static func stone_step(size: int = 32, seed: int = 89) -> Image:
+	_seed(seed)
+	var base := Color(0.50, 0.50, 0.51)
+	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
+	for y in size:
+		for x in size:
+			var c := base.darkened(_rng.randf() * 0.12)
+			if x % 16 == 0:
+				c = base.darkened(0.2)
+			elif _rng.randf() < 0.05:
+				c = base.lightened(0.06)
+			img.set_pixel(x, y, c)
+	return img
+
+
+## 水田（8 月。稲の緑と水面の暗さ。周期なし）
+static func paddy(size: int = 32, seed: int = 91) -> Image:
+	_seed(seed)
+	var base := Color(0.26, 0.36, 0.22)
+	var pal := [base, base.darkened(0.2), base.lightened(0.08), Color(0.20, 0.28, 0.30), base.darkened(0.35)]
+	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
+	for y in size:
+		for x in size:
+			img.set_pixel(x, y, _pick(pal, [0.4, 0.2, 0.15, 0.15, 0.1]))
+	return img

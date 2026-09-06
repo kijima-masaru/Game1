@@ -1,0 +1,3674 @@
+{
+ "format": 2,
+ "id": "F08",
+ "name": "臥牛山 天神社",
+ "size": [
+  40,
+  48
+ ],
+ "elevation": 5,
+ "biome": "hilltop_shrine",
+ "scene": "res://scenes/fields/f08_tenjin.tscn",
+ "field_yaw": 50,
+ "sun_az": {
+  "evening": 235
+ },
+ "note": "歩ける範囲は F08_walkable.png（唯一の真実）。座標は refs/field/F08.png と docs/field/F08_spec.md（調べ物・出入口はそのまま）。道は 6 タイル以上に広げた。 高さは F08_height.png（1 階調 = 0.15 m）。 tools/gen_fields_*.py が生成（フェーズ 12〜14）。石段は地図の 14 タイルに 56 段（8.4 m）。資料の約 200 段は F07 側と画面外の登りとして扱う（DEVIATIONS.md）。",
+ "walkable": "res://data/fields/F08_walkable.png",
+ "height": "res://data/fields/F08_height.png",
+ "terrain": {
+  "wall": "rock",
+  "rects": [
+   {
+    "kind": "stairs",
+    "rect": [
+     8,
+     3,
+     2,
+     14
+    ],
+    "wall": "stone_wall"
+   }
+  ]
+ },
+ "ground": {
+  "walk": "grass",
+  "narrow": "stone_step",
+  "open": "grass",
+  "default": "grass",
+  "patches": [
+   {
+    "id": "p000",
+    "rect": [
+     8,
+     2,
+     7,
+     1
+    ],
+    "tex": "gravel"
+   },
+   {
+    "id": "p001",
+    "rect": [
+     20,
+     2,
+     4,
+     1
+    ],
+    "tex": "gravel"
+   },
+   {
+    "id": "p002",
+    "rect": [
+     8,
+     3,
+     2,
+     1
+    ],
+    "tex": "stone_step"
+   },
+   {
+    "id": "p003",
+    "rect": [
+     11,
+     3,
+     4,
+     1
+    ],
+    "tex": "gravel"
+   },
+   {
+    "id": "p004",
+    "rect": [
+     20,
+     3,
+     4,
+     1
+    ],
+    "tex": "gravel"
+   },
+   {
+    "id": "p005",
+    "rect": [
+     8,
+     4,
+     2,
+     1
+    ],
+    "tex": "stone_step"
+   },
+   {
+    "id": "p006",
+    "rect": [
+     11,
+     4,
+     13,
+     1
+    ],
+    "tex": "gravel"
+   },
+   {
+    "id": "p007",
+    "rect": [
+     8,
+     5,
+     2,
+     1
+    ],
+    "tex": "stone_step"
+   },
+   {
+    "id": "p008",
+    "rect": [
+     11,
+     5,
+     3,
+     1
+    ],
+    "tex": "gravel"
+   },
+   {
+    "id": "p009",
+    "rect": [
+     21,
+     5,
+     3,
+     1
+    ],
+    "tex": "gravel"
+   },
+   {
+    "id": "p010",
+    "rect": [
+     8,
+     6,
+     2,
+     1
+    ],
+    "tex": "stone_step"
+   },
+   {
+    "id": "p011",
+    "rect": [
+     11,
+     6,
+     3,
+     1
+    ],
+    "tex": "gravel"
+   },
+   {
+    "id": "p012",
+    "rect": [
+     21,
+     6,
+     3,
+     1
+    ],
+    "tex": "gravel"
+   },
+   {
+    "id": "p013",
+    "rect": [
+     8,
+     7,
+     2,
+     1
+    ],
+    "tex": "stone_step"
+   },
+   {
+    "id": "p014",
+    "rect": [
+     11,
+     7,
+     3,
+     1
+    ],
+    "tex": "gravel"
+   },
+   {
+    "id": "p015",
+    "rect": [
+     21,
+     7,
+     3,
+     1
+    ],
+    "tex": "gravel"
+   },
+   {
+    "id": "p016",
+    "rect": [
+     8,
+     8,
+     2,
+     1
+    ],
+    "tex": "stone_step"
+   },
+   {
+    "id": "p017",
+    "rect": [
+     11,
+     8,
+     3,
+     1
+    ],
+    "tex": "gravel"
+   },
+   {
+    "id": "p018",
+    "rect": [
+     21,
+     8,
+     3,
+     1
+    ],
+    "tex": "gravel"
+   },
+   {
+    "id": "p019",
+    "rect": [
+     8,
+     9,
+     2,
+     1
+    ],
+    "tex": "stone_step"
+   },
+   {
+    "id": "p020",
+    "rect": [
+     11,
+     9,
+     13,
+     1
+    ],
+    "tex": "gravel"
+   },
+   {
+    "id": "p021",
+    "rect": [
+     8,
+     10,
+     2,
+     1
+    ],
+    "tex": "stone_step"
+   },
+   {
+    "id": "p022",
+    "rect": [
+     11,
+     10,
+     13,
+     1
+    ],
+    "tex": "gravel"
+   },
+   {
+    "id": "p023",
+    "rect": [
+     8,
+     11,
+     2,
+     1
+    ],
+    "tex": "stone_step"
+   },
+   {
+    "id": "p024",
+    "rect": [
+     11,
+     11,
+     13,
+     1
+    ],
+    "tex": "gravel"
+   },
+   {
+    "id": "p025",
+    "rect": [
+     8,
+     12,
+     2,
+     1
+    ],
+    "tex": "stone_step"
+   },
+   {
+    "id": "p026",
+    "rect": [
+     11,
+     12,
+     28,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p027",
+    "rect": [
+     8,
+     13,
+     2,
+     1
+    ],
+    "tex": "stone_step"
+   },
+   {
+    "id": "p028",
+    "rect": [
+     11,
+     13,
+     28,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p029",
+    "rect": [
+     8,
+     14,
+     2,
+     1
+    ],
+    "tex": "stone_step"
+   },
+   {
+    "id": "p030",
+    "rect": [
+     11,
+     14,
+     28,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p031",
+    "rect": [
+     8,
+     15,
+     2,
+     1
+    ],
+    "tex": "stone_step"
+   },
+   {
+    "id": "p032",
+    "rect": [
+     11,
+     15,
+     28,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p033",
+    "rect": [
+     0,
+     16,
+     8,
+     1
+    ],
+    "tex": "stone_path"
+   },
+   {
+    "id": "p034",
+    "rect": [
+     8,
+     16,
+     2,
+     1
+    ],
+    "tex": "stone_step"
+   },
+   {
+    "id": "p035",
+    "rect": [
+     11,
+     16,
+     28,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p036",
+    "rect": [
+     0,
+     17,
+     8,
+     1
+    ],
+    "tex": "stone_path"
+   },
+   {
+    "id": "p037",
+    "rect": [
+     11,
+     17,
+     28,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p038",
+    "rect": [
+     0,
+     18,
+     8,
+     1
+    ],
+    "tex": "stone_path"
+   },
+   {
+    "id": "p039",
+    "rect": [
+     11,
+     18,
+     28,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p040",
+    "rect": [
+     11,
+     19,
+     28,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p041",
+    "rect": [
+     11,
+     20,
+     28,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p042",
+    "rect": [
+     11,
+     21,
+     28,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p043",
+    "rect": [
+     11,
+     22,
+     28,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p044",
+    "rect": [
+     11,
+     23,
+     28,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p045",
+    "rect": [
+     11,
+     24,
+     28,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p046",
+    "rect": [
+     11,
+     25,
+     28,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p047",
+    "rect": [
+     11,
+     26,
+     28,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p048",
+    "rect": [
+     11,
+     27,
+     28,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p049",
+    "rect": [
+     11,
+     28,
+     28,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p050",
+    "rect": [
+     11,
+     29,
+     28,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p051",
+    "rect": [
+     11,
+     30,
+     28,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p052",
+    "rect": [
+     11,
+     31,
+     28,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p053",
+    "rect": [
+     11,
+     32,
+     28,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p054",
+    "rect": [
+     11,
+     33,
+     28,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p055",
+    "rect": [
+     11,
+     34,
+     28,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p056",
+    "rect": [
+     11,
+     35,
+     28,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p057",
+    "rect": [
+     11,
+     36,
+     28,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p058",
+    "rect": [
+     11,
+     37,
+     28,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p059",
+    "rect": [
+     11,
+     38,
+     28,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p060",
+    "rect": [
+     11,
+     39,
+     28,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p061",
+    "rect": [
+     11,
+     40,
+     28,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p062",
+    "rect": [
+     11,
+     41,
+     28,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p063",
+    "rect": [
+     11,
+     42,
+     28,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p064",
+    "rect": [
+     11,
+     43,
+     28,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p065",
+    "rect": [
+     11,
+     44,
+     28,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p066",
+    "rect": [
+     31,
+     45,
+     8,
+     1
+    ],
+    "tex": "stone_path"
+   },
+   {
+    "id": "p067",
+    "rect": [
+     31,
+     46,
+     8,
+     1
+    ],
+    "tex": "stone_path"
+   },
+   {
+    "id": "p068",
+    "rect": [
+     31,
+     47,
+     8,
+     1
+    ],
+    "tex": "stone_path"
+   }
+  ]
+ },
+ "edge_fill": [
+  {
+   "rect": [
+    0,
+    0,
+    40,
+    48
+   ],
+   "kind": "none"
+  }
+ ],
+ "buildings": [
+  {
+   "id": "haiden",
+   "kind": "temple_hall",
+   "width": 7,
+   "floors": 1,
+   "wall": "plaster",
+   "near": [
+    17,
+    9
+   ],
+   "depth": 4,
+   "height_m": 4.6,
+   "note": "拝殿"
+  },
+  {
+   "id": "honden",
+   "kind": "temple_hall",
+   "width": 5,
+   "floors": 1,
+   "wall": "plaster",
+   "near": [
+    17,
+    4
+   ],
+   "depth": 2,
+   "height_m": 3.6,
+   "note": "本殿"
+  },
+  {
+   "id": "torii",
+   "kind": "temple_gate",
+   "width": 3,
+   "floors": 1,
+   "wall": "wood",
+   "at": [
+    9,
+    1
+   ],
+   "depth": 1,
+   "front": "S",
+   "note": "鳥居"
+  }
+ ],
+ "barriers": [],
+ "props": [
+  {
+   "id": "cow",
+   "asset": "ph_cow_statue",
+   "at": [
+    11.5,
+    4.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "ema",
+   "asset": "obj_bulletin_board",
+   "at": [
+    19.5,
+    4.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "basin",
+   "asset": "obj_water_basin",
+   "at": [
+    11.5,
+    9.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "mask_box",
+   "asset": "obj_offering_box",
+   "at": [
+    19.5,
+    9.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o004",
+   "asset": "obj_stone_lantern",
+   "at": [
+    13.5,
+    10.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o005",
+   "asset": "obj_stone_lantern",
+   "at": [
+    18.5,
+    10.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o006",
+   "asset": "obj_block_wall",
+   "at": [
+    12.0,
+    8.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o007",
+   "asset": "obj_block_wall",
+   "at": [
+    21.0,
+    8.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o008",
+   "asset": "ph_tree_ume",
+   "at": [
+    11.5,
+    13.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o009",
+   "asset": "ph_tree_ume",
+   "at": [
+    14.5,
+    13.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o010",
+   "asset": "ph_tree_ume",
+   "at": [
+    17.5,
+    13.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o011",
+   "asset": "ph_tree_ume",
+   "at": [
+    20.5,
+    13.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o012",
+   "asset": "ph_tree_ume",
+   "at": [
+    23.5,
+    13.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o013",
+   "asset": "ph_tree_ume",
+   "at": [
+    26.5,
+    13.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o014",
+   "asset": "ph_tree_ume",
+   "at": [
+    29.5,
+    13.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o015",
+   "asset": "ph_tree_ume",
+   "at": [
+    32.5,
+    13.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o016",
+   "asset": "ph_tree_ume",
+   "at": [
+    35.5,
+    13.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o017",
+   "asset": "ph_tree_ume",
+   "at": [
+    12.0,
+    16.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o018",
+   "asset": "ph_tree_ume",
+   "at": [
+    15.0,
+    16.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o019",
+   "asset": "ph_tree_ume",
+   "at": [
+    18.0,
+    16.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o020",
+   "asset": "ph_tree_ume",
+   "at": [
+    21.0,
+    16.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o021",
+   "asset": "ph_tree_ume",
+   "at": [
+    24.0,
+    16.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o022",
+   "asset": "ph_tree_ume",
+   "at": [
+    27.0,
+    16.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o023",
+   "asset": "ph_tree_ume",
+   "at": [
+    30.0,
+    16.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o024",
+   "asset": "ph_tree_ume",
+   "at": [
+    33.0,
+    16.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o025",
+   "asset": "ph_tree_ume",
+   "at": [
+    36.0,
+    16.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o026",
+   "asset": "ph_tree_ume",
+   "at": [
+    11.5,
+    19.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o027",
+   "asset": "ph_tree_ume",
+   "at": [
+    14.5,
+    19.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o028",
+   "asset": "ph_tree_ume",
+   "at": [
+    17.5,
+    19.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o029",
+   "asset": "ph_tree_ume",
+   "at": [
+    20.5,
+    19.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o030",
+   "asset": "ph_tree_ume",
+   "at": [
+    23.5,
+    19.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o031",
+   "asset": "ph_tree_ume",
+   "at": [
+    26.5,
+    19.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o032",
+   "asset": "ph_tree_ume",
+   "at": [
+    29.5,
+    19.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o033",
+   "asset": "ph_tree_ume",
+   "at": [
+    32.5,
+    19.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o034",
+   "asset": "ph_tree_ume",
+   "at": [
+    35.5,
+    19.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o035",
+   "asset": "ph_tree_ume",
+   "at": [
+    12.0,
+    22.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o036",
+   "asset": "ph_tree_ume",
+   "at": [
+    15.0,
+    22.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o037",
+   "asset": "ph_tree_ume",
+   "at": [
+    18.0,
+    22.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o038",
+   "asset": "ph_tree_ume",
+   "at": [
+    21.0,
+    22.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o039",
+   "asset": "ph_tree_ume",
+   "at": [
+    24.0,
+    22.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o040",
+   "asset": "ph_tree_ume",
+   "at": [
+    27.0,
+    22.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o041",
+   "asset": "ph_tree_ume",
+   "at": [
+    30.0,
+    22.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o042",
+   "asset": "ph_tree_ume",
+   "at": [
+    33.0,
+    22.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o043",
+   "asset": "ph_tree_ume",
+   "at": [
+    36.0,
+    22.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o044",
+   "asset": "ph_tree_ume",
+   "at": [
+    11.5,
+    25.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o045",
+   "asset": "ph_tree_ume",
+   "at": [
+    14.5,
+    25.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o046",
+   "asset": "ph_tree_ume",
+   "at": [
+    17.5,
+    25.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o047",
+   "asset": "ph_tree_ume",
+   "at": [
+    20.5,
+    25.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o048",
+   "asset": "ph_tree_ume",
+   "at": [
+    23.5,
+    25.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o049",
+   "asset": "ph_tree_ume",
+   "at": [
+    26.5,
+    25.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o050",
+   "asset": "ph_tree_ume",
+   "at": [
+    29.5,
+    25.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o051",
+   "asset": "ph_tree_ume",
+   "at": [
+    32.5,
+    25.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o052",
+   "asset": "ph_tree_ume",
+   "at": [
+    35.5,
+    25.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o053",
+   "asset": "ph_tree_ume",
+   "at": [
+    12.0,
+    28.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o054",
+   "asset": "ph_tree_ume",
+   "at": [
+    15.0,
+    28.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o055",
+   "asset": "ph_tree_ume",
+   "at": [
+    18.0,
+    28.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o056",
+   "asset": "ph_tree_ume",
+   "at": [
+    21.0,
+    28.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o057",
+   "asset": "ph_tree_ume",
+   "at": [
+    30.0,
+    28.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o058",
+   "asset": "ph_tree_ume",
+   "at": [
+    33.0,
+    28.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o059",
+   "asset": "ph_tree_ume",
+   "at": [
+    36.0,
+    28.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o060",
+   "asset": "ph_tree_ume",
+   "at": [
+    11.5,
+    31.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o061",
+   "asset": "ph_tree_ume",
+   "at": [
+    14.5,
+    31.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o062",
+   "asset": "ph_tree_ume",
+   "at": [
+    17.5,
+    31.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o063",
+   "asset": "ph_tree_ume",
+   "at": [
+    20.5,
+    31.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o064",
+   "asset": "ph_tree_ume",
+   "at": [
+    23.5,
+    31.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o065",
+   "asset": "ph_tree_ume",
+   "at": [
+    26.5,
+    31.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o066",
+   "asset": "ph_tree_ume",
+   "at": [
+    29.5,
+    31.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o067",
+   "asset": "ph_tree_ume",
+   "at": [
+    32.5,
+    31.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o068",
+   "asset": "ph_tree_ume",
+   "at": [
+    35.5,
+    31.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o069",
+   "asset": "ph_tree_ume",
+   "at": [
+    12.0,
+    34.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o070",
+   "asset": "ph_tree_ume",
+   "at": [
+    15.0,
+    34.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o071",
+   "asset": "ph_tree_ume",
+   "at": [
+    18.0,
+    34.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o072",
+   "asset": "ph_tree_ume",
+   "at": [
+    21.0,
+    34.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o073",
+   "asset": "ph_tree_ume",
+   "at": [
+    24.0,
+    34.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o074",
+   "asset": "ph_tree_ume",
+   "at": [
+    27.0,
+    34.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o075",
+   "asset": "ph_tree_ume",
+   "at": [
+    30.0,
+    34.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o076",
+   "asset": "ph_tree_ume",
+   "at": [
+    33.0,
+    34.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o077",
+   "asset": "ph_tree_ume",
+   "at": [
+    36.0,
+    34.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o078",
+   "asset": "ph_tree_ume",
+   "at": [
+    11.5,
+    37.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o079",
+   "asset": "ph_tree_ume",
+   "at": [
+    14.5,
+    37.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o080",
+   "asset": "ph_tree_ume",
+   "at": [
+    17.5,
+    37.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o081",
+   "asset": "ph_tree_ume",
+   "at": [
+    20.5,
+    37.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o082",
+   "asset": "ph_tree_ume",
+   "at": [
+    23.5,
+    37.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o083",
+   "asset": "ph_tree_ume",
+   "at": [
+    26.5,
+    37.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o084",
+   "asset": "ph_tree_ume",
+   "at": [
+    29.5,
+    37.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o085",
+   "asset": "ph_tree_ume",
+   "at": [
+    32.5,
+    37.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o086",
+   "asset": "ph_tree_ume",
+   "at": [
+    35.5,
+    37.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o087",
+   "asset": "ph_tree_ume",
+   "at": [
+    12.0,
+    40.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o088",
+   "asset": "ph_tree_ume",
+   "at": [
+    15.0,
+    40.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o089",
+   "asset": "ph_tree_ume",
+   "at": [
+    18.0,
+    40.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o090",
+   "asset": "ph_tree_ume",
+   "at": [
+    21.0,
+    40.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o091",
+   "asset": "ph_tree_ume",
+   "at": [
+    24.0,
+    40.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o092",
+   "asset": "ph_tree_ume",
+   "at": [
+    27.0,
+    40.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o093",
+   "asset": "ph_tree_ume",
+   "at": [
+    30.0,
+    40.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o094",
+   "asset": "ph_tree_ume",
+   "at": [
+    33.0,
+    40.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o095",
+   "asset": "ph_tree_ume",
+   "at": [
+    36.0,
+    40.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o096",
+   "asset": "ph_tree_ume",
+   "at": [
+    11.5,
+    43.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o097",
+   "asset": "ph_tree_ume",
+   "at": [
+    14.5,
+    43.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o098",
+   "asset": "ph_tree_ume",
+   "at": [
+    17.5,
+    43.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o099",
+   "asset": "ph_tree_ume",
+   "at": [
+    20.5,
+    43.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o100",
+   "asset": "ph_tree_ume",
+   "at": [
+    23.5,
+    43.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o101",
+   "asset": "ph_tree_ume",
+   "at": [
+    26.5,
+    43.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o102",
+   "asset": "ph_tree_ume",
+   "at": [
+    29.5,
+    43.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o103",
+   "asset": "ph_tree_ume",
+   "at": [
+    32.5,
+    43.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o104",
+   "asset": "ph_tree_ume",
+   "at": [
+    35.5,
+    43.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "small_shrine",
+   "asset": "obj_stone_marker",
+   "at": [
+    24.5,
+    27.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o106",
+   "asset": "obj_bench",
+   "at": [
+    33.5,
+    45.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "lookout",
+   "asset": "obj_bulletin_board",
+   "at": [
+    36.5,
+    45.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o108",
+   "asset": "ph_tree_conifer",
+   "at": [
+    10.5,
+    11.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o109",
+   "asset": "ph_tree_conifer",
+   "at": [
+    12.5,
+    11.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o110",
+   "asset": "ph_tree_conifer",
+   "at": [
+    14.5,
+    11.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o111",
+   "asset": "ph_tree_conifer",
+   "at": [
+    20.5,
+    11.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o112",
+   "asset": "ph_tree_conifer",
+   "at": [
+    22.5,
+    11.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o113",
+   "asset": "ph_tree_conifer",
+   "at": [
+    0.5,
+    0.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o114",
+   "asset": "ph_tree_conifer",
+   "at": [
+    3.5,
+    1.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o115",
+   "asset": "ph_tree_conifer",
+   "at": [
+    4.5,
+    1.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o116",
+   "asset": "ph_tree_conifer",
+   "at": [
+    7.5,
+    1.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o117",
+   "asset": "ph_tree_conifer",
+   "at": [
+    1.5,
+    2.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o118",
+   "asset": "ph_tree_conifer",
+   "at": [
+    3.5,
+    3.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o119",
+   "asset": "ph_tree_conifer",
+   "at": [
+    5.5,
+    3.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o120",
+   "asset": "ph_tree_conifer",
+   "at": [
+    6.5,
+    3.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o121",
+   "asset": "ph_tree_conifer",
+   "at": [
+    1.5,
+    5.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o122",
+   "asset": "ph_tree_conifer",
+   "at": [
+    2.5,
+    4.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o123",
+   "asset": "ph_tree_conifer",
+   "at": [
+    4.5,
+    5.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o124",
+   "asset": "ph_tree_conifer",
+   "at": [
+    7.5,
+    4.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o125",
+   "asset": "ph_tree_conifer",
+   "at": [
+    0.5,
+    7.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o126",
+   "asset": "ph_tree_conifer",
+   "at": [
+    2.5,
+    7.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o127",
+   "asset": "ph_tree_conifer",
+   "at": [
+    4.5,
+    7.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o128",
+   "asset": "ph_tree_conifer",
+   "at": [
+    7.5,
+    6.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o129",
+   "asset": "ph_tree_conifer",
+   "at": [
+    1.5,
+    9.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o130",
+   "asset": "ph_tree_conifer",
+   "at": [
+    3.5,
+    9.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o131",
+   "asset": "ph_tree_conifer",
+   "at": [
+    4.5,
+    8.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o132",
+   "asset": "ph_tree_conifer",
+   "at": [
+    6.5,
+    9.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o133",
+   "asset": "ph_tree_conifer",
+   "at": [
+    0.5,
+    10.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o134",
+   "asset": "ph_tree_conifer",
+   "at": [
+    2.5,
+    10.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o135",
+   "asset": "ph_tree_conifer",
+   "at": [
+    4.5,
+    11.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o136",
+   "asset": "ph_tree_conifer",
+   "at": [
+    6.5,
+    10.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o137",
+   "asset": "ph_tree_conifer",
+   "at": [
+    1.5,
+    13.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o138",
+   "asset": "ph_tree_conifer",
+   "at": [
+    3.5,
+    12.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o139",
+   "asset": "ph_tree_conifer",
+   "at": [
+    4.5,
+    13.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o140",
+   "asset": "ph_tree_conifer",
+   "at": [
+    7.5,
+    13.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o141",
+   "asset": "ph_tree_conifer",
+   "at": [
+    1.5,
+    15.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o142",
+   "asset": "ph_tree_conifer",
+   "at": [
+    3.5,
+    15.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o143",
+   "asset": "ph_tree_conifer",
+   "at": [
+    4.5,
+    14.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o144",
+   "asset": "ph_tree_conifer",
+   "at": [
+    7.5,
+    15.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o145",
+   "asset": "ph_tree_conifer",
+   "at": [
+    1.5,
+    19.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o146",
+   "asset": "ph_tree_conifer",
+   "at": [
+    2.5,
+    19.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o147",
+   "asset": "ph_tree_conifer",
+   "at": [
+    5.5,
+    20.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o148",
+   "asset": "ph_tree_conifer",
+   "at": [
+    6.5,
+    20.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o149",
+   "asset": "ph_tree_conifer",
+   "at": [
+    1.5,
+    22.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o150",
+   "asset": "ph_tree_conifer",
+   "at": [
+    2.5,
+    21.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o151",
+   "asset": "ph_tree_conifer",
+   "at": [
+    4.5,
+    22.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o152",
+   "asset": "ph_tree_conifer",
+   "at": [
+    7.5,
+    21.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o153",
+   "asset": "ph_tree_conifer",
+   "at": [
+    0.5,
+    23.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o154",
+   "asset": "ph_tree_conifer",
+   "at": [
+    2.5,
+    24.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o155",
+   "asset": "ph_tree_conifer",
+   "at": [
+    5.5,
+    23.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o156",
+   "asset": "ph_tree_conifer",
+   "at": [
+    7.5,
+    23.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o157",
+   "asset": "ph_tree_conifer",
+   "at": [
+    1.5,
+    26.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o158",
+   "asset": "ph_tree_conifer",
+   "at": [
+    3.5,
+    26.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o159",
+   "asset": "ph_tree_conifer",
+   "at": [
+    4.5,
+    25.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o160",
+   "asset": "ph_tree_conifer",
+   "at": [
+    7.5,
+    25.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o161",
+   "asset": "ph_tree_conifer",
+   "at": [
+    0.5,
+    28.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o162",
+   "asset": "ph_tree_conifer",
+   "at": [
+    3.5,
+    27.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o163",
+   "asset": "ph_tree_conifer",
+   "at": [
+    4.5,
+    27.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o164",
+   "asset": "ph_tree_conifer",
+   "at": [
+    6.5,
+    28.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o165",
+   "asset": "ph_tree_conifer",
+   "at": [
+    1.5,
+    30.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o166",
+   "asset": "ph_tree_conifer",
+   "at": [
+    2.5,
+    30.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o167",
+   "asset": "ph_tree_conifer",
+   "at": [
+    4.5,
+    29.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o168",
+   "asset": "ph_tree_conifer",
+   "at": [
+    7.5,
+    30.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o169",
+   "asset": "ph_tree_conifer",
+   "at": [
+    1.5,
+    31.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o170",
+   "asset": "ph_tree_conifer",
+   "at": [
+    3.5,
+    32.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o171",
+   "asset": "ph_tree_conifer",
+   "at": [
+    5.5,
+    32.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o172",
+   "asset": "ph_tree_conifer",
+   "at": [
+    6.5,
+    32.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o173",
+   "asset": "ph_tree_conifer",
+   "at": [
+    1.5,
+    33.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o174",
+   "asset": "ph_tree_conifer",
+   "at": [
+    2.5,
+    33.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o175",
+   "asset": "ph_tree_conifer",
+   "at": [
+    5.5,
+    34.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o176",
+   "asset": "ph_tree_conifer",
+   "at": [
+    6.5,
+    34.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o177",
+   "asset": "ph_tree_conifer",
+   "at": [
+    0.5,
+    36.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o178",
+   "asset": "ph_tree_conifer",
+   "at": [
+    3.5,
+    35.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o179",
+   "asset": "ph_tree_conifer",
+   "at": [
+    5.5,
+    36.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o180",
+   "asset": "ph_tree_conifer",
+   "at": [
+    7.5,
+    36.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o181",
+   "asset": "ph_tree_conifer",
+   "at": [
+    0.5,
+    37.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o182",
+   "asset": "ph_tree_conifer",
+   "at": [
+    2.5,
+    38.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o183",
+   "asset": "ph_tree_conifer",
+   "at": [
+    5.5,
+    38.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o184",
+   "asset": "ph_tree_conifer",
+   "at": [
+    6.5,
+    37.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o185",
+   "asset": "ph_tree_conifer",
+   "at": [
+    1.5,
+    40.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o186",
+   "asset": "ph_tree_conifer",
+   "at": [
+    3.5,
+    40.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o187",
+   "asset": "ph_tree_conifer",
+   "at": [
+    5.5,
+    39.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o188",
+   "asset": "ph_tree_conifer",
+   "at": [
+    7.5,
+    39.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o189",
+   "asset": "ph_tree_conifer",
+   "at": [
+    0.5,
+    42.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o190",
+   "asset": "ph_tree_conifer",
+   "at": [
+    2.5,
+    42.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o191",
+   "asset": "ph_tree_conifer",
+   "at": [
+    4.5,
+    42.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o192",
+   "asset": "ph_tree_conifer",
+   "at": [
+    6.5,
+    42.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o193",
+   "asset": "ph_tree_conifer",
+   "at": [
+    0.5,
+    44.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o194",
+   "asset": "ph_tree_conifer",
+   "at": [
+    2.5,
+    44.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o195",
+   "asset": "ph_tree_conifer",
+   "at": [
+    5.5,
+    43.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o196",
+   "asset": "ph_tree_conifer",
+   "at": [
+    6.5,
+    44.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o197",
+   "asset": "ph_tree_conifer",
+   "at": [
+    1.5,
+    45.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o198",
+   "asset": "ph_tree_conifer",
+   "at": [
+    2.5,
+    46.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o199",
+   "asset": "ph_tree_conifer",
+   "at": [
+    5.5,
+    46.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o200",
+   "asset": "ph_tree_conifer",
+   "at": [
+    6.5,
+    46.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o201",
+   "asset": "ph_tree_conifer",
+   "at": [
+    3.5,
+    47.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o202",
+   "asset": "ph_tree_conifer",
+   "at": [
+    4.5,
+    47.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o203",
+   "asset": "ph_tree_conifer",
+   "at": [
+    11.5,
+    0.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o204",
+   "asset": "ph_tree_conifer",
+   "at": [
+    13.5,
+    0.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o205",
+   "asset": "ph_tree_conifer",
+   "at": [
+    15.5,
+    1.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o206",
+   "asset": "ph_tree_conifer",
+   "at": [
+    17.5,
+    0.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o207",
+   "asset": "ph_tree_conifer",
+   "at": [
+    19.5,
+    1.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o208",
+   "asset": "ph_tree_conifer",
+   "at": [
+    20.5,
+    1.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o209",
+   "asset": "ph_tree_conifer",
+   "at": [
+    22.5,
+    0.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o210",
+   "asset": "ph_tree_conifer",
+   "at": [
+    24.5,
+    1.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o211",
+   "asset": "ph_tree_conifer",
+   "at": [
+    27.5,
+    0.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o212",
+   "asset": "ph_tree_conifer",
+   "at": [
+    29.5,
+    1.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o213",
+   "asset": "ph_tree_conifer",
+   "at": [
+    30.5,
+    0.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o214",
+   "asset": "ph_tree_conifer",
+   "at": [
+    32.5,
+    1.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o215",
+   "asset": "ph_tree_conifer",
+   "at": [
+    34.5,
+    0.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o216",
+   "asset": "ph_tree_conifer",
+   "at": [
+    37.5,
+    0.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o217",
+   "asset": "ph_tree_conifer",
+   "at": [
+    38.5,
+    1.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o218",
+   "asset": "ph_tree_conifer",
+   "at": [
+    25.5,
+    2.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o219",
+   "asset": "ph_tree_conifer",
+   "at": [
+    26.5,
+    3.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o220",
+   "asset": "ph_tree_conifer",
+   "at": [
+    28.5,
+    2.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o221",
+   "asset": "ph_tree_conifer",
+   "at": [
+    30.5,
+    2.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o222",
+   "asset": "ph_tree_conifer",
+   "at": [
+    33.5,
+    3.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o223",
+   "asset": "ph_tree_conifer",
+   "at": [
+    35.5,
+    3.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o224",
+   "asset": "ph_tree_conifer",
+   "at": [
+    36.5,
+    3.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o225",
+   "asset": "ph_tree_conifer",
+   "at": [
+    39.5,
+    3.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o226",
+   "asset": "ph_tree_conifer",
+   "at": [
+    25.5,
+    5.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o227",
+   "asset": "ph_tree_conifer",
+   "at": [
+    26.5,
+    5.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o228",
+   "asset": "ph_tree_conifer",
+   "at": [
+    28.5,
+    4.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o229",
+   "asset": "ph_tree_conifer",
+   "at": [
+    31.5,
+    4.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o230",
+   "asset": "ph_tree_conifer",
+   "at": [
+    33.5,
+    4.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o231",
+   "asset": "ph_tree_conifer",
+   "at": [
+    35.5,
+    5.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o232",
+   "asset": "ph_tree_conifer",
+   "at": [
+    36.5,
+    4.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o233",
+   "asset": "ph_tree_conifer",
+   "at": [
+    39.5,
+    5.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o234",
+   "asset": "ph_tree_conifer",
+   "at": [
+    24.5,
+    6.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o235",
+   "asset": "ph_tree_conifer",
+   "at": [
+    27.5,
+    7.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o236",
+   "asset": "ph_tree_conifer",
+   "at": [
+    28.5,
+    7.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o237",
+   "asset": "ph_tree_conifer",
+   "at": [
+    31.5,
+    6.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o238",
+   "asset": "ph_tree_conifer",
+   "at": [
+    32.5,
+    7.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o239",
+   "asset": "ph_tree_conifer",
+   "at": [
+    35.5,
+    7.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o240",
+   "asset": "ph_tree_conifer",
+   "at": [
+    36.5,
+    6.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o241",
+   "asset": "ph_tree_conifer",
+   "at": [
+    39.5,
+    6.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o242",
+   "asset": "ph_tree_conifer",
+   "at": [
+    24.5,
+    8.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o243",
+   "asset": "ph_tree_conifer",
+   "at": [
+    26.5,
+    8.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o244",
+   "asset": "ph_tree_conifer",
+   "at": [
+    29.5,
+    9.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o245",
+   "asset": "ph_tree_conifer",
+   "at": [
+    30.5,
+    9.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o246",
+   "asset": "ph_tree_conifer",
+   "at": [
+    33.5,
+    9.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o247",
+   "asset": "ph_tree_conifer",
+   "at": [
+    34.5,
+    9.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o248",
+   "asset": "ph_tree_conifer",
+   "at": [
+    36.5,
+    8.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o249",
+   "asset": "ph_tree_conifer",
+   "at": [
+    39.5,
+    8.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o250",
+   "asset": "ph_tree_conifer",
+   "at": [
+    24.5,
+    11.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o251",
+   "asset": "ph_tree_conifer",
+   "at": [
+    26.5,
+    10.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o252",
+   "asset": "ph_tree_conifer",
+   "at": [
+    28.5,
+    10.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o253",
+   "asset": "ph_tree_conifer",
+   "at": [
+    31.5,
+    11.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o254",
+   "asset": "ph_tree_conifer",
+   "at": [
+    33.5,
+    11.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o255",
+   "asset": "ph_tree_conifer",
+   "at": [
+    34.5,
+    11.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o256",
+   "asset": "ph_tree_conifer",
+   "at": [
+    36.5,
+    11.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o257",
+   "asset": "ph_tree_conifer",
+   "at": [
+    38.5,
+    11.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o258",
+   "asset": "ph_tree_conifer",
+   "at": [
+    7.5,
+    19.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o259",
+   "asset": "ph_tree_conifer",
+   "at": [
+    10.5,
+    20.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o260",
+   "asset": "ph_tree_conifer",
+   "at": [
+    7.5,
+    22.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o261",
+   "asset": "ph_tree_conifer",
+   "at": [
+    10.5,
+    22.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o262",
+   "asset": "ph_tree_conifer",
+   "at": [
+    8.5,
+    24.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o263",
+   "asset": "ph_tree_conifer",
+   "at": [
+    9.5,
+    23.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o264",
+   "asset": "ph_tree_conifer",
+   "at": [
+    7.5,
+    26.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o265",
+   "asset": "ph_tree_conifer",
+   "at": [
+    9.5,
+    26.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o266",
+   "asset": "ph_tree_conifer",
+   "at": [
+    8.5,
+    28.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o267",
+   "asset": "ph_tree_conifer",
+   "at": [
+    10.5,
+    27.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o268",
+   "asset": "ph_tree_conifer",
+   "at": [
+    7.5,
+    30.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o269",
+   "asset": "ph_tree_conifer",
+   "at": [
+    9.5,
+    29.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o270",
+   "asset": "ph_tree_conifer",
+   "at": [
+    7.5,
+    32.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o271",
+   "asset": "ph_tree_conifer",
+   "at": [
+    9.5,
+    31.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o272",
+   "asset": "ph_tree_conifer",
+   "at": [
+    7.5,
+    34.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o273",
+   "asset": "ph_tree_conifer",
+   "at": [
+    10.5,
+    33.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o274",
+   "asset": "ph_tree_conifer",
+   "at": [
+    7.5,
+    35.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o275",
+   "asset": "ph_tree_conifer",
+   "at": [
+    9.5,
+    36.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o276",
+   "asset": "ph_tree_conifer",
+   "at": [
+    7.5,
+    38.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o277",
+   "asset": "ph_tree_conifer",
+   "at": [
+    9.5,
+    38.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o278",
+   "asset": "ph_tree_conifer",
+   "at": [
+    8.5,
+    39.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o279",
+   "asset": "ph_tree_conifer",
+   "at": [
+    10.5,
+    39.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o280",
+   "asset": "ph_tree_conifer",
+   "at": [
+    7.5,
+    42.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o281",
+   "asset": "ph_tree_conifer",
+   "at": [
+    9.5,
+    42.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o282",
+   "asset": "ph_tree_conifer",
+   "at": [
+    8.5,
+    43.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o283",
+   "asset": "ph_tree_conifer",
+   "at": [
+    9.5,
+    44.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o284",
+   "asset": "ph_tree_conifer",
+   "at": [
+    7.5,
+    45.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o285",
+   "asset": "ph_tree_conifer",
+   "at": [
+    10.5,
+    45.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o286",
+   "asset": "ph_tree_conifer",
+   "at": [
+    9.5,
+    47.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o287",
+   "asset": "ph_tree_conifer",
+   "at": [
+    39.5,
+    14.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o288",
+   "asset": "ph_tree_conifer",
+   "at": [
+    39.5,
+    21.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o289",
+   "asset": "ph_tree_conifer",
+   "at": [
+    39.5,
+    28.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o290",
+   "asset": "ph_tree_conifer",
+   "at": [
+    39.5,
+    35.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o291",
+   "asset": "ph_tree_conifer",
+   "at": [
+    39.5,
+    39.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o292",
+   "asset": "ph_tree_conifer",
+   "at": [
+    39.5,
+    41.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o293",
+   "asset": "ph_tree_conifer",
+   "at": [
+    39.5,
+    42.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o294",
+   "asset": "ph_tree_conifer",
+   "at": [
+    39.5,
+    47.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o295",
+   "asset": "ph_tree_conifer",
+   "at": [
+    10.5,
+    45.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o296",
+   "asset": "ph_tree_conifer",
+   "at": [
+    19.5,
+    45.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o297",
+   "asset": "ph_tree_conifer",
+   "at": [
+    26.5,
+    45.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o298",
+   "asset": "ph_tree_conifer",
+   "at": [
+    29.5,
+    45.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o299",
+   "asset": "ph_tree_conifer",
+   "at": [
+    30.5,
+    45.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o300",
+   "asset": "ph_tree_conifer",
+   "at": [
+    11.5,
+    47.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o301",
+   "asset": "ph_tree_conifer",
+   "at": [
+    12.5,
+    47.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o302",
+   "asset": "ph_tree_conifer",
+   "at": [
+    15.5,
+    47.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o303",
+   "asset": "ph_tree_conifer",
+   "at": [
+    17.5,
+    46.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o304",
+   "asset": "ph_tree_conifer",
+   "at": [
+    18.5,
+    46.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o305",
+   "asset": "ph_tree_conifer",
+   "at": [
+    21.5,
+    47.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o306",
+   "asset": "ph_tree_conifer",
+   "at": [
+    23.5,
+    47.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o307",
+   "asset": "ph_tree_conifer",
+   "at": [
+    25.5,
+    47.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o308",
+   "asset": "ph_tree_conifer",
+   "at": [
+    27.5,
+    46.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o309",
+   "asset": "ph_tree_conifer",
+   "at": [
+    29.5,
+    46.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o310",
+   "asset": "ph_tree_conifer",
+   "at": [
+    30.5,
+    47.5
+   ],
+   "facing": "E"
+  }
+ ],
+ "collision": {
+  "extra_blocked": [],
+  "extra_open": []
+ },
+ "points": [
+  {
+   "id": "cow",
+   "at": [
+    9,
+    4
+   ],
+   "kind": "item",
+   "label": "撫で牛"
+  },
+  {
+   "id": "ema",
+   "at": [
+    19,
+    4
+   ],
+   "kind": "board",
+   "label": "絵馬掛け"
+  },
+  {
+   "id": "haiden",
+   "at": [
+    14,
+    6
+   ],
+   "kind": "door",
+   "label": "拝殿"
+  },
+  {
+   "id": "basin",
+   "at": [
+    10,
+    9
+   ],
+   "kind": "item",
+   "label": "手水舎"
+  },
+  {
+   "id": "mask_box",
+   "at": [
+    19,
+    9
+   ],
+   "kind": "item",
+   "label": "面掛け所の保管箱"
+  },
+  {
+   "id": "small_shrine",
+   "at": [
+    24,
+    27
+   ],
+   "kind": "item",
+   "label": "梅林の祠"
+  },
+  {
+   "id": "lookout",
+   "at": [
+    33,
+    46
+   ],
+   "kind": "item",
+   "label": "展望所からの町の眺め"
+  }
+ ],
+ "exits": [
+  {
+   "dir": "W",
+   "at": [
+    0,
+    16
+   ],
+   "to": "F07",
+   "spawn": [
+    1,
+    16
+   ],
+   "label": "長い石段を下って光明院の裏手へ"
+  }
+ ],
+ "areas": []
+}

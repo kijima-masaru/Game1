@@ -1,0 +1,1458 @@
+{
+ "format": 2,
+ "id": "F11",
+ "name": "磐戸第一小学校",
+ "size": [
+  48,
+  40
+ ],
+ "elevation": 2,
+ "biome": "school_dungeon",
+ "scene": "res://scenes/fields/f11_school.tscn",
+ "field_yaw": 50,
+ "sun_az": {
+  "evening": 145
+ },
+ "note": "歩ける範囲は F11_walkable.png（唯一の真実）。座標は refs/field/F11.png と docs/field/F11_spec.md（調べ物・出入口はそのまま）。道は 6 タイル以上に広げた。 tools/gen_fields_*.py が生成（フェーズ 12〜14）。屋外のみ。校舎の階数は地図の窓の段数から（新校舎 3、旧校舎 2）。",
+ "walkable": "res://data/fields/F11_walkable.png",
+ "ground": {
+  "walk": "dirt",
+  "narrow": "alley",
+  "open": "grass",
+  "default": "grass",
+  "patches": [
+   {
+    "id": "p000",
+    "rect": [
+     21,
+     0,
+     4,
+     1
+    ],
+    "tex": "asphalt"
+   },
+   {
+    "id": "p001",
+    "rect": [
+     1,
+     1,
+     20,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p002",
+    "rect": [
+     21,
+     1,
+     4,
+     1
+    ],
+    "tex": "asphalt"
+   },
+   {
+    "id": "p003",
+    "rect": [
+     25,
+     1,
+     22,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p004",
+    "rect": [
+     1,
+     2,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p005",
+    "rect": [
+     46,
+     2,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p006",
+    "rect": [
+     1,
+     3,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p007",
+    "rect": [
+     46,
+     3,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p008",
+    "rect": [
+     1,
+     4,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p009",
+    "rect": [
+     46,
+     4,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p010",
+    "rect": [
+     1,
+     5,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p011",
+    "rect": [
+     46,
+     5,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p012",
+    "rect": [
+     1,
+     6,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p013",
+    "rect": [
+     46,
+     6,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p014",
+    "rect": [
+     1,
+     7,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p015",
+    "rect": [
+     46,
+     7,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p016",
+    "rect": [
+     1,
+     8,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p017",
+    "rect": [
+     46,
+     8,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p018",
+    "rect": [
+     1,
+     9,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p019",
+    "rect": [
+     46,
+     9,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p020",
+    "rect": [
+     1,
+     10,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p021",
+    "rect": [
+     46,
+     10,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p022",
+    "rect": [
+     1,
+     11,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p023",
+    "rect": [
+     46,
+     11,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p024",
+    "rect": [
+     1,
+     12,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p025",
+    "rect": [
+     46,
+     12,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p026",
+    "rect": [
+     1,
+     13,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p027",
+    "rect": [
+     46,
+     13,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p028",
+    "rect": [
+     1,
+     14,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p029",
+    "rect": [
+     46,
+     14,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p030",
+    "rect": [
+     1,
+     15,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p031",
+    "rect": [
+     46,
+     15,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p032",
+    "rect": [
+     0,
+     16,
+     2,
+     1
+    ],
+    "tex": "asphalt"
+   },
+   {
+    "id": "p033",
+    "rect": [
+     46,
+     16,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p034",
+    "rect": [
+     0,
+     17,
+     2,
+     1
+    ],
+    "tex": "asphalt"
+   },
+   {
+    "id": "p035",
+    "rect": [
+     46,
+     17,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p036",
+    "rect": [
+     0,
+     18,
+     2,
+     1
+    ],
+    "tex": "asphalt"
+   },
+   {
+    "id": "p037",
+    "rect": [
+     10,
+     18,
+     24,
+     1
+    ],
+    "tex": "sidewalk"
+   },
+   {
+    "id": "p038",
+    "rect": [
+     46,
+     18,
+     2,
+     1
+    ],
+    "tex": "asphalt"
+   },
+   {
+    "id": "p039",
+    "rect": [
+     0,
+     19,
+     2,
+     1
+    ],
+    "tex": "asphalt"
+   },
+   {
+    "id": "p040",
+    "rect": [
+     46,
+     19,
+     2,
+     1
+    ],
+    "tex": "asphalt"
+   },
+   {
+    "id": "p041",
+    "rect": [
+     0,
+     20,
+     2,
+     1
+    ],
+    "tex": "asphalt"
+   },
+   {
+    "id": "p042",
+    "rect": [
+     46,
+     20,
+     2,
+     1
+    ],
+    "tex": "asphalt"
+   },
+   {
+    "id": "p043",
+    "rect": [
+     0,
+     21,
+     2,
+     1
+    ],
+    "tex": "asphalt"
+   },
+   {
+    "id": "p044",
+    "rect": [
+     46,
+     21,
+     2,
+     1
+    ],
+    "tex": "asphalt"
+   },
+   {
+    "id": "p045",
+    "rect": [
+     1,
+     22,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p046",
+    "rect": [
+     46,
+     22,
+     2,
+     1
+    ],
+    "tex": "asphalt"
+   },
+   {
+    "id": "p047",
+    "rect": [
+     1,
+     23,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p048",
+    "rect": [
+     46,
+     23,
+     2,
+     1
+    ],
+    "tex": "asphalt"
+   },
+   {
+    "id": "p049",
+    "rect": [
+     1,
+     24,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p050",
+    "rect": [
+     46,
+     24,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p051",
+    "rect": [
+     1,
+     25,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p052",
+    "rect": [
+     46,
+     25,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p053",
+    "rect": [
+     1,
+     26,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p054",
+    "rect": [
+     46,
+     26,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p055",
+    "rect": [
+     1,
+     27,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p056",
+    "rect": [
+     46,
+     27,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p057",
+    "rect": [
+     1,
+     28,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p058",
+    "rect": [
+     46,
+     28,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p059",
+    "rect": [
+     1,
+     29,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p060",
+    "rect": [
+     46,
+     29,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p061",
+    "rect": [
+     1,
+     30,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p062",
+    "rect": [
+     10,
+     30,
+     24,
+     1
+    ],
+    "tex": "sidewalk"
+   },
+   {
+    "id": "p063",
+    "rect": [
+     46,
+     30,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p064",
+    "rect": [
+     1,
+     31,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p065",
+    "rect": [
+     46,
+     31,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p066",
+    "rect": [
+     1,
+     32,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p067",
+    "rect": [
+     46,
+     32,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p068",
+    "rect": [
+     1,
+     33,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p069",
+    "rect": [
+     46,
+     33,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p070",
+    "rect": [
+     1,
+     34,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p071",
+    "rect": [
+     46,
+     34,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p072",
+    "rect": [
+     1,
+     35,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p073",
+    "rect": [
+     46,
+     35,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p074",
+    "rect": [
+     1,
+     36,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p075",
+    "rect": [
+     46,
+     36,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p076",
+    "rect": [
+     1,
+     37,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p077",
+    "rect": [
+     46,
+     37,
+     1,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p078",
+    "rect": [
+     1,
+     38,
+     9,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p079",
+    "rect": [
+     10,
+     38,
+     6,
+     1
+    ],
+    "tex": "asphalt"
+   },
+   {
+    "id": "p080",
+    "rect": [
+     16,
+     38,
+     16,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p081",
+    "rect": [
+     32,
+     38,
+     6,
+     1
+    ],
+    "tex": "asphalt"
+   },
+   {
+    "id": "p082",
+    "rect": [
+     38,
+     38,
+     9,
+     1
+    ],
+    "tex": "grass"
+   },
+   {
+    "id": "p083",
+    "rect": [
+     10,
+     39,
+     6,
+     1
+    ],
+    "tex": "asphalt"
+   },
+   {
+    "id": "p084",
+    "rect": [
+     32,
+     39,
+     6,
+     1
+    ],
+    "tex": "asphalt"
+   }
+  ]
+ },
+ "edge_fill": [
+  {
+   "rect": [
+    0,
+    0,
+    48,
+    40
+   ],
+   "kind": "none"
+  }
+ ],
+ "buildings": [
+  {
+   "id": "new_school",
+   "kind": "school",
+   "width": 30,
+   "floors": 3,
+   "wall": "concrete",
+   "near": [
+    24,
+    10
+   ],
+   "depth": 7,
+   "height_m": 10.5,
+   "roof": "flat",
+   "note": "新校舎（RC 3 階）"
+  },
+  {
+   "id": "old_school",
+   "kind": "school",
+   "width": 9,
+   "floors": 2,
+   "wall": "weatherboard",
+   "near": [
+    35,
+    20
+   ],
+   "depth": 8,
+   "height_m": 7.2,
+   "roof": "gable",
+   "note": "旧校舎（木造 2 階）。屋内は作らない"
+  },
+  {
+   "id": "gym",
+   "kind": "gym",
+   "width": 9,
+   "floors": 1,
+   "wall": "concrete",
+   "near": [
+    7,
+    23
+   ],
+   "depth": 11,
+   "height_m": 9.0,
+   "roof": "flat",
+   "note": "体育館"
+  },
+  {
+   "id": "hutch",
+   "kind": "house",
+   "width": 3,
+   "floors": 1,
+   "wall": "weatherboard",
+   "near": [
+    5,
+    14
+   ],
+   "depth": 2,
+   "height_m": 2.2,
+   "note": "飼育小屋"
+  }
+ ],
+ "barriers": [
+  {
+   "kind": "wire_fence",
+   "rect": [
+    1,
+    1,
+    20,
+    1
+   ]
+  },
+  {
+   "kind": "wire_fence",
+   "rect": [
+    25,
+    1,
+    22,
+    1
+   ]
+  },
+  {
+   "kind": "wire_fence",
+   "rect": [
+    1,
+    38,
+    9,
+    1
+   ]
+  },
+  {
+   "kind": "wire_fence",
+   "rect": [
+    16,
+    38,
+    16,
+    1
+   ]
+  },
+  {
+   "kind": "wire_fence",
+   "rect": [
+    38,
+    38,
+    9,
+    1
+   ]
+  },
+  {
+   "kind": "wire_fence",
+   "rect": [
+    1,
+    1,
+    1,
+    15
+   ]
+  },
+  {
+   "kind": "wire_fence",
+   "rect": [
+    1,
+    22,
+    1,
+    17
+   ]
+  },
+  {
+   "kind": "wire_fence",
+   "rect": [
+    46,
+    1,
+    1,
+    17
+   ]
+  },
+  {
+   "kind": "wire_fence",
+   "rect": [
+    46,
+    24,
+    1,
+    15
+   ]
+  }
+ ],
+ "props": [
+  {
+   "id": "pedestal",
+   "asset": "obj_stone_marker",
+   "at": [
+    14.5,
+    11.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "platform",
+   "asset": "obj_bench",
+   "at": [
+    24.5,
+    14.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "weather_box",
+   "asset": "obj_water_tank",
+   "at": [
+    9.5,
+    14.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o003",
+   "asset": "obj_hedge",
+   "at": [
+    12.5,
+    36.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o004",
+   "asset": "obj_hedge",
+   "at": [
+    18.5,
+    36.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o005",
+   "asset": "obj_hedge",
+   "at": [
+    24.5,
+    36.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o006",
+   "asset": "obj_hedge",
+   "at": [
+    30.5,
+    36.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o007",
+   "asset": "obj_street_light_led",
+   "at": [
+    3.5,
+    3.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o008",
+   "asset": "obj_street_light_led",
+   "at": [
+    44.5,
+    3.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o009",
+   "asset": "obj_street_light_led",
+   "at": [
+    3.5,
+    21.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o010",
+   "asset": "obj_street_light_led",
+   "at": [
+    44.5,
+    12.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o011",
+   "asset": "obj_street_light_led",
+   "at": [
+    20.5,
+    36.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o012",
+   "asset": "obj_street_light_led",
+   "at": [
+    40.5,
+    36.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o013",
+   "asset": "obj_flag_pole",
+   "at": [
+    22.5,
+    11.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o014",
+   "asset": "obj_bicycle_rack",
+   "at": [
+    42.5,
+    29.5
+   ],
+   "facing": "N"
+  },
+  {
+   "id": "o015",
+   "asset": "obj_bicycle_rack",
+   "at": [
+    42.5,
+    31.5
+   ],
+   "facing": "N"
+  },
+  {
+   "id": "o016",
+   "asset": "obj_water_basin",
+   "at": [
+    13.5,
+    24.5
+   ],
+   "facing": "S"
+  },
+  {
+   "id": "o017",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    9.5,
+    0.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o018",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    15.5,
+    3.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o019",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    16.5,
+    0.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o020",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    27.5,
+    3.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o021",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    43.5,
+    0.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o022",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    47.5,
+    3.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o023",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    17.5,
+    39.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o024",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    27.5,
+    39.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o025",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    43.5,
+    39.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o026",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    0.5,
+    8.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o027",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    0.5,
+    23.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o028",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    0.5,
+    29.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o029",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    47.5,
+    7.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o030",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    47.5,
+    29.5
+   ],
+   "facing": "E"
+  },
+  {
+   "id": "o031",
+   "asset": "ph_tree_broadleaf",
+   "at": [
+    47.5,
+    36.5
+   ],
+   "facing": "E"
+  }
+ ],
+ "collision": {
+  "extra_blocked": [],
+  "extra_open": []
+ },
+ "points": [
+  {
+   "id": "staff_room",
+   "at": [
+    24,
+    8
+   ],
+   "kind": "door",
+   "label": "新校舎 職員室"
+  },
+  {
+   "id": "old_entrance",
+   "at": [
+    36,
+    20
+   ],
+   "kind": "door",
+   "label": "旧校舎の昇降口"
+  },
+  {
+   "id": "pedestal",
+   "at": [
+    14,
+    11
+   ],
+   "kind": "item",
+   "label": "像の台座"
+  },
+  {
+   "id": "platform",
+   "at": [
+    24,
+    14
+   ],
+   "kind": "item",
+   "label": "朝礼台"
+  },
+  {
+   "id": "gym_door",
+   "at": [
+    7,
+    24
+   ],
+   "kind": "door",
+   "label": "体育館"
+  },
+  {
+   "id": "hutch",
+   "at": [
+    5,
+    13
+   ],
+   "kind": "item",
+   "label": "飼育小屋"
+  },
+  {
+   "id": "weather_box",
+   "at": [
+    9,
+    14
+   ],
+   "kind": "item",
+   "label": "百葉箱"
+  }
+ ],
+ "exits": [
+  {
+   "dir": "N",
+   "at": [
+    22,
+    0
+   ],
+   "to": "F07",
+   "spawn": [
+    22,
+    1
+   ],
+   "label": "正門→坂→光明院"
+  },
+  {
+   "dir": "W",
+   "at": [
+    0,
+    18
+   ],
+   "to": "F12",
+   "spawn": [
+    1,
+    18
+   ],
+   "label": "西門→団地"
+  },
+  {
+   "dir": "S",
+   "at": [
+    12,
+    39
+   ],
+   "to": "F13",
+   "spawn": [
+    12,
+    38
+   ],
+   "label": "南門→ニュータウン"
+  },
+  {
+   "dir": "S",
+   "at": [
+    34,
+    39
+   ],
+   "to": "F10",
+   "spawn": [
+    34,
+    38
+   ],
+   "label": "裏門→運動広場"
+  },
+  {
+   "dir": "E",
+   "at": [
+    47,
+    20
+   ],
+   "to": "F14",
+   "spawn": [
+    46,
+    20
+   ],
+   "label": "東の通用口→朝和の里"
+  }
+ ],
+ "areas": []
+}

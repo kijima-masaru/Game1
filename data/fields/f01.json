@@ -13,7 +13,7 @@
  "sun_az": {
   "evening": 235
  },
- "note": "歩ける範囲は F01_walkable.png（唯一の真実）。座標は refs/field/F01.png と docs/field/F01_spec.md（調べ物・出入口はそのまま）。道は 6 タイル以上に広げた。帯・塀・配置物は tools/gen_fields_a.py が規則から自動配置（フェーズ 12）。",
+ "note": "歩ける範囲は F01_walkable.png（唯一の真実）。座標は refs/field/F01.png と docs/field/F01_spec.md（調べ物・出入口はそのまま）。道は 6 タイル以上に広げた。 tools/gen_fields_*.py が生成（フェーズ 12〜14）。",
  "walkable": "res://data/fields/F01_walkable.png",
  "ground": {
   "walk": "asphalt",

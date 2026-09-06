@@ -68,6 +68,27 @@ func _draw() -> void:
 				col = COL_OPEN
 			draw_rect(Rect2(origin + Vector2(x, y) * s, Vector2(x1 - x, 1) * s), col)
 			x = x1
+	# T-2b: 登れない段差の境を暗い線で、階段を細い横線で描く（高さそのものは描かない）
+	if fd.has_height:
+		var col_step := Color(0.05, 0.04, 0.06, 0.9)
+		for y in fd.size.y:
+			for x in fd.size.x:
+				var vis := fd.cls(x, y) != FieldLayout.CLASS_BLOCKED
+				if x + 1 < fd.size.x and (vis or fd.cls(x + 1, y) != FieldLayout.CLASS_BLOCKED) and absi(fd.h_units(x, y) - fd.h_units(x + 1, y)) > FieldData.CLIMB_MAX and not fd.is_smooth(x, y) and not fd.is_smooth(x + 1, y):
+					draw_line(origin + Vector2(x + 1, y) * s, origin + Vector2(x + 1, y + 1) * s, col_step, 1.0)
+				if y + 1 < fd.size.y and (vis or fd.cls(x, y + 1) != FieldLayout.CLASS_BLOCKED) and absi(fd.h_units(x, y) - fd.h_units(x, y + 1)) > FieldData.CLIMB_MAX and not fd.is_smooth(x, y) and not fd.is_smooth(x, y + 1):
+					draw_line(origin + Vector2(x, y + 1) * s, origin + Vector2(x + 1, y + 1) * s, col_step, 1.0)
+		for r in fd.trects:
+			if r.get("kind", "") != "stairs":
+				continue
+			var rc: Array = r["rect"]
+			var col_st := Color(0.2, 0.2, 0.25, 0.9)
+			if r["axis"] == "y":
+				for y in range(int(rc[1]), int(rc[1]) + int(rc[3]) + 1):
+					draw_line(origin + Vector2(rc[0], y) * s, origin + Vector2(rc[0] + rc[2], y) * s, col_st, 1.0)
+			else:
+				for x in range(int(rc[0]), int(rc[0]) + int(rc[2]) + 1):
+					draw_line(origin + Vector2(x, rc[1]) * s, origin + Vector2(x, rc[1] + rc[3]) * s, col_st, 1.0)
 	for e in fd.d.get("exits", []):
 		var p := origin + (Vector2(float(e["at"][0]) + 0.5, float(e["at"][1]) + 0.5)) * s
 		var dir := Vector2.ZERO
