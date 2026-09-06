@@ -44,7 +44,7 @@ const BASE_H := 720
 const DESIGN_H := 360                          # 構図を決める基準の描画高さ（px）。pixel=2 で 1 texel = 1 px
 var cam_distance := 18.0                        # fov と base_texel_per_meter から _apply_camera で逆算
 const ORTHO_DISTANCE := 30.0
-const CAM_PITCH_DEG := -42.0
+var cam_pitch_deg := -42.0                     # 俯角（負）。J-0 で 30/36/42 を比較
 var cam_yaw_deg := 60.0                        # 街路（X 軸）を斜めに奥へ見通す。v1 レイアウトは 34
 var cam_target := Vector3(-5.0, 0.0, -1.0)     # 注視点（v2: 街路の少し奥）。v1 は (2, 0, -3)
 
@@ -262,6 +262,8 @@ func _parse_args() -> void:
 				fov_deg = float(v)
 			"yaw":
 				cam_yaw_deg = float(v)
+			"pitch":
+				cam_pitch_deg = -absf(float(v))
 			"extra_pole":
 				var ep := v.split(",")
 				if ep.size() == 2:
@@ -1138,7 +1140,7 @@ func _apply_camera() -> void:
 		cam.fov = fov_deg
 		# 縦 FOV で基準面の縦幅が view_h_m になる距離を逆算
 		cam_distance = (view_h_m * 0.5) / tan(deg_to_rad(fov_deg * 0.5))
-	var basis := Basis.from_euler(Vector3(deg_to_rad(CAM_PITCH_DEG), deg_to_rad(cam_yaw_deg), 0.0))
+	var basis := Basis.from_euler(Vector3(deg_to_rad(cam_pitch_deg), deg_to_rad(cam_yaw_deg), 0.0))
 	cam.position = cam_target + basis.z * cam_distance
 	cam.look_at(cam_target, Vector3.UP)
 	_cam_base_pos = cam.position
@@ -1307,7 +1309,7 @@ func _build_c1_boards() -> void:
 		billboards.append(pivot)   # カメラ正対（_face_billboards が回す）
 		c1_boards.append(mi)
 		print("C1BOARD {\"frac\":%.2f,\"world\":[%.2f,%.2f,%.2f],\"dist\":%.3f}" % [frac, hit.x, hit.y, hit.z, cam.global_position.distance_to(hit + Vector3(0, 0.5, 0))])
-	print("C1CAM {\"fov\":%.2f,\"ortho\":%s,\"distance\":%.3f,\"height\":%.3f,\"pitch\":%.1f}" % [cam.fov, "true" if ortho else "false", cam_distance, cam.global_position.y, -CAM_PITCH_DEG])
+	print("C1CAM {\"fov\":%.2f,\"ortho\":%s,\"distance\":%.3f,\"height\":%.3f,\"pitch\":%.1f}" % [cam.fov, "true" if ortho else "false", cam_distance, cam.global_position.y, -cam_pitch_deg])
 
 
 ## ビルボードの向き。full: カメラに正対（足元は地面に固定）。y: Y 軸回転のみ。

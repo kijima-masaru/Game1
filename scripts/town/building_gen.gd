@@ -76,12 +76,10 @@ func add_plate(wall_origin: Vector3, wall_u: Vector3, wall_v: Vector3, normal: V
 
 ## 窓: 暗いガラス + 白い枠（emission 板、ART_SPEC 第 4 節）
 func add_window(wall_origin: Vector3, wall_u: Vector3, wall_v: Vector3, normal: Vector3, ox: float, oy: float, w: float, h: float, glass: Material, frame: Material, name_: String, bar := 0.06) -> void:
+	# 暗いガラス面 + 上辺のハイライト 1 本 + 中桟（枠を白い線で囲まない: I-0）
 	add_plate(wall_origin, wall_u, wall_v, normal, ox, oy, w, h, glass, name_ + "_glass", 0.02)
-	add_plate(wall_origin, wall_u, wall_v, normal, ox, oy, w, bar, frame, name_ + "_f0", 0.03)
 	add_plate(wall_origin, wall_u, wall_v, normal, ox, oy + h - bar, w, bar, frame, name_ + "_f1", 0.03)
-	add_plate(wall_origin, wall_u, wall_v, normal, ox, oy, bar, h, frame, name_ + "_f2", 0.03)
-	add_plate(wall_origin, wall_u, wall_v, normal, ox + w - bar, oy, bar, h, frame, name_ + "_f3", 0.03)
-	add_plate(wall_origin, wall_u, wall_v, normal, ox + w * 0.5 - bar * 0.5, oy, bar, h, frame, name_ + "_f4", 0.03)
+	add_plate(wall_origin, wall_u, wall_v, normal, ox + w * 0.5 - bar * 0.5, oy, bar, h * 0.9, frame, name_ + "_f4", 0.03)
 
 
 # ---- 生成 ------------------------------------------------------------------------

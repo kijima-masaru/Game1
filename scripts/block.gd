@@ -25,6 +25,7 @@ var player_pos := Vector3.INF
 var occl := "none"
 var want_footprint := false
 var no_ao := false
+var areamask := false          # J-0: 壁=赤 / 屋根=緑 / 地面=青 の単色で描き、面積比を数える
 var player_pivot: Node3D
 var player_sprite: Sprite3D
 var silhouette: Sprite3D
@@ -56,6 +57,8 @@ func _ready() -> void:
 				want_footprint = kv[1] == "1"
 			"noao":
 				no_ao = kv[1] == "1"
+			"areamask":
+				areamask = kv[1] == "1"
 	lookdev = load("res://scenes/lookdev.tscn").instantiate()
 	# layout=empty を lookdev の引数に頼らず直接指定
 	lookdev.layout = "empty"
@@ -120,7 +123,8 @@ func _build_materials() -> void:
 			mats["fence"] = PT.material(PT.block_fence())
 			mats["shutter"] = PT.material(PT.shutter())
 	mats["glass"] = PT.material(PT.noise(8, Color(0.10, 0.12, 0.18), 0.02))
-	mats["frame"] = PT.emissive_material(Color(0.92, 0.92, 0.90), 1.0)     # 白い窓枠（unshaded 相当）
+	mats["frame"] = PT.material(PT.noise(8, Color(0.62, 0.62, 0.60), 0.02))   # 窓枠: 明るい灰（受光する。白い emission の枠線は使わない: I-0）
+	mats["highlight"] = PT.material(PT.noise(8, Color(0.80, 0.80, 0.78), 0.01))  # 窓の上辺のハイライト 1 本
 	mats["sign"] = PT.emissive_material(Color(0.95, 0.94, 0.90), 1.1)
 	mats["lane"] = PT.emissive_material(Color(0.88, 0.88, 0.85), 0.9)      # 白線
 	mats["soffit"] = PT.material(PT.noise(16, Color(0.30, 0.29, 0.30), 0.02))
@@ -170,11 +174,33 @@ func _build_block() -> void:
 
 	gen.finalize(null if no_ao else baker)
 	_collect_buildings()
+	if areamask:
+		_apply_areamask()
 	# 街路の向き（H-6a）: カメラ前方に対して street_angle。lookdev v2 の配置は 30° 相当
 	var yaw: float = lookdev.cam_yaw_deg
 	var fwd := Vector3(-sin(deg_to_rad(yaw)), 0, -cos(deg_to_rad(yaw)))
 	var dir := fwd.rotated(Vector3.UP, deg_to_rad(street_angle))
 	block.rotation.y = atan2(-dir.z, dir.x) - PI   # ローカル -X（奥）を dir に向ける
+
+
+func _apply_areamask() -> void:
+	var cols := {"wall": Color(1, 0, 0), "roof": Color(0, 1, 0), "ground": Color(0, 0, 1)}
+	for mi in block.get_children():
+		if not (mi is MeshInstance3D):
+			continue
+		var n: String = mi.name
+		var kind := "wall"
+		if n == "ground" or n.begins_with("sidewalk") or n.begins_with("lane") or n == "manhole":
+			kind = "ground"
+		elif "_roof" in n or n.ends_with("_top") or "_soffit" in n or "_gable" in n:
+			kind = "roof"
+		var m := StandardMaterial3D.new()
+		m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		m.albedo_color = cols[kind]
+		m.cull_mode = BaseMaterial3D.CULL_DISABLED
+		mi.material_override = m
+	for p in billboards:
+		p.visible = false
 
 
 func _collect_buildings() -> void:
