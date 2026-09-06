@@ -195,3 +195,8 @@ Claude-PixelLab の `projects/iwato/assets/objects/`（62 種 × 本体・`_n`�
 
 ピクセル整合（低 FOV 透視・シマー・モアレ）、白線 L=218 の検証、レイアウト v2、太陽方位・脱彩度、
 疑似スカイライトの検証は [PHASE3.md](PHASE3.md)。**現在の既定値は PHASE3.md の表を見ること。**
+
+## 続き: フェーズ 4（最終）
+
+GIF による動画判定、AO ベイク、スプライトのスケール変動、素材制作仕様（[../ART_SPEC.md](../ART_SPEC.md)）は
+[PHASE4.md](PHASE4.md)。**ルックデブはここで終了。現在の既定値は ART_SPEC.md を見ること。**

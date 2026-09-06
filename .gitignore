@@ -30,3 +30,6 @@ Thumbs.db
 
 # Python ツールのキャッシュ
 __pycache__/
+
+# lookdev の GIF/連番（大きい。tools/lookdev_c.py で再生成）
+/docs/lookdev/video/

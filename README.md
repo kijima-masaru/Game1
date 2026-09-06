@@ -56,7 +56,10 @@ python tools/lookdev_shots.py          # 設定違いを一括撮影して比較
 python tools/lookdev_calib.py ambient  # 環境光スイープと路面の点測定（較正）
 python tools/measure.py refs/reference_evening.png docs/lookdev/shots/best_p3.png --hist out.png
 python tools/lookdev_c.py c1|c2|c3    # 投影・シマー・モアレの計測（フェーズ 3）
+python tools/lookdev_walk.py           # スプライトのスケール変動（歩行テスト、GIF 出力）
 ```
+
+素材制作のルールは [docs/ART_SPEC.md](docs/ART_SPEC.md)。
 
 参考画像は `refs/` に置く（Git 管理外）。
 
@@ -81,6 +84,8 @@ tools/lookdev_shots.py 検証シーンの一括撮影と比較シート作成
 tools/lookdev_calib.py 較正スイープ（環境光・壁アルベド・トーンマップ）と点測定
 tools/measure.py     明度分布・日陰面積率・色相統計・ヒストグラム
 tools/lookdev_c.py   ピクセル整合の計測（FOV スイープ・シマー MAD・モアレ）
+tools/lookdev_walk.py スプライト歩行テスト（A〜D 条件、GIF、MAD）
+docs/ART_SPEC.md     素材制作仕様（lookdev の結論）
 docs/lookdev/        検証の所見と比較シート
 tools/setup_godot.sh Godot のインストール（Linux）
 tools/setup_godot.ps1 Godot のインストール（Windows）
